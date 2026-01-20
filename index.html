@@ -27,6 +27,8 @@
             --radius-lg: 12px;
             --warning: #F59E0B;
             --warning-light: #FEF3C7;
+            --google-blue: #4285F4;
+            --google-green: #34A853;
         }
         
         /* ===== RESET & BASE ===== */
@@ -470,6 +472,15 @@
             color: white;
         }
         
+        .btn-google {
+            background: var(--google-blue);
+            color: white;
+        }
+        
+        .btn-google:hover {
+            background: #3367D6;
+        }
+        
         .btn-sm {
             padding: 8px 15px;
             font-size: 0.9rem;
@@ -803,6 +814,14 @@
             font-size: 0.9rem;
         }
         
+        .status-badge.syncing {
+            background: var(--warning);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
         .data-controls {
             display: flex;
             gap: 10px;
@@ -883,6 +902,67 @@
             justify-content: flex-end;
         }
         
+        /* ===== GOOGLE SHEETS CONFIG ===== */
+        .sheet-config {
+            padding: 20px;
+            background: var(--light);
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+        
+        .sheet-url-help {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--google-blue);
+            color: white;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+        }
+        
+        .sheet-url-help i {
+            font-size: 1.2rem;
+        }
+        
+        .sheet-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .sheet-test-results {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        
+        .sheet-test-success {
+            color: var(--profit);
+        }
+        
+        .sheet-test-error {
+            color: var(--loss);
+        }
+        
+        .auto-sync-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .auto-sync-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--light);
+            border-radius: var(--radius);
+        }
+        
         /* ===== LOADER ===== */
         #global-loader {
             position: fixed;
@@ -943,6 +1023,11 @@
             color: white;
         }
         
+        .notification.info {
+            background: var(--google-blue);
+            color: white;
+        }
+        
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -951,6 +1036,64 @@
         @keyframes slideOut {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* ===== CLEAR DATA MODAL STYLES ===== */
+        .confirmation-modal .modal-content {
+            max-width: 500px;
+        }
+        
+        .confirmation-modal .modal-body {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .confirmation-modal .warning-icon {
+            font-size: 4rem;
+            color: var(--loss);
+            margin-bottom: 20px;
+        }
+        
+        .confirmation-modal h3 {
+            color: var(--loss);
+            margin-bottom: 15px;
+        }
+        
+        .confirmation-modal .warning-box {
+            background: var(--loss-light);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin: 20px 0;
+            border-left: 4px solid var(--loss);
+        }
+        
+        .confirmation-modal .warning-box i {
+            color: var(--loss);
+            margin-right: 10px;
+        }
+        
+        .confirmation-modal #confirm-delete-input,
+        .confirmation-modal #confirm-import-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.3s;
+        }
+        
+        .confirmation-modal #confirm-delete-input:focus,
+        .confirmation-modal #confirm-import-input:focus {
+            border-color: var(--loss);
+            box-shadow: 0 0 0 3px var(--loss-light);
+        }
+        
+        .confirmation-modal #confirm-delete-input.correct,
+        .confirmation-modal #confirm-import-input.correct {
+            border-color: var(--profit);
+            background: var(--profit-light);
         }
         
         /* ===== FOOTER ===== */
@@ -1127,11 +1270,11 @@
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">Round Profit</span>
-                    <span class="stat-value profit" id="current-profit">₵2,450</span>
+                    <span class="stat-value profit" id="current-profit">₵0.00</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Status</span>
-                    <span class="status-badge active">Active</span>
+                    <span class="stat-label">Google Sheets</span>
+                    <span class="status-badge" id="header-sync-status">Not Connected</span>
                 </div>
             </div>
         </header>
@@ -1143,7 +1286,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number" id="shareholder-count">5</div>
+                    <div class="stat-number" id="shareholder-count">0</div>
                     <div class="stat-title">Shareholders</div>
                 </div>
             </div>
@@ -1152,7 +1295,7 @@
                     <i class="fas fa-boxes"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number" id="product-count">23</div>
+                    <div class="stat-number" id="product-count">0</div>
                     <div class="stat-title">Products</div>
                 </div>
             </div>
@@ -1161,7 +1304,7 @@
                     <i class="fas fa-shopping-cart"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number loss" id="total-procurement">₵3,370</div>
+                    <div class="stat-number loss" id="total-procurement">₵0.00</div>
                     <div class="stat-title">Procurement</div>
                 </div>
             </div>
@@ -1170,7 +1313,7 @@
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number profit" id="dividend-pool">₵2,450</div>
+                    <div class="stat-number profit" id="dividend-pool">₵0.00</div>
                     <div class="stat-title">Dividend Pool</div>
                 </div>
             </div>
@@ -1219,19 +1362,19 @@
                     <div class="summary-grid">
                         <div class="summary-item">
                             <div class="summary-label">Total Procurement</div>
-                            <div class="summary-value loss" id="summary-procurement">₵3,370</div>
+                            <div class="summary-value loss" id="summary-procurement">₵0.00</div>
                         </div>
                         <div class="summary-item">
                             <div class="summary-label">Total Sales</div>
-                            <div class="summary-value profit" id="summary-sales">₵5,820</div>
+                            <div class="summary-value profit" id="summary-sales">₵0.00</div>
                         </div>
                         <div class="summary-item">
                             <div class="summary-label">Net Profit</div>
-                            <div class="summary-value profit" id="summary-profit">₵2,450</div>
+                            <div class="summary-value profit" id="summary-profit">₵0.00</div>
                         </div>
                         <div class="summary-item">
                             <div class="summary-label">Profit Margin</div>
-                            <div class="summary-value profit" id="summary-margin">42.1%</div>
+                            <div class="summary-value profit" id="summary-margin">0%</div>
                         </div>
                     </div>
                 </div>
@@ -1262,27 +1405,11 @@
                     <h3><i class="fas fa-history"></i> Recent Activity</h3>
                     <div class="activity-list" id="activity-list">
                         <div class="activity-item profit">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="fas fa-info-circle"></i>
                             <div class="activity-content">
-                                <div class="activity-title">Stock Count Completed</div>
-                                <div class="activity-desc">120 items sold, ₵420 revenue</div>
-                                <div class="activity-time">Today, 2:30 PM</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <i class="fas fa-shopping-cart"></i>
-                            <div class="activity-content">
-                                <div class="activity-title">New Procurement</div>
-                                <div class="activity-desc">BIGO DRINKS - 10 boxes</div>
-                                <div class="activity-time">Yesterday, 10:15 AM</div>
-                            </div>
-                        </div>
-                        <div class="activity-item profit">
-                            <i class="fas fa-user-plus"></i>
-                            <div class="activity-content">
-                                <div class="activity-title">New Shareholder Added</div>
-                                <div class="activity-desc">Kwame Solo - ₵2,000 investment</div>
-                                <div class="activity-time">Oct 15, 2023</div>
+                                <div class="activity-title">Welcome!</div>
+                                <div class="activity-desc">Add your first product or shareholder to get started</div>
+                                <div class="activity-time">Just now</div>
                             </div>
                         </div>
                     </div>
@@ -1292,24 +1419,9 @@
                     <h3><i class="fas fa-star"></i> Top Performing Products</h3>
                     <div class="products-list" id="top-products-list">
                         <div class="product-item profit">
-                            <div class="product-name">LAYERZ CAKE</div>
+                            <div class="product-name">No products yet</div>
                             <div class="product-stats">
-                                <span class="product-sales">54 items sold</span>
-                                <span class="product-profit">₵108 profit</span>
-                            </div>
-                        </div>
-                        <div class="product-item profit">
-                            <div class="product-name">MALT</div>
-                            <div class="product-stats">
-                                <span class="product-sales">36 items sold</span>
-                                <span class="product-profit">₵60 profit</span>
-                            </div>
-                        </div>
-                        <div class="product-item loss">
-                            <div class="product-name">BREAKFAST CEREAL</div>
-                            <div class="product-stats">
-                                <span class="product-sales">7 items sold</span>
-                                <span class="product-profit">Low stock</span>
+                                <span class="product-sales">Add your first product</span>
                             </div>
                         </div>
                     </div>
@@ -1379,6 +1491,9 @@
                         </button>
                         <button class="btn btn-sm btn-success" id="export-products">
                             <i class="fas fa-file-export"></i> Export
+                        </button>
+                        <button class="btn btn-sm btn-google" id="sync-products-sheet">
+                            <i class="fas fa-sync-alt"></i> Sync to Sheets
                         </button>
                     </div>
                 </div>
@@ -1476,6 +1591,9 @@
                         </button>
                         <button class="btn btn-sm btn-success" id="export-procurement">
                             <i class="fas fa-file-export"></i> Export
+                        </button>
+                        <button class="btn btn-sm btn-google" id="sync-procurement-sheet">
+                            <i class="fas fa-sync-alt"></i> Sync to Sheets
                         </button>
                     </div>
                 </div>
@@ -1592,6 +1710,9 @@
                     <button class="btn btn-success" id="save-stock-btn">
                         <i class="fas fa-save"></i> Save Stock Count
                     </button>
+                    <button class="btn btn-google" id="sync-stock-sheet">
+                        <i class="fas fa-sync-alt"></i> Sync to Sheets
+                    </button>
                     <button class="btn" id="new-stock-btn">
                         <i class="fas fa-redo"></i> Start New Count
                     </button>
@@ -1601,6 +1722,11 @@
             <div class="data-table">
                 <div class="table-header">
                     <h3><i class="fas fa-history"></i> Stock Count History</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-sm btn-google" id="sync-stock-history-sheet">
+                            <i class="fas fa-sync-alt"></i> Sync to Sheets
+                        </button>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -1677,6 +1803,9 @@
                         <button class="btn btn-sm btn-success" id="calculate-shares">
                             <i class="fas fa-calculator"></i> Update Shares
                         </button>
+                        <button class="btn btn-sm btn-google" id="sync-shareholders-sheet">
+                            <i class="fas fa-sync-alt"></i> Sync to Sheets
+                        </button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1727,11 +1856,11 @@
                 </div>
                 <div class="control-group">
                     <label>Round Profit</label>
-                    <div class="value-display profit" id="round-profit-display">₵2,450</div>
+                    <div class="value-display profit" id="round-profit-display">₵0.00</div>
                 </div>
                 <div class="control-group">
                     <label>Dividend Pool</label>
-                    <div class="value-display profit" id="dividend-pool-display">₵2,450</div>
+                    <div class="value-display profit" id="dividend-pool-display">₵0.00</div>
                 </div>
             </div>
 
@@ -1744,6 +1873,9 @@
                         </button>
                         <button class="btn btn-sm" id="export-dividends">
                             <i class="fas fa-file-export"></i> Export
+                        </button>
+                        <button class="btn btn-sm btn-google" id="sync-dividends-sheet">
+                            <i class="fas fa-sync-alt"></i> Sync to Sheets
                         </button>
                     </div>
                 </div>
@@ -1772,19 +1904,19 @@
                 <div class="summary-grid">
                     <div class="summary-item">
                         <div class="summary-label">Total Investment</div>
-                        <div class="summary-value" id="total-investment">₵5,000</div>
+                        <div class="summary-value" id="total-investment">₵0.00</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Total Profit</div>
-                        <div class="summary-value profit" id="total-profit">₵2,450</div>
+                        <div class="summary-value profit" id="total-profit">₵0.00</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Dividend Pool</div>
-                        <div class="summary-value profit" id="total-dividend-pool">₵2,450</div>
+                        <div class="summary-value profit" id="total-dividend-pool">₵0.00</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Average ROI</div>
-                        <div class="summary-value profit" id="average-roi">49%</div>
+                        <div class="summary-value profit" id="average-roi">0%</div>
                     </div>
                 </div>
             </div>
@@ -1799,23 +1931,62 @@
             <div class="settings-grid">
                 <div class="settings-card">
                     <h3><i class="fas fa-google"></i> Google Sheets Integration</h3>
-                    <div class="settings-form">
-                        <div class="form-group">
-                            <label for="sheet-id">Google Sheet ID</label>
-                            <input type="text" id="sheet-id" placeholder="Enter your Google Sheet ID" maxlength="100">
-                            <small>Get this from your Google Sheet URL</small>
+                    <div class="sheet-config">
+                        <div class="sheet-url-help">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Get your Google Sheet ID from the URL: https://docs.google.com/spreadsheets/d/<strong>YOUR_SHEET_ID</strong>/edit</span>
                         </div>
-                        <div class="form-group">
-                            <label for="api-key">API Key (Optional)</label>
-                            <input type="password" id="api-key" placeholder="Enter API key" maxlength="200">
-                        </div>
-                        <div class="form-actions">
-                            <button class="btn btn-success" id="connect-sheets">
-                                <i class="fas fa-plug"></i> Connect to Google Sheets
-                            </button>
-                            <button class="btn" id="test-connection">
-                                <i class="fas fa-test"></i> Test Connection
-                            </button>
+                        
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label for="sheet-id">Google Sheet ID *</label>
+                                <input type="text" id="sheet-id" placeholder="Enter your Google Sheet ID" maxlength="100">
+                                <small>This is required for automatic data recording</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="api-key">API Key (Optional)</label>
+                                <input type="password" id="api-key" placeholder="Enter API key for advanced features" maxlength="200">
+                                <small>Required for automatic sync and background updates</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="auto-sync">Auto-Sync Settings</label>
+                                <div class="auto-sync-options">
+                                    <label class="auto-sync-option">
+                                        <input type="checkbox" id="auto-sync-products" checked>
+                                        <span>Sync products automatically</span>
+                                    </label>
+                                    <label class="auto-sync-option">
+                                        <input type="checkbox" id="auto-sync-procurement" checked>
+                                        <span>Sync purchases automatically</span>
+                                    </label>
+                                    <label class="auto-sync-option">
+                                        <input type="checkbox" id="auto-sync-stock" checked>
+                                        <span>Sync stock counts automatically</span>
+                                    </label>
+                                    <label class="auto-sync-option">
+                                        <input type="checkbox" id="auto-sync-dividends" checked>
+                                        <span>Sync dividends automatically</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="sheet-actions">
+                                <button class="btn btn-google" id="connect-sheets">
+                                    <i class="fab fa-google"></i> Connect to Google Sheets
+                                </button>
+                                <button class="btn btn-success" id="test-sheet-connection">
+                                    <i class="fas fa-test-tube"></i> Test Connection
+                                </button>
+                                <button class="btn btn-warning" id="create-sheet-template">
+                                    <i class="fas fa-file-excel"></i> Create Template
+                                </button>
+                            </div>
+                            
+                            <div id="sheet-test-results" class="sheet-test-results" style="display: none;">
+                                <!-- Test results will appear here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1848,24 +2019,34 @@
                             <span class="status-label">Connection:</span>
                             <span class="status-badge disconnected" id="connection-status">Disconnected</span>
                         </div>
+                        <div class="status-item">
+                            <span class="status-label">Auto-Sync:</span>
+                            <span class="status-value" id="auto-sync-status">Disabled</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="settings-card">
                     <h3><i class="fas fa-database"></i> Data Management</h3>
-                    <div class="data-controls">
+                    <div class="data-controls" id="data-controls">
                         <button class="btn btn-sm" id="export-all">
                             <i class="fas fa-download"></i> Export All Data
                         </button>
                         <button class="btn btn-sm" id="import-data">
                             <i class="fas fa-upload"></i> Import Data
                         </button>
+                        <button class="btn btn-sm btn-success" id="create-backup">
+                            <i class="fas fa-download"></i> Create Backup
+                        </button>
+                        <button class="btn btn-sm btn-warning" id="load-sample-data">
+                            <i class="fas fa-vial"></i> Load Sample Data
+                        </button>
                         <button class="btn btn-sm btn-danger" id="clear-data">
                             <i class="fas fa-trash"></i> Clear All Data
                         </button>
                     </div>
                     <div class="backup-info">
-                        <p><i class="fas fa-info-circle"></i> Regular backups are recommended. Data is stored in your browser's local storage.</p>
+                        <p><i class="fas fa-info-circle"></i> Data is automatically recorded to Google Sheets when connected. Regular local backups are recommended.</p>
                     </div>
                 </div>
 
@@ -1889,10 +2070,139 @@
                             <label for="tax-rate">Tax Rate (%)</label>
                             <input type="number" id="tax-rate" value="0" step="0.1" min="0" max="100">
                         </div>
+                        <div class="form-group">
+                            <label for="sync-interval">Auto-Sync Interval (minutes)</label>
+                            <select id="sync-interval">
+                                <option value="5">5 minutes</option>
+                                <option value="15" selected>15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">60 minutes</option>
+                                <option value="0">Manual only</option>
+                            </select>
+                        </div>
                         <button class="btn btn-primary" id="save-settings">
                             <i class="fas fa-save"></i> Save Settings
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Sheets Setup Modal -->
+        <div id="sheet-setup-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fab fa-google"></i> Google Sheets Setup</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <i class="fab fa-google-drive" style="font-size: 3rem; color: var(--google-blue); margin-bottom: 15px;"></i>
+                        <h3 style="margin-bottom: 10px;">Connect to Google Sheets</h3>
+                        <p style="color: var(--secondary); margin-bottom: 20px;">Set up automatic data recording to Google Sheets</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modal-sheet-id">Google Sheet ID *</label>
+                        <input type="text" id="modal-sheet-id" placeholder="Paste your Google Sheet ID here" style="font-family: monospace;">
+                        <small class="form-text">Get this from your Google Sheet URL: docs.google.com/spreadsheets/d/<strong>YOUR_SHEET_ID</strong>/edit</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modal-sheet-name">Sheet Name (Optional)</label>
+                        <input type="text" id="modal-sheet-name" placeholder="e.g., Financial Data" value="Solo's Snacks Data">
+                        <small class="form-text">Name of the sheet where data will be recorded</small>
+                    </div>
+                    
+                    <div style="background: var(--light); padding: 15px; border-radius: var(--radius); margin: 20px 0;">
+                        <h4 style="margin-bottom: 10px;"><i class="fas fa-cogs"></i> Automatic Recording Features:</h4>
+                        <ul style="padding-left: 20px; color: var(--secondary);">
+                            <li>All products added will be recorded automatically</li>
+                            <li>All purchases will be logged in real-time</li>
+                            <li>Stock counts will be saved after calculation</li>
+                            <li>Dividend calculations will be recorded</li>
+                            <li>Shareholder information will be updated</li>
+                        </ul>
+                    </div>
+                    
+                    <div id="sheet-setup-instructions" style="display: none;">
+                        <div style="background: var(--profit-light); padding: 15px; border-radius: var(--radius); border-left: 4px solid var(--profit);">
+                            <h4 style="color: var(--profit); margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Setup Instructions:</h4>
+                            <ol style="padding-left: 20px; color: var(--profit-dark);">
+                                <li>Share your Google Sheet with edit permissions to: <code>your-service-account@example.com</code></li>
+                                <li>Click "Test Connection" to verify setup</li>
+                                <li>Data will start recording automatically</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" id="cancel-sheet-setup">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn btn-google" id="save-sheet-setup">
+                        <i class="fab fa-google"></i> Save & Connect
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sheet Template Modal -->
+        <div id="template-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-excel"></i> Create Google Sheets Template</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <i class="fas fa-table" style="font-size: 3rem; color: var(--google-green); margin-bottom: 15px;"></i>
+                        <h3 style="margin-bottom: 10px;">Create Organized Sheets</h3>
+                        <p style="color: var(--secondary); margin-bottom: 20px;">This will create a Google Sheet with organized tabs for all your data</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4><i class="fas fa-layer-group"></i> Sheets to be created:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
+                                <i class="fas fa-box" style="color: var(--profit);"></i>
+                                <span style="margin-left: 10px;">Products</span>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
+                                <i class="fas fa-shopping-cart" style="color: var(--profit);"></i>
+                                <span style="margin-left: 10px;">Procurement</span>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
+                                <i class="fas fa-users" style="color: var(--profit);"></i>
+                                <span style="margin-left: 10px;">Shareholders</span>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
+                                <i class="fas fa-chart-pie" style="color: var(--profit);"></i>
+                                <span style="margin-left: 10px;">Dividends</span>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
+                                <i class="fas fa-clipboard-check" style="color: var(--profit);"></i>
+                                <span style="margin-left: 10px;">Stock History</span>
+                            </div>
+                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
+                                <i class="fas fa-chart-bar" style="color: var(--profit);"></i>
+                                <span style="margin-left: 10px;">Dashboard</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--warning-light); padding: 15px; border-radius: var(--radius); border-left: 4px solid var(--warning);">
+                        <h4 style="color: var(--warning); margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> Important:</h4>
+                        <p style="color: var(--warning);">This will create a new Google Sheet in your Google Drive. Make sure you're logged into the correct Google account.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" id="cancel-template">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn btn-success" id="create-template">
+                        <i class="fas fa-plus-circle"></i> Create Template
+                    </button>
                 </div>
             </div>
         </div>
@@ -1941,9 +2251,11 @@
                     <a href="#" id="help-link"><i class="fas fa-question-circle"></i> Help</a>
                     <a href="#" id="docs-link"><i class="fas fa-book"></i> Documentation</a>
                     <a href="#" id="contact-link"><i class="fas fa-envelope"></i> Contact</a>
+                    <a href="#" id="sheet-help-link"><i class="fab fa-google"></i> Sheets Help</a>
                 </div>
                 <div class="footer-info">
                     <p>Financial Management System v1.0.0</p>
+                    <p>Google Sheets: <span id="footer-sync-status">Not Connected</span></p>
                     <p>Data last synced: <span id="footer-sync">Never</span></p>
                 </div>
             </div>
@@ -1952,7 +2264,7 @@
 
     <script>
         // ===== APPLICATION CONFIGURATION =====
-        const APP_VERSION = '1.0.0';
+        const APP_VERSION = '1.1.0';
         const APP_NAME = "Solo's Snacks";
         const STORAGE_KEY = 'soloSnacksData_v1';
         
@@ -1969,158 +2281,95 @@
             lastUpdated: null
         };
 
-        // ===== SAMPLE DATA FOR INITIALIZATION =====
-        const sampleProducts = [
-            { id: 1, name: "BIGO DRINKS", itemsPerBox: 24, costPerBox: 45.00, currentStock: 10, sellingPrice: 3.00 },
-            { id: 2, name: "MALT", itemsPerBox: 24, costPerBox: 48.00, currentStock: 8, sellingPrice: 3.50 },
-            { id: 3, name: "BEL COLA", itemsPerBox: 24, costPerBox: 42.00, currentStock: 12, sellingPrice: 2.80 },
-            { id: 4, name: "STORM", itemsPerBox: 24, costPerBox: 50.00, currentStock: 6, sellingPrice: 3.80 },
-            { id: 5, name: "KAESAR APPLE", itemsPerBox: 24, costPerBox: 46.00, currentStock: 9, sellingPrice: 3.20 },
-            { id: 6, name: "LAYERZ - CHOCOLATE-COATED CAKE", itemsPerBox: 12, costPerBox: 36.00, currentStock: 15, sellingPrice: 4.50 },
-            { id: 7, name: "PERK", itemsPerBox: 24, costPerBox: 40.00, currentStock: 11, sellingPrice: 2.50 },
-            { id: 8, name: "BREAKFAST CEREAL", itemsPerBox: 12, costPerBox: 60.00, currentStock: 7, sellingPrice: 7.00 },
-            { id: 9, name: "MAXI CHOCO", itemsPerBox: 24, costPerBox: 52.00, currentStock: 5, sellingPrice: 3.50 },
-            { id: 10, name: "SIMPLY GOOD", itemsPerBox: 12, costPerBox: 44.00, currentStock: 10, sellingPrice: 5.00 },
-            { id: 11, name: "OBA SPAGETTI", itemsPerBox: 24, costPerBox: 55.00, currentStock: 8, sellingPrice: 3.80 },
-            { id: 12, name: "LOVAL WAFER", itemsPerBox: 24, costPerBox: 38.00, currentStock: 14, sellingPrice: 2.50 },
-            { id: 13, name: "FRESH DONUT", itemsPerBox: 12, costPerBox: 42.00, currentStock: 9, sellingPrice: 5.00 },
-            { id: 14, name: "BELLA CAKE", itemsPerBox: 12, costPerBox: 48.00, currentStock: 6, sellingPrice: 5.50 },
-            { id: 15, name: "NUTRIBARS", itemsPerBox: 24, costPerBox: 65.00, currentStock: 4, sellingPrice: 4.00 },
-            { id: 16, name: "KALYPO", itemsPerBox: 24, costPerBox: 44.00, currentStock: 10, sellingPrice: 3.00 },
-            { id: 17, name: "GRANOLA BAR", itemsPerBox: 24, costPerBox: 58.00, currentStock: 7, sellingPrice: 3.80 },
-            { id: 18, name: "TIGERNUTS BISCUIT", itemsPerBox: 24, costPerBox: 40.00, currentStock: 12, sellingPrice: 2.80 },
-            { id: 19, name: "STORM (SMALL)", itemsPerBox: 24, costPerBox: 35.00, currentStock: 15, sellingPrice: 2.50 },
-            { id: 20, name: "RUSH", itemsPerBox: 24, costPerBox: 46.00, currentStock: 8, sellingPrice: 3.20 },
-            { id: 21, name: "Tampico", itemsPerBox: 24, costPerBox: 42.00, currentStock: 11, sellingPrice: 3.00 },
-            { id: 22, name: "KIVO GARI MIX", itemsPerBox: 12, costPerBox: 54.00, currentStock: 6, sellingPrice: 6.00 }
-        ];
-
-        const sampleProcurement = [
-            { id: 1, round: 1, date: '2023-10-01', productId: 1, productName: "BIGO DRINKS", quantity: 10, cost: 450, supplier: "Beverages Wholesale", notes: "Initial stock" },
-            { id: 2, round: 1, date: '2023-10-02', productId: 2, productName: "MALT", quantity: 8, cost: 384, supplier: "Beverages Wholesale", notes: "Restock" },
-            { id: 3, round: 1, date: '2023-10-03', productId: 6, productName: "LAYERZ - CHOCOLATE-COATED CAKE", quantity: 15, cost: 540, supplier: "Confectionery Distributors", notes: "New product" }
-        ];
-
-        const sampleShareholders = [
-            { id: 1, name: "Kwame Solo", email: "kwame@example.com", phone: "024-123-4567", investment: 2000 },
-            { id: 2, name: "Ama Mensah", email: "ama@example.com", phone: "024-234-5678", investment: 1250 },
-            { id: 3, name: "Kofi Asante", email: "kofi@example.com", phone: "024-345-6789", investment: 1000 },
-            { id: 4, name: "Esi Boateng", email: "esi@example.com", phone: "024-456-7890", investment: 500 },
-            { id: 5, name: "Yaw Appiah", email: "yaw@example.com", phone: "024-567-8901", investment: 250 }
-        ];
-
-        const sampleBusinessRounds = [
-            { id: 1, name: "Round 1", startDate: '2023-10-01', endDate: null, status: 'Active', procurementCost: 3370, salesRevenue: 5820, netProfit: 2450, dividendPool: 2450 }
-        ];
+        // ===== GOOGLE SHEETS CONFIGURATION =====
+        let googleSheetsConnected = false;
+        let autoSyncInterval = null;
 
         // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', function() {
+        function initializeApp() {
             console.log(`${APP_NAME} v${APP_VERSION} initializing...`);
             loadData();
-            initializeUI();
             setupEventListeners();
-            updateDashboard();
+            updateUI();
+            setCurrentDate();
             showNotification('Welcome to Solo\'s Snacks Financial System!', 'success');
-        });
-
-        // ===== ENHANCED DATA MANAGEMENT =====
-        function safeLocalStorageGet(key) {
-            try {
-                return localStorage.getItem(key);
-            } catch (e) {
-                console.error('LocalStorage read error:', e);
-                showNotification('Storage error - using default data', 'warning');
-                return null;
-            }
         }
 
-        function safeLocalStorageSet(key, value) {
-            try {
-                localStorage.setItem(key, value);
-                return true;
-            } catch (e) {
-                console.error('LocalStorage write error:', e);
-                showNotification('Failed to save data to storage', 'error');
-                return false;
-            }
-        }
-
+        // ===== DATA MANAGEMENT =====
         function loadData() {
-            setLoading(true);
             try {
-                const savedData = safeLocalStorageGet(STORAGE_KEY);
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                
                 if (savedData) {
                     const parsed = JSON.parse(savedData);
                     
-                    // Version check for data migration
-                    if (parsed.version !== APP_VERSION) {
-                        console.warn(`Data version mismatch: ${parsed.version} -> ${APP_VERSION}`);
-                        showNotification('Data format updated to new version', 'warning');
-                    }
-                    
-                    currentData = parsed;
-                    
-                    // Ensure arrays exist
-                    currentData.products = currentData.products || [];
-                    currentData.procurement = currentData.procurement || [];
-                    currentData.shareholders = currentData.shareholders || [];
-                    currentData.stockCounts = currentData.stockCounts || [];
-                    currentData.businessRounds = currentData.businessRounds || [];
-                    currentData.settings = currentData.settings || {};
-                    currentData.currentRound = currentData.currentRound || 1;
-                    currentData.version = APP_VERSION;
+                    // Merge with current structure
+                    currentData = {
+                        ...currentData,
+                        ...parsed,
+                        version: APP_VERSION
+                    };
                     
                     console.log(`Loaded ${currentData.products.length} products, ${currentData.shareholders.length} shareholders`);
                 } else {
-                    // Load sample data for first-time users
-                    initializeSampleData();
-                    console.log('Initialized with sample data');
+                    // Initialize with default data
+                    initializeEmptyData();
                 }
             } catch (error) {
                 console.error('Error loading data:', error);
-                showNotification('Error loading saved data', 'error');
-                initializeSampleData();
-            } finally {
-                setLoading(false);
+                initializeEmptyData();
             }
         }
 
-        function initializeSampleData() {
-            currentData.products = [...sampleProducts];
-            currentData.procurement = [...sampleProcurement];
-            currentData.shareholders = [...sampleShareholders];
-            currentData.businessRounds = [...sampleBusinessRounds];
-            currentData.stockCounts = [];
-            currentData.settings = {
-                businessName: APP_NAME,
-                currency: "₵",
-                taxRate: 0,
-                googleSheetId: "",
-                lastSync: null,
-                autoSave: true,
-                notifications: true
+        function initializeEmptyData() {
+            currentData = {
+                products: [],
+                procurement: [],
+                shareholders: [],
+                stockCounts: [],
+                businessRounds: [{
+                    id: 1,
+                    name: "Round 1",
+                    startDate: new Date().toISOString().split('T')[0],
+                    endDate: null,
+                    status: 'Active',
+                    procurementCost: 0,
+                    salesRevenue: 0,
+                    netProfit: 0,
+                    dividendPool: 0
+                }],
+                settings: {
+                    businessName: APP_NAME,
+                    currency: "₵",
+                    taxRate: 0,
+                    googleSheetId: "",
+                    apiKey: "",
+                    lastSync: null,
+                    autoSync: true,
+                    autoSyncProducts: true,
+                    autoSyncProcurement: true,
+                    autoSyncStock: true,
+                    autoSyncShareholders: true,
+                    autoSyncDividends: true,
+                    syncInterval: 15,
+                    notifications: true
+                },
+                currentRound: 1,
+                version: APP_VERSION,
+                lastUpdated: new Date().toISOString()
             };
-            currentData.currentRound = 1;
-            currentData.version = APP_VERSION;
-            currentData.lastUpdated = new Date().toISOString();
             saveData();
         }
 
         function saveData() {
-            setLoading(true);
             try {
                 currentData.lastUpdated = new Date().toISOString();
-                const jsonData = JSON.stringify(currentData, null, 2);
-                
-                if (safeLocalStorageSet(STORAGE_KEY, jsonData)) {
-                    updateLastSync();
-                    console.log('Data saved successfully');
-                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData, null, 2));
+                console.log('Data saved successfully');
+                updateLastSync();
             } catch (error) {
                 console.error('Error saving data:', error);
                 showNotification('Error saving data', 'error');
-            } finally {
-                setLoading(false);
             }
         }
 
@@ -2132,44 +2381,12 @@
             
             document.getElementById('last-sync').textContent = lastSync;
             document.getElementById('footer-sync').textContent = lastSync;
-            
-            // Update settings
-            if (currentData.settings) {
-                currentData.settings.lastSync = lastSync;
-            }
         }
 
-        // ===== UI INITIALIZATION =====
-        function initializeUI() {
-            updateProductTable();
-            updateProcurementTable();
-            updateShareholdersTable();
-            updateStockHistory();
-            updateRoundSelectors();
-            updateSettingsForm();
-            setCurrentDate();
-            updateActivityLog();
-            updateTopProducts();
-            
-            // Set business name
-            const businessName = currentData.settings.businessName || APP_NAME;
-            document.getElementById('business-title').textContent = businessName;
-            document.getElementById('footer-business-name').textContent = businessName;
-        }
-
-        function setCurrentDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('procurement-date').value = today;
-            document.getElementById('stock-date').value = today;
-        }
-
-        // ===== INPUT SANITIZATION =====
+        // ===== UTILITY FUNCTIONS =====
         function sanitizeInput(text) {
             if (typeof text !== 'string') return '';
-            return text
-                .replace(/[<>]/g, '') // Remove HTML tags
-                .trim()
-                .substring(0, 500); // Limit length
+            return text.trim().substring(0, 500);
         }
 
         function sanitizeNumber(value, defaultValue = 0, min = null, max = null) {
@@ -2183,48 +2400,30 @@
             return result;
         }
 
-        // ===== LOADER MANAGEMENT =====
-        function setLoading(state) {
-            const loader = document.getElementById('global-loader');
-            if (loader) {
-                loader.style.display = state ? 'flex' : 'none';
-            }
+        function setCurrentDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('procurement-date').value = today;
+            document.getElementById('stock-date').value = today;
         }
 
-        // ===== NOTIFICATION SYSTEM =====
-        function showNotification(message, type = 'success') {
-            if (currentData.settings && currentData.settings.notifications === false) {
-                return;
-            }
+        // ===== UI UPDATES =====
+        function updateUI() {
+            updateProductTable();
+            updateProcurementTable();
+            updateShareholdersTable();
+            updateStockHistory();
+            updateRoundSelectors();
+            updateSettingsForm();
+            updateDashboard();
+            updateActivityLog();
+            updateTopProducts();
             
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            
-            let icon = 'info-circle';
-            if (type === 'success') icon = 'check-circle';
-            if (type === 'error') icon = 'exclamation-circle';
-            if (type === 'warning') icon = 'exclamation-triangle';
-            
-            notification.innerHTML = `
-                <i class="fas fa-${icon}"></i>
-                <span>${sanitizeInput(message)}</span>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 4 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-in';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 4000);
+            // Set business name
+            const businessName = currentData.settings.businessName || APP_NAME;
+            document.getElementById('business-title').textContent = businessName;
+            document.getElementById('footer-business-name').textContent = businessName;
         }
 
-        // ===== PRODUCT MANAGEMENT =====
         function updateProductTable() {
             const tbody = document.getElementById('products-table-body');
             tbody.innerHTML = '';
@@ -2233,6 +2432,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="8" class="text-center">No products found. Add your first product!</td>`;
                 tbody.appendChild(row);
+                document.getElementById('product-count').textContent = '0';
                 return;
             }
             
@@ -2266,7 +2466,6 @@
             
             document.getElementById('product-count').textContent = currentData.products.length;
             updateProcurementProductDropdown();
-            updateTopProducts();
         }
 
         function updateProcurementProductDropdown() {
@@ -2281,59 +2480,6 @@
             });
         }
 
-        function addProduct(productData) {
-            const newId = currentData.products.length > 0 
-                ? Math.max(...currentData.products.map(p => p.id)) + 1 
-                : 1;
-            
-            const newProduct = {
-                id: newId,
-                name: sanitizeInput(productData.name),
-                itemsPerBox: sanitizeNumber(productData.itemsPerBox, 1, 1),
-                costPerBox: sanitizeNumber(productData.costPerBox, 0, 0),
-                sellingPrice: sanitizeNumber(productData.sellingPrice, 0, 0),
-                currentStock: sanitizeNumber(productData.currentStock, 0, 0)
-            };
-            
-            currentData.products.push(newProduct);
-            saveData();
-            updateProductTable();
-            
-            // Add to activity log
-            addActivity(`Product added: ${newProduct.name}`, 'product');
-            
-            showNotification('Product added successfully!', 'success');
-            return newProduct;
-        }
-
-        function editProduct(productId) {
-            const product = currentData.products.find(p => p.id === productId);
-            if (!product) {
-                showNotification('Product not found', 'error');
-                return;
-            }
-            
-            showEditModal('product', product);
-        }
-
-        function deleteProduct(productId) {
-            const product = currentData.products.find(p => p.id === productId);
-            if (!product) {
-                showNotification('Product not found', 'error');
-                return;
-            }
-            
-            // Check if product is referenced in procurement
-            const hasProcurement = currentData.procurement.some(p => p.productId === productId);
-            let message = `Delete "${product.name}"?`;
-            if (hasProcurement) {
-                message += "\n\nWarning: This product has procurement records. Deleting it will not remove those records.";
-            }
-            
-            showDeleteModal('product', productId, message);
-        }
-
-        // ===== PROCUREMENT MANAGEMENT =====
         function updateProcurementTable() {
             const tbody = document.getElementById('procurement-table-body');
             tbody.innerHTML = '';
@@ -2344,15 +2490,11 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="7" class="text-center">No purchase records found.</td>`;
                 tbody.appendChild(row);
+                document.getElementById('total-procurement').textContent = '₵0.00';
                 return;
             }
             
-            // Sort by date descending
-            const sortedProcurement = [...currentData.procurement].sort((a, b) => 
-                new Date(b.date) - new Date(a.date)
-            );
-            
-            sortedProcurement.forEach(record => {
+            currentData.procurement.forEach(record => {
                 totalCost += record.cost;
                 
                 const row = document.createElement('tr');
@@ -2373,66 +2515,8 @@
             });
             
             document.getElementById('total-procurement').textContent = `₵${totalCost.toFixed(2)}`;
-            updateBusinessRoundCosts();
         }
 
-        function addProcurement(procurementData) {
-            const product = currentData.products.find(p => p.id === parseInt(procurementData.productId));
-            if (!product) {
-                showNotification('Product not found!', 'error');
-                return;
-            }
-            
-            const newId = currentData.procurement.length > 0 
-                ? Math.max(...currentData.procurement.map(p => p.id)) + 1 
-                : 1;
-            
-            const newProcurement = {
-                id: newId,
-                round: currentData.currentRound,
-                date: procurementData.date || new Date().toISOString().split('T')[0],
-                productId: parseInt(procurementData.productId),
-                productName: product.name,
-                quantity: sanitizeNumber(procurementData.quantity, 1, 1),
-                cost: sanitizeNumber(procurementData.cost, 0, 0),
-                supplier: sanitizeInput(procurementData.supplier),
-                notes: sanitizeInput(procurementData.notes)
-            };
-            
-            // Update product stock
-            product.currentStock += newProcurement.quantity;
-            
-            currentData.procurement.push(newProcurement);
-            saveData();
-            updateProcurementTable();
-            updateProductTable();
-            updateDashboard();
-            
-            // Add to activity log
-            addActivity(`Procurement: ${newProcurement.quantity} boxes of ${product.name}`, 'procurement');
-            
-            showNotification('Purchase recorded successfully!', 'success');
-            return newProcurement;
-        }
-
-        function deleteProcurement(procurementId) {
-            const procurement = currentData.procurement.find(p => p.id === procurementId);
-            if (!procurement) {
-                showNotification('Purchase record not found', 'error');
-                return;
-            }
-            
-            // Update product stock
-            const product = currentData.products.find(p => p.id === procurement.productId);
-            if (product) {
-                product.currentStock -= procurement.quantity;
-                if (product.currentStock < 0) product.currentStock = 0;
-            }
-            
-            showDeleteModal('procurement', procurementId, `Delete purchase record for ${procurement.productName}?`);
-        }
-
-        // ===== SHAREHOLDER MANAGEMENT =====
         function updateShareholdersTable() {
             const tbody = document.getElementById('shareholders-table-body');
             tbody.innerHTML = '';
@@ -2441,6 +2525,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="6" class="text-center">No shareholders found. Add your first shareholder!</td>`;
                 tbody.appendChild(row);
+                document.getElementById('shareholder-count').textContent = '0';
                 return;
             }
             
@@ -2471,44 +2556,459 @@
             });
             
             document.getElementById('shareholder-count').textContent = currentData.shareholders.length;
-            updateDividendCalculations();
         }
 
-        function addShareholder(shareholderData) {
+        function updateStockHistory() {
+            const tbody = document.getElementById('stock-history-body');
+            tbody.innerHTML = '';
+            
+            if (currentData.stockCounts.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="7" class="text-center">No stock count history found.</td>`;
+                tbody.appendChild(row);
+                return;
+            }
+            
+            currentData.stockCounts.forEach(count => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${count.date}</td>
+                    <td>Round ${count.round}</td>
+                    <td>${count.itemsCounted}</td>
+                    <td class="profit">${count.itemsSold.toLocaleString()}</td>
+                    <td class="profit">₵${count.revenue.toFixed(2)}</td>
+                    <td class="${count.profit >= 0 ? 'profit' : 'loss'}">₵${count.profit.toFixed(2)}</td>
+                    <td>${sanitizeInput(count.notes)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateRoundSelectors() {
+            const selectors = [
+                'dashboard-round-selector',
+                'procurement-round',
+                'stock-round',
+                'dividend-round'
+            ];
+            
+            selectors.forEach(selectorId => {
+                const select = document.getElementById(selectorId);
+                if (select) {
+                    select.innerHTML = currentData.businessRounds
+                        .map(round => `<option value="${round.id}">${round.name}${round.status === 'Active' ? ' - Current' : ''}</option>`)
+                        .join('');
+                    select.value = currentData.currentRound;
+                }
+            });
+        }
+
+        function updateSettingsForm() {
+            document.getElementById('business-name').value = currentData.settings.businessName || APP_NAME;
+            document.getElementById('currency').value = currentData.settings.currency || "₵";
+            document.getElementById('tax-rate').value = currentData.settings.taxRate || 0;
+            document.getElementById('sheet-id').value = currentData.settings.googleSheetId || "";
+            document.getElementById('api-key').value = currentData.settings.apiKey || "";
+            document.getElementById('sync-interval').value = currentData.settings.syncInterval || 15;
+            
+            // Auto-sync checkboxes
+            document.getElementById('auto-sync-products').checked = currentData.settings.autoSyncProducts !== false;
+            document.getElementById('auto-sync-procurement').checked = currentData.settings.autoSyncProcurement !== false;
+            document.getElementById('auto-sync-stock').checked = currentData.settings.autoSyncStock !== false;
+            document.getElementById('auto-sync-dividends').checked = currentData.settings.autoSyncDividends !== false;
+            
+            if (currentData.settings.lastSync) {
+                document.getElementById('last-sync').textContent = currentData.settings.lastSync;
+                document.getElementById('footer-sync').textContent = currentData.settings.lastSync;
+            }
+        }
+
+        function updateDashboard() {
+            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
+            if (!currentRound) return;
+            
+            // Update main stats
+            document.getElementById('current-round-display').textContent = currentRound.name;
+            document.getElementById('current-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
+            document.getElementById('total-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
+            document.getElementById('dividend-pool').textContent = `₵${currentRound.dividendPool.toFixed(2)}`;
+            
+            // Calculate profit margin
+            const profitMargin = currentRound.salesRevenue > 0 
+                ? ((currentRound.netProfit / currentRound.salesRevenue) * 100).toFixed(1)
+                : '0.0';
+            
+            // Update summary
+            document.getElementById('summary-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
+            document.getElementById('summary-sales').textContent = `₵${currentRound.salesRevenue.toFixed(2)}`;
+            document.getElementById('summary-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
+            document.getElementById('summary-margin').textContent = `${profitMargin}%`;
+        }
+
+        function updateActivityLog() {
+            const activityList = document.getElementById('activity-list');
+            activityList.innerHTML = '';
+            
+            if (currentData.products.length === 0 && currentData.shareholders.length === 0) {
+                const welcomeItem = document.createElement('div');
+                welcomeItem.className = 'activity-item profit';
+                welcomeItem.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">Welcome!</div>
+                        <div class="activity-desc">Add your first product or shareholder to get started</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                `;
+                activityList.appendChild(welcomeItem);
+                return;
+            }
+            
+            // Add recent activities
+            if (currentData.products.length > 0) {
+                const recentProduct = currentData.products[currentData.products.length - 1];
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item profit';
+                activityItem.innerHTML = `
+                    <i class="fas fa-box-open"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">Product Added</div>
+                        <div class="activity-desc">${recentProduct.name}</div>
+                        <div class="activity-time">Recently</div>
+                    </div>
+                `;
+                activityList.appendChild(activityItem);
+            }
+            
+            if (currentData.shareholders.length > 0) {
+                const recentShareholder = currentData.shareholders[currentData.shareholders.length - 1];
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item profit';
+                activityItem.innerHTML = `
+                    <i class="fas fa-user-plus"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">Shareholder Added</div>
+                        <div class="activity-desc">${recentShareholder.name}</div>
+                        <div class="activity-time">Recently</div>
+                    </div>
+                `;
+                activityList.appendChild(activityItem);
+            }
+        }
+
+        function updateTopProducts() {
+            const topProductsList = document.getElementById('top-products-list');
+            topProductsList.innerHTML = '';
+            
+            if (currentData.products.length === 0) {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-item profit';
+                productItem.innerHTML = `
+                    <div class="product-name">No products yet</div>
+                    <div class="product-stats">
+                        <span class="product-sales">Add your first product</span>
+                    </div>
+                `;
+                topProductsList.appendChild(productItem);
+                return;
+            }
+            
+            // Sort products by current stock
+            const sortedProducts = [...currentData.products]
+                .sort((a, b) => b.currentStock - a.currentStock)
+                .slice(0, 3);
+            
+            sortedProducts.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = `product-item ${product.currentStock <= 2 ? 'loss' : 'profit'}`;
+                productItem.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-stats">
+                        <span class="product-sales">${product.currentStock} boxes in stock</span>
+                        <span class="product-profit">₵${product.sellingPrice.toFixed(2)}/item</span>
+                    </div>
+                `;
+                topProductsList.appendChild(productItem);
+            });
+        }
+
+        // ===== PRODUCT FUNCTIONS =====
+        function addProduct() {
+            const name = document.getElementById('product-name').value.trim();
+            const itemsPerBox = document.getElementById('items-per-box').value;
+            const costPerBox = document.getElementById('cost-per-box').value;
+            const sellingPrice = document.getElementById('selling-price').value;
+            const initialStock = document.getElementById('initial-stock').value;
+            
+            // Validation
+            if (!name || !itemsPerBox || !costPerBox || !sellingPrice || !initialStock) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (parseFloat(costPerBox) <= 0 || parseFloat(sellingPrice) <= 0) {
+                showNotification('Cost and price must be greater than 0', 'error');
+                return;
+            }
+            
+            const newId = currentData.products.length > 0 
+                ? Math.max(...currentData.products.map(p => p.id)) + 1 
+                : 1;
+            
+            const newProduct = {
+                id: newId,
+                name: sanitizeInput(name),
+                itemsPerBox: sanitizeNumber(itemsPerBox, 1, 1),
+                costPerBox: sanitizeNumber(costPerBox, 0, 0),
+                sellingPrice: sanitizeNumber(sellingPrice, 0, 0),
+                currentStock: sanitizeNumber(initialStock, 0, 0)
+            };
+            
+            currentData.products.push(newProduct);
+            saveData();
+            updateUI();
+            clearProductForm();
+            showNotification('Product added successfully!', 'success');
+        }
+
+        function editProduct(id) {
+            const product = currentData.products.find(p => p.id === id);
+            if (!product) {
+                showNotification('Product not found', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('edit-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = 'Edit Product';
+            modalBody.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-name">Product Name</label>
+                        <input type="text" id="edit-product-name" value="${sanitizeInput(product.name)}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-items-per-box">Items per Box</label>
+                        <input type="number" id="edit-items-per-box" value="${product.itemsPerBox}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-cost-per-box">Cost per Box (₵)</label>
+                        <input type="number" id="edit-cost-per-box" value="${product.costPerBox}" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-selling-price">Selling Price (₵)</label>
+                        <input type="number" id="edit-selling-price" value="${product.sellingPrice}" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-current-stock">Current Stock</label>
+                        <input type="number" id="edit-current-stock" value="${product.currentStock}">
+                    </div>
+                </div>
+                <input type="hidden" id="edit-product-id" value="${product.id}">
+            `;
+            
+            modal.style.display = 'flex';
+            
+            document.getElementById('modal-save').onclick = () => {
+                const updatedProduct = {
+                    name: document.getElementById('edit-product-name').value,
+                    itemsPerBox: parseInt(document.getElementById('edit-items-per-box').value),
+                    costPerBox: parseFloat(document.getElementById('edit-cost-per-box').value),
+                    sellingPrice: parseFloat(document.getElementById('edit-selling-price').value),
+                    currentStock: parseInt(document.getElementById('edit-current-stock').value)
+                };
+                
+                if (!updatedProduct.name || isNaN(updatedProduct.itemsPerBox) || isNaN(updatedProduct.costPerBox)) {
+                    showNotification('Please fill all fields correctly', 'error');
+                    return;
+                }
+                
+                product.name = updatedProduct.name;
+                product.itemsPerBox = updatedProduct.itemsPerBox;
+                product.costPerBox = updatedProduct.costPerBox;
+                product.sellingPrice = updatedProduct.sellingPrice;
+                product.currentStock = updatedProduct.currentStock;
+                
+                saveData();
+                updateUI();
+                modal.style.display = 'none';
+                showNotification('Product updated successfully!', 'success');
+            };
+            
+            document.getElementById('modal-cancel').onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+
+        function deleteProduct(id) {
+            const product = currentData.products.find(p => p.id === id);
+            if (!product) return;
+            
+            const modal = document.getElementById('delete-modal');
+            document.getElementById('delete-message').textContent = `Are you sure you want to delete "${product.name}"?`;
+            modal.style.display = 'flex';
+            
+            document.getElementById('confirm-delete').onclick = () => {
+                currentData.products = currentData.products.filter(p => p.id !== id);
+                saveData();
+                updateUI();
+                modal.style.display = 'none';
+                showNotification('Product deleted successfully!', 'success');
+            };
+            
+            document.getElementById('cancel-delete').onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+
+        function clearProductForm() {
+            document.getElementById('product-name').value = '';
+            document.getElementById('items-per-box').value = '';
+            document.getElementById('cost-per-box').value = '';
+            document.getElementById('selling-price').value = '';
+            document.getElementById('initial-stock').value = '';
+        }
+
+        // ===== PROCUREMENT FUNCTIONS =====
+        function addProcurement() {
+            const productId = document.getElementById('procurement-product').value;
+            const quantity = document.getElementById('procurement-qty').value;
+            const cost = document.getElementById('procurement-cost').value;
+            const date = document.getElementById('procurement-date').value;
+            const supplier = document.getElementById('procurement-supplier').value;
+            
+            // Validation
+            if (!productId || !quantity || !cost || !date || !supplier) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const product = currentData.products.find(p => p.id === parseInt(productId));
+            if (!product) {
+                showNotification('Product not found!', 'error');
+                return;
+            }
+            
+            const newId = currentData.procurement.length > 0 
+                ? Math.max(...currentData.procurement.map(p => p.id)) + 1 
+                : 1;
+            
+            const newProcurement = {
+                id: newId,
+                round: currentData.currentRound,
+                date: date,
+                productId: parseInt(productId),
+                productName: product.name,
+                quantity: sanitizeNumber(quantity, 1, 1),
+                cost: sanitizeNumber(cost, 0, 0),
+                supplier: sanitizeInput(supplier),
+                notes: sanitizeInput(document.getElementById('procurement-notes').value)
+            };
+            
+            // Update product stock
+            product.currentStock += newProcurement.quantity;
+            
+            currentData.procurement.push(newProcurement);
+            saveData();
+            updateUI();
+            clearProcurementForm();
+            showNotification('Purchase recorded successfully!', 'success');
+        }
+
+        function deleteProcurement(id) {
+            const procurement = currentData.procurement.find(p => p.id === id);
+            if (!procurement) return;
+            
+            if (confirm(`Delete purchase record for ${procurement.productName}?`)) {
+                currentData.procurement = currentData.procurement.filter(p => p.id !== id);
+                
+                // Update product stock
+                const product = currentData.products.find(p => p.id === procurement.productId);
+                if (product) {
+                    product.currentStock = Math.max(0, product.currentStock - procurement.quantity);
+                }
+                
+                saveData();
+                updateUI();
+                showNotification('Purchase record deleted', 'success');
+            }
+        }
+
+        function clearProcurementForm() {
+            document.getElementById('procurement-product').value = '';
+            document.getElementById('procurement-qty').value = '';
+            document.getElementById('procurement-cost').value = '';
+            document.getElementById('procurement-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('procurement-supplier').value = '';
+            document.getElementById('procurement-notes').value = '';
+        }
+
+        // ===== SHAREHOLDER FUNCTIONS =====
+        function addShareholder() {
+            const name = document.getElementById('shareholder-name').value.trim();
+            const email = document.getElementById('shareholder-email').value.trim();
+            const phone = document.getElementById('shareholder-phone').value.trim();
+            const investment = document.getElementById('shareholder-investment').value;
+            
+            // Validation
+            if (!name || !email || !phone || !investment) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+            
             const newId = currentData.shareholders.length > 0 
                 ? Math.max(...currentData.shareholders.map(s => s.id)) + 1 
                 : 1;
             
             const newShareholder = {
                 id: newId,
-                name: sanitizeInput(shareholderData.name),
-                email: sanitizeInput(shareholderData.email),
-                phone: sanitizeInput(shareholderData.phone),
-                investment: sanitizeNumber(shareholderData.investment, 0, 0)
+                name: sanitizeInput(name),
+                email: sanitizeInput(email),
+                phone: sanitizeInput(phone),
+                investment: sanitizeNumber(investment, 0, 0)
             };
             
             currentData.shareholders.push(newShareholder);
             saveData();
-            updateShareholdersTable();
-            
-            // Add to activity log
-            addActivity(`Shareholder added: ${newShareholder.name}`, 'shareholder');
-            
+            updateUI();
+            clearShareholderForm();
             showNotification('Shareholder added successfully!', 'success');
-            return newShareholder;
         }
 
-        function deleteShareholder(shareholderId) {
-            const shareholder = currentData.shareholders.find(s => s.id === shareholderId);
-            if (!shareholder) {
-                showNotification('Shareholder not found', 'error');
-                return;
-            }
+        function deleteShareholder(id) {
+            const shareholder = currentData.shareholders.find(s => s.id === id);
+            if (!shareholder) return;
             
-            showDeleteModal('shareholder', shareholderId, `Delete shareholder "${shareholder.name}"?`);
+            if (confirm(`Delete shareholder "${shareholder.name}"? This cannot be undone.`)) {
+                currentData.shareholders = currentData.shareholders.filter(s => s.id !== id);
+                saveData();
+                updateUI();
+                showNotification('Shareholder deleted', 'success');
+            }
         }
 
-        // ===== STOCK TAKING =====
+        function clearShareholderForm() {
+            document.getElementById('shareholder-name').value = '';
+            document.getElementById('shareholder-email').value = '';
+            document.getElementById('shareholder-phone').value = '';
+            document.getElementById('shareholder-investment').value = '';
+            document.getElementById('shareholder-percentage').value = '';
+        }
+
+        // ===== STOCK TAKING FUNCTIONS =====
         let currentStockCount = [];
 
         function startStockCount() {
@@ -2535,9 +3035,7 @@
                     <div class="stock-item-input">
                         <label>Counted Stock (Boxes)</label>
                         <input type="number" id="stock-count-${product.id}" 
-                               value="${product.currentStock}" min="0" max="${product.currentStock + 100}"
-                               data-current="${product.currentStock}"
-                               onchange="validateStockInput(${product.id})">
+                               value="${product.currentStock}" min="0">
                         <small class="input-hint" id="hint-${product.id}"></small>
                     </div>
                 `;
@@ -2548,58 +3046,19 @@
             document.getElementById('stock-results').style.display = 'none';
         }
 
-        function validateStockInput(productId) {
-            const input = document.getElementById(`stock-count-${productId}`);
-            const hint = document.getElementById(`hint-${productId}`);
-            const currentStock = parseInt(input.dataset.current);
-            const countedStock = parseInt(input.value) || 0;
-            
-            if (countedStock > currentStock + 100) {
-                hint.textContent = 'Warning: Count seems too high';
-                hint.style.color = 'var(--warning)';
-            } else if (countedStock < 0) {
-                hint.textContent = 'Error: Cannot be negative';
-                hint.style.color = 'var(--loss)';
-            } else if (countedStock > currentStock) {
-                hint.textContent = 'Note: Count > current stock';
-                hint.style.color = 'var(--secondary)';
-            } else {
-                hint.textContent = '';
-            }
-        }
-
         function calculateStockResults() {
             let totalItemsSold = 0;
             let totalRevenue = 0;
             let totalCost = 0;
-            let hasErrors = false;
             
             currentStockCount = [];
-            
-            // Validate all inputs first
-            currentData.products.forEach(product => {
-                const countedStock = parseInt(document.getElementById(`stock-count-${product.id}`).value) || 0;
-                const previousStock = product.currentStock;
-                
-                if (countedStock < 0) {
-                    showNotification(`Stock count cannot be negative for ${product.name}`, 'error');
-                    hasErrors = true;
-                    return;
-                }
-                
-                if (countedStock > previousStock + 100) {
-                    showNotification(`Stock count for ${product.name} seems unusually high`, 'warning');
-                }
-            });
-            
-            if (hasErrors) return;
             
             // Calculate results
             currentData.products.forEach(product => {
                 const countedStock = parseInt(document.getElementById(`stock-count-${product.id}`).value) || 0;
                 const previousStock = product.currentStock;
                 
-                if (countedStock <= previousStock) {
+                if (countedStock < previousStock) {
                     const boxesSold = previousStock - countedStock;
                     const itemsSold = boxesSold * product.itemsPerBox;
                     const costPerItem = product.costPerBox / product.itemsPerBox;
@@ -2666,14 +3125,7 @@
                 itemsSold: totalItemsSold,
                 revenue: totalRevenue,
                 profit: totalProfit,
-                notes: notes,
-                details: currentStockCount.map(item => ({
-                    productId: item.productId,
-                    productName: item.productName,
-                    countedStock: item.countedStock,
-                    itemsSold: item.itemsSold,
-                    revenue: item.revenue
-                }))
+                notes: notes
             };
             
             currentData.stockCounts.push(newStockCount);
@@ -2687,320 +3139,41 @@
             }
             
             saveData();
-            updateProductTable();
-            updateStockHistory();
-            updateDashboard();
-            updateActivityLog();
+            updateUI();
             
             // Reset form
             document.getElementById('stock-count-form').style.display = 'none';
             document.getElementById('stock-results').style.display = 'none';
             document.getElementById('stock-notes').value = '';
             
-            // Add to activity log
-            addActivity(`Stock count completed: ${totalItemsSold} items sold, ₵${totalProfit.toFixed(2)} profit`, 'stock');
-            
             showNotification('Stock count saved successfully!', 'success');
         }
 
-        function updateStockHistory() {
-            const tbody = document.getElementById('stock-history-body');
-            tbody.innerHTML = '';
-            
-            if (currentData.stockCounts.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">No stock count history found.</td>`;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            // Sort by date descending
-            const sortedCounts = [...currentData.stockCounts].sort((a, b) => 
-                new Date(b.date) - new Date(a.date)
-            );
-            
-            sortedCounts.forEach(count => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${count.date}</td>
-                    <td>Round ${count.round}</td>
-                    <td>${count.itemsCounted}</td>
-                    <td class="profit">${count.itemsSold.toLocaleString()}</td>
-                    <td class="profit">₵${count.revenue.toFixed(2)}</td>
-                    <td class="${count.profit >= 0 ? 'profit' : 'loss'}">₵${count.profit.toFixed(2)}</td>
-                    <td>${sanitizeInput(count.notes)}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // ===== DIVIDEND CALCULATIONS =====
-        function updateDividendCalculations() {
-            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
-            if (!currentRound) {
-                showNotification('No active business round found', 'warning');
-                return;
-            }
-            
-            const totalInvestment = currentData.shareholders.reduce((sum, s) => sum + s.investment, 0);
-            const dividendPercentage = parseInt(document.getElementById('dividend-percentage').value) || 100;
-            const dividendPool = currentRound.netProfit * (dividendPercentage / 100);
-            
-            // Update displays
-            document.getElementById('round-profit-display').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('dividend-pool-display').textContent = `₵${dividendPool.toFixed(2)}`;
-            document.getElementById('current-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('dividend-pool').textContent = `₵${dividendPool.toFixed(2)}`;
-            
-            // Update summary
-            document.getElementById('total-investment').textContent = `₵${totalInvestment.toFixed(2)}`;
-            document.getElementById('total-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('total-dividend-pool').textContent = `₵${dividendPool.toFixed(2)}`;
-            
-            // Update dividend table
-            const tbody = document.getElementById('dividends-table-body');
-            tbody.innerHTML = '';
-            
-            if (currentData.shareholders.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">No shareholders found.</td>`;
-                tbody.appendChild(row);
-                
-                // Update average ROI
-                document.getElementById('average-roi').textContent = '0%';
-                return;
-            }
-            
-            let totalROI = 0;
-            
-            currentData.shareholders.forEach(shareholder => {
-                const sharePercentage = totalInvestment > 0 
-                    ? (shareholder.investment / totalInvestment) 
-                    : 0;
-                
-                const dividend = dividendPool * sharePercentage;
-                const roi = totalInvestment > 0 ? (dividend / shareholder.investment * 100) : 0;
-                totalROI += roi;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${shareholder.name}</td>
-                    <td>₵${shareholder.investment.toFixed(2)}</td>
-                    <td>${(sharePercentage * 100).toFixed(1)}%</td>
-                    <td class="profit">₵${dividend.toFixed(2)}</td>
-                    <td class="${roi >= 0 ? 'profit' : 'loss'}">${roi.toFixed(1)}%</td>
-                    <td><span class="profit">Pending</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-success" onclick="markDividendPaid(${shareholder.id})" title="Mark as Paid">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            // Update average ROI
-            const averageROI = totalROI / currentData.shareholders.length;
-            document.getElementById('average-roi').textContent = `${averageROI.toFixed(1)}%`;
-        }
-
-        function markDividendPaid(shareholderId) {
-            const shareholder = currentData.shareholders.find(s => s.id === shareholderId);
-            if (shareholder) {
-                showNotification(`Dividend marked as paid for ${shareholder.name}`, 'success');
-                // In a real app, you would update a paid status in your data
-            }
-        }
-
-        // ===== DASHBOARD UPDATES =====
-        function updateDashboard() {
-            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
-            if (!currentRound) {
-                console.warn('No current round found');
-                return;
-            }
-            
-            // Update main stats
-            document.getElementById('current-round-display').textContent = currentRound.name;
-            document.getElementById('current-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('total-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
-            document.getElementById('dividend-pool').textContent = `₵${currentRound.dividendPool.toFixed(2)}`;
-            
-            // Calculate profit margin
-            const profitMargin = currentRound.salesRevenue > 0 
-                ? ((currentRound.netProfit / currentRound.salesRevenue) * 100).toFixed(1)
-                : '0.0';
-            
-            // Update summary
-            document.getElementById('summary-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
-            document.getElementById('summary-sales').textContent = `₵${currentRound.salesRevenue.toFixed(2)}`;
-            document.getElementById('summary-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('summary-margin').textContent = `${profitMargin}%`;
-            
-            updateActivityLog();
-            updateTopProducts();
-        }
-
-        function updateBusinessRoundCosts() {
-            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
-            if (!currentRound) return;
-            
-            const roundProcurement = currentData.procurement.filter(p => p.round === currentData.currentRound);
-            const totalCost = roundProcurement.reduce((sum, p) => sum + p.cost, 0);
-            
-            currentRound.procurementCost = totalCost;
-            currentRound.netProfit = currentRound.salesRevenue - totalCost;
-            currentRound.dividendPool = currentRound.netProfit;
-            
-            saveData();
-            updateDashboard();
-            updateDividendCalculations();
-        }
-
-        function updateActivityLog() {
-            const container = document.getElementById('activity-list');
-            if (!container) return;
-            
-            // Get recent activities (last 5)
-            const activities = [];
-            
-            // Add recent stock counts
-            const recentStockCounts = [...currentData.stockCounts]
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 2);
-            
-            recentStockCounts.forEach(count => {
-                activities.push({
-                    type: 'stock',
-                    title: 'Stock Count Completed',
-                    desc: `${count.itemsSold} items sold, ₵${count.revenue.toFixed(2)} revenue`,
-                    time: formatDate(count.date),
-                    icon: 'chart-line'
-                });
-            });
-            
-            // Add recent procurement
-            const recentProcurement = [...currentData.procurement]
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 2);
-            
-            recentProcurement.forEach(proc => {
-                activities.push({
-                    type: 'procurement',
-                    title: 'New Procurement',
-                    desc: `${proc.productName} - ${proc.quantity} boxes`,
-                    time: formatDate(proc.date),
-                    icon: 'shopping-cart'
-                });
-            });
-            
-            // Sort by date
-            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
-            
-            // Update UI
-            container.innerHTML = '';
-            activities.slice(0, 5).forEach(activity => {
-                const item = document.createElement('div');
-                item.className = `activity-item ${activity.type === 'stock' ? 'profit' : ''}`;
-                item.innerHTML = `
-                    <i class="fas fa-${activity.icon}"></i>
-                    <div class="activity-content">
-                        <div class="activity-title">${activity.title}</div>
-                        <div class="activity-desc">${activity.desc}</div>
-                        <div class="activity-time">${activity.time}</div>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function updateTopProducts() {
-            const container = document.getElementById('top-products-list');
-            if (!container) return;
-            
-            // Calculate product performance from stock counts
-            const productPerformance = {};
-            
-            currentData.stockCounts.forEach(count => {
-                if (count.details) {
-                    count.details.forEach(detail => {
-                        if (!productPerformance[detail.productId]) {
-                            productPerformance[detail.productId] = {
-                                itemsSold: 0,
-                                revenue: 0,
-                                productName: detail.productName
-                            };
-                        }
-                        productPerformance[detail.productId].itemsSold += detail.itemsSold;
-                        productPerformance[detail.productId].revenue += detail.revenue;
-                    });
-                }
-            });
-            
-            // Convert to array and sort by items sold
-            const topProducts = Object.values(productPerformance)
-                .sort((a, b) => b.itemsSold - a.itemsSold)
-                .slice(0, 3);
-            
-            container.innerHTML = '';
-            
-            if (topProducts.length === 0) {
-                container.innerHTML = '<div class="text-center">No sales data available</div>';
-                return;
-            }
-            
-            topProducts.forEach(product => {
-                const item = document.createElement('div');
-                item.className = 'product-item profit';
-                item.innerHTML = `
-                    <div class="product-name">${product.productName}</div>
-                    <div class="product-stats">
-                        <span class="product-sales">${product.itemsSold} items sold</span>
-                        <span class="product-profit">₵${product.revenue.toFixed(2)} revenue</span>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function addActivity(message, type = 'info') {
-            // In a real app, you would save activities to currentData
-            console.log(`Activity [${type}]: ${message}`);
-        }
-
-        // ===== SETTINGS =====
-        function updateSettingsForm() {
-            document.getElementById('business-name').value = currentData.settings.businessName || APP_NAME;
-            document.getElementById('currency').value = currentData.settings.currency || "₵";
-            document.getElementById('tax-rate').value = currentData.settings.taxRate || 0;
-            document.getElementById('sheet-id').value = currentData.settings.googleSheetId || "";
-            document.getElementById('api-key').value = currentData.settings.apiKey || "";
-            
-            if (currentData.settings.lastSync) {
-                document.getElementById('last-sync').textContent = currentData.settings.lastSync;
-                document.getElementById('footer-sync').textContent = currentData.settings.lastSync;
-            }
-            
-            // Update connection status
-            const statusEl = document.getElementById('connection-status');
-            if (currentData.settings.googleSheetId && currentData.settings.apiKey) {
-                statusEl.textContent = 'Connected';
-                statusEl.className = 'status-badge connected';
-            }
-        }
-
+        // ===== SETTINGS FUNCTIONS =====
         function saveSettings() {
             const businessName = sanitizeInput(document.getElementById('business-name').value) || APP_NAME;
             const currency = document.getElementById('currency').value;
             const taxRate = sanitizeNumber(document.getElementById('tax-rate').value, 0, 0, 100);
             const sheetId = sanitizeInput(document.getElementById('sheet-id').value);
             const apiKey = sanitizeInput(document.getElementById('api-key').value);
+            const syncInterval = parseInt(document.getElementById('sync-interval').value) || 15;
+            
+            // Auto-sync settings
+            const autoSyncProducts = document.getElementById('auto-sync-products').checked;
+            const autoSyncProcurement = document.getElementById('auto-sync-procurement').checked;
+            const autoSyncStock = document.getElementById('auto-sync-stock').checked;
+            const autoSyncDividends = document.getElementById('auto-sync-dividends').checked;
             
             currentData.settings.businessName = businessName;
             currentData.settings.currency = currency;
             currentData.settings.taxRate = taxRate;
             currentData.settings.googleSheetId = sheetId;
             currentData.settings.apiKey = apiKey;
+            currentData.settings.syncInterval = syncInterval;
+            currentData.settings.autoSyncProducts = autoSyncProducts;
+            currentData.settings.autoSyncProcurement = autoSyncProcurement;
+            currentData.settings.autoSyncStock = autoSyncStock;
+            currentData.settings.autoSyncDividends = autoSyncDividends;
             
             // Update UI
             document.getElementById('business-title').textContent = businessName;
@@ -3010,157 +3183,149 @@
             showNotification('Settings saved successfully!', 'success');
         }
 
-        // ===== GOOGLE SHEETS INTEGRATION =====
-        let googleSheetsConnected = false;
-
-        function connectGoogleSheets() {
-            const sheetId = document.getElementById('sheet-id').value;
-            if (!sheetId) {
-                showNotification('Please enter a Google Sheet ID', 'error');
-                return;
+        function exportData(type = 'all') {
+            let dataToExport;
+            let filename;
+            
+            switch(type) {
+                case 'products':
+                    dataToExport = currentData.products;
+                    filename = `${APP_NAME}_Products_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                case 'shareholders':
+                    dataToExport = currentData.shareholders;
+                    filename = `${APP_NAME}_Shareholders_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                case 'procurement':
+                    dataToExport = currentData.procurement;
+                    filename = `${APP_NAME}_Procurement_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                default:
+                    dataToExport = currentData;
+                    filename = `${APP_NAME}_FullBackup_${new Date().toISOString().split('T')[0]}.json`;
             }
             
-            // Save sheet ID to settings
-            currentData.settings.googleSheetId = sheetId;
-            currentData.settings.apiKey = document.getElementById('api-key').value;
-            saveData();
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            // Update connection status
-            googleSheetsConnected = true;
-            document.getElementById('connection-status').textContent = 'Connected';
-            document.getElementById('connection-status').className = 'status-badge connected';
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             
-            showNotification('Connected to Google Sheets!', 'success');
+            showNotification(`Data exported to ${filename}`, 'success');
         }
 
-        function syncAllData() {
-            if (!googleSheetsConnected) {
-                showNotification('Please connect to Google Sheets first', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            showNotification('Syncing data to Google Sheets...', 'success');
-            
-            // Simulate sync process
-            setTimeout(() => {
-                setLoading(false);
-                updateLastSync();
-                showNotification('Data synced successfully!', 'success');
-            }, 2000);
-        }
-
-        // ===== MODAL FUNCTIONS =====
-        let currentEditItem = null;
-        let currentDeleteItem = { type: null, id: null };
-
-        function showEditModal(type, item) {
-            currentEditItem = { type, item };
-            
-            let title = '';
-            let content = '';
-            
-            if (type === 'product') {
-                title = 'Edit Product';
-                content = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="edit-product-name">Product Name</label>
-                            <input type="text" id="edit-product-name" value="${sanitizeInput(item.name)}">
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-items-per-box">Items per Box</label>
-                            <input type="number" id="edit-items-per-box" value="${item.itemsPerBox}" min="1">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="edit-cost-per-box">Cost per Box (₵)</label>
-                            <input type="number" id="edit-cost-per-box" value="${item.costPerBox}" step="0.01" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-current-stock">Current Stock</label>
-                            <input type="number" id="edit-current-stock" value="${item.currentStock}" min="0">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="edit-selling-price">Selling Price (₵)</label>
-                            <input type="number" id="edit-selling-price" value="${item.sellingPrice}" step="0.01" min="0">
-                        </div>
-                    </div>
-                `;
-            }
-            
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-body').innerHTML = content;
-            document.getElementById('edit-modal').style.display = 'flex';
-        }
-
-        function showDeleteModal(type, id, message) {
-            currentDeleteItem = { type, id };
-            document.getElementById('delete-message').textContent = message;
-            document.getElementById('delete-modal').style.display = 'flex';
-        }
-
-        function saveEdit() {
-            if (!currentEditItem) return;
-            
-            const { type, item } = currentEditItem;
-            
-            if (type === 'product') {
-                const updatedProduct = {
-                    ...item,
-                    name: sanitizeInput(document.getElementById('edit-product-name').value),
-                    itemsPerBox: sanitizeNumber(document.getElementById('edit-items-per-box').value, 1, 1),
-                    costPerBox: sanitizeNumber(document.getElementById('edit-cost-per-box').value, 0, 0),
-                    currentStock: sanitizeNumber(document.getElementById('edit-current-stock').value, 0, 0),
-                    sellingPrice: sanitizeNumber(document.getElementById('edit-selling-price').value, 0, 0)
+        function clearAllData() {
+            if (confirm('WARNING: This will delete ALL data including products, shareholders, and purchase records. This cannot be undone. Continue?')) {
+                currentData = {
+                    products: [],
+                    procurement: [],
+                    shareholders: [],
+                    stockCounts: [],
+                    businessRounds: [{
+                        id: 1,
+                        name: "Round 1",
+                        startDate: new Date().toISOString().split('T')[0],
+                        endDate: null,
+                        status: 'Active',
+                        procurementCost: 0,
+                        salesRevenue: 0,
+                        netProfit: 0,
+                        dividendPool: 0
+                    }],
+                    settings: {
+                        businessName: APP_NAME,
+                        currency: "₵",
+                        taxRate: 0,
+                        googleSheetId: "",
+                        apiKey: "",
+                        lastSync: null,
+                        autoSync: true,
+                        autoSyncProducts: true,
+                        autoSyncProcurement: true,
+                        autoSyncStock: true,
+                        autoSyncShareholders: true,
+                        autoSyncDividends: true,
+                        syncInterval: 15,
+                        notifications: true
+                    },
+                    currentRound: 1,
+                    version: APP_VERSION,
+                    lastUpdated: new Date().toISOString()
                 };
                 
-                const index = currentData.products.findIndex(p => p.id === item.id);
-                if (index !== -1) {
-                    currentData.products[index] = updatedProduct;
-                    saveData();
-                    updateProductTable();
-                    showNotification('Product updated successfully!', 'success');
-                }
-            }
-            
-            closeModal('edit-modal');
-            currentEditItem = null;
-        }
-
-        function confirmDelete() {
-            const { type, id } = currentDeleteItem;
-            let successMessage = '';
-            
-            if (type === 'product') {
-                currentData.products = currentData.products.filter(p => p.id !== id);
-                successMessage = 'Product deleted successfully!';
-            } else if (type === 'procurement') {
-                currentData.procurement = currentData.procurement.filter(p => p.id !== id);
-                successMessage = 'Purchase record deleted successfully!';
-            } else if (type === 'shareholder') {
-                currentData.shareholders = currentData.shareholders.filter(s => s.id !== id);
-                successMessage = 'Shareholder deleted successfully!';
-            }
-            
-            if (successMessage) {
                 saveData();
-                updateProductTable();
-                updateProcurementTable();
-                updateShareholdersTable();
-                updateDashboard();
-                showNotification(successMessage, 'success');
+                updateUI();
+                showNotification('All data has been cleared successfully!', 'success');
             }
-            
-            closeModal('delete-modal');
-            currentDeleteItem = { type: null, id: null };
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+        function loadSampleData() {
+            if (confirm('Load sample data? This will replace current data with example data.')) {
+                currentData.products = [
+                    { id: 1, name: "BIGO DRINKS", itemsPerBox: 24, costPerBox: 45.00, currentStock: 10, sellingPrice: 3.00 },
+                    { id: 2, name: "MALT", itemsPerBox: 24, costPerBox: 48.00, currentStock: 8, sellingPrice: 3.50 },
+                    { id: 3, name: "BEL COLA", itemsPerBox: 24, costPerBox: 42.00, currentStock: 12, sellingPrice: 2.80 }
+                ];
+                
+                currentData.procurement = [
+                    { id: 1, round: 1, date: new Date().toISOString().split('T')[0], productId: 1, productName: "BIGO DRINKS", quantity: 10, cost: 450, supplier: "Beverages Wholesale", notes: "Initial stock" }
+                ];
+                
+                currentData.shareholders = [
+                    { id: 1, name: "Kwame Solo", email: "kwame@example.com", phone: "024-123-4567", investment: 2000 },
+                    { id: 2, name: "Ama Mensah", email: "ama@example.com", phone: "024-234-5678", investment: 1250 }
+                ];
+                
+                saveData();
+                updateUI();
+                showNotification('Sample data loaded successfully!', 'success');
+            }
+        }
+
+        // ===== NOTIFICATION SYSTEM =====
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            notification.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${sanitizeInput(message)}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // ===== TAB NAVIGATION =====
+        function switchTab(tabId) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+            });
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === tabId);
+            });
         }
 
         // ===== EVENT LISTENERS SETUP =====
@@ -3177,200 +3342,39 @@
             document.getElementById('quick-stock-count').addEventListener('click', () => switchTab('stock'));
             document.getElementById('quick-procurement').addEventListener('click', () => switchTab('procurement'));
             document.getElementById('quick-dividend').addEventListener('click', () => switchTab('dividends'));
-            document.getElementById('quick-sync').addEventListener('click', syncAllData);
             
             // Product form
-            document.getElementById('save-product-btn').addEventListener('click', () => {
-                const productData = {
-                    name: document.getElementById('product-name').value,
-                    itemsPerBox: document.getElementById('items-per-box').value,
-                    costPerBox: document.getElementById('cost-per-box').value,
-                    sellingPrice: document.getElementById('selling-price').value,
-                    currentStock: document.getElementById('initial-stock').value
-                };
-                
-                // Validation
-                if (!productData.name || !productData.itemsPerBox || !productData.costPerBox || 
-                    !productData.sellingPrice || !productData.currentStock) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                if (parseFloat(productData.costPerBox) <= 0 || parseFloat(productData.sellingPrice) <= 0) {
-                    showNotification('Cost and price must be greater than 0', 'error');
-                    return;
-                }
-                
-                addProduct(productData);
-            });
-            
-            document.getElementById('clear-product-form').addEventListener('click', () => {
-                document.getElementById('product-name').value = '';
-                document.getElementById('items-per-box').value = '';
-                document.getElementById('cost-per-box').value = '';
-                document.getElementById('selling-price').value = '';
-                document.getElementById('initial-stock').value = '';
-                showNotification('Form cleared', 'info');
-            });
+            document.getElementById('save-product-btn').addEventListener('click', addProduct);
+            document.getElementById('clear-product-form').addEventListener('click', clearProductForm);
             
             // Procurement form
-            document.getElementById('save-procurement-btn').addEventListener('click', () => {
-                const procurementData = {
-                    productId: document.getElementById('procurement-product').value,
-                    quantity: document.getElementById('procurement-qty').value,
-                    cost: document.getElementById('procurement-cost').value,
-                    date: document.getElementById('procurement-date').value,
-                    supplier: document.getElementById('procurement-supplier').value,
-                    notes: document.getElementById('procurement-notes').value
-                };
-                
-                // Validation
-                if (!procurementData.productId || !procurementData.quantity || !procurementData.cost || 
-                    !procurementData.date || !procurementData.supplier) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                addProcurement(procurementData);
-            });
-            
-            document.getElementById('clear-procurement-form').addEventListener('click', () => {
-                document.getElementById('procurement-product').value = '';
-                document.getElementById('procurement-qty').value = '';
-                document.getElementById('procurement-cost').value = '';
-                document.getElementById('procurement-supplier').value = '';
-                document.getElementById('procurement-notes').value = '';
-                showNotification('Form cleared', 'info');
-            });
-            
-            // Auto-calculate procurement cost based on product selection
-            document.getElementById('procurement-product').addEventListener('change', function() {
-                const productId = this.value;
-                if (!productId) return;
-                
-                const product = currentData.products.find(p => p.id === parseInt(productId));
-                if (product && !document.getElementById('procurement-cost').value) {
-                    const qty = document.getElementById('procurement-qty').value || 1;
-                    const estimatedCost = qty * product.costPerBox;
-                    document.getElementById('procurement-cost').value = estimatedCost.toFixed(2);
-                }
-            });
-            
-            document.getElementById('procurement-qty').addEventListener('input', function() {
-                const productId = document.getElementById('procurement-product').value;
-                if (!productId) return;
-                
-                const product = currentData.products.find(p => p.id === parseInt(productId));
-                if (product) {
-                    const qty = this.value || 0;
-                    const estimatedCost = qty * product.costPerBox;
-                    document.getElementById('procurement-cost').value = estimatedCost.toFixed(2);
-                }
-            });
+            document.getElementById('save-procurement-btn').addEventListener('click', addProcurement);
+            document.getElementById('clear-procurement-form').addEventListener('click', clearProcurementForm);
             
             // Shareholder form
-            document.getElementById('save-shareholder-btn').addEventListener('click', () => {
-                const shareholderData = {
-                    name: document.getElementById('shareholder-name').value,
-                    email: document.getElementById('shareholder-email').value,
-                    phone: document.getElementById('shareholder-phone').value,
-                    investment: document.getElementById('shareholder-investment').value
-                };
-                
-                // Validation
-                if (!shareholderData.name || !shareholderData.email || !shareholderData.phone || !shareholderData.investment) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(shareholderData.email)) {
-                    showNotification('Please enter a valid email address', 'error');
-                    return;
-                }
-                
-                addShareholder(shareholderData);
-            });
-            
-            document.getElementById('clear-shareholder-form').addEventListener('click', () => {
-                document.getElementById('shareholder-name').value = '';
-                document.getElementById('shareholder-email').value = '';
-                document.getElementById('shareholder-phone').value = '';
-                document.getElementById('shareholder-investment').value = '';
-                document.getElementById('shareholder-percentage').value = '';
-                showNotification('Form cleared', 'info');
-            });
-            
-            // Auto-calculate share percentage
-            document.getElementById('shareholder-investment').addEventListener('input', () => {
-                const investment = parseFloat(document.getElementById('shareholder-investment').value) || 0;
-                const totalInvestment = currentData.shareholders.reduce((sum, s) => sum + s.investment, 0);
-                const total = totalInvestment + investment;
-                const percentage = total > 0 ? ((investment / total) * 100).toFixed(1) : '0.0';
-                document.getElementById('shareholder-percentage').value = `${percentage}%`;
-            });
+            document.getElementById('save-shareholder-btn').addEventListener('click', addShareholder);
+            document.getElementById('clear-shareholder-form').addEventListener('click', clearShareholderForm);
             
             // Stock taking
             document.getElementById('start-stock-btn').addEventListener('click', startStockCount);
             document.getElementById('calculate-stock-btn').addEventListener('click', calculateStockResults);
             document.getElementById('save-stock-btn').addEventListener('click', saveStockCount);
-            document.getElementById('cancel-stock-btn').addEventListener('click', () => {
-                document.getElementById('stock-count-form').style.display = 'none';
-            });
-            document.getElementById('new-stock-btn').addEventListener('click', () => {
-                document.getElementById('stock-results').style.display = 'none';
-                startStockCount();
-            });
-            document.getElementById('auto-fill-stock').addEventListener('click', () => {
-                currentData.products.forEach(product => {
-                    const input = document.getElementById(`stock-count-${product.id}`);
-                    if (input) {
-                        input.value = product.currentStock;
-                    }
-                });
-                showNotification('Stock counts auto-filled with current values', 'success');
-            });
-            
-            // Dividends
-            document.getElementById('calculate-dividends-btn').addEventListener('click', updateDividendCalculations);
-            document.getElementById('dividend-percentage').addEventListener('change', updateDividendCalculations);
-            document.getElementById('declare-dividends').addEventListener('click', () => {
-                showNotification('Dividends declared successfully!', 'success');
-            });
             
             // Settings
-            document.getElementById('connect-sheets').addEventListener('click', connectGoogleSheets);
             document.getElementById('save-settings').addEventListener('click', saveSettings);
-            document.getElementById('sync-all').addEventListener('click', syncAllData);
-            
-            // Data export
+            document.getElementById('export-all').addEventListener('click', () => exportData('all'));
             document.getElementById('export-products').addEventListener('click', () => exportData('products'));
             document.getElementById('export-procurement').addEventListener('click', () => exportData('procurement'));
-            document.getElementById('export-dividends').addEventListener('click', () => exportData('shareholders'));
-            document.getElementById('export-all').addEventListener('click', () => exportData('all'));
+            document.getElementById('load-sample-data').addEventListener('click', loadSampleData);
+            document.getElementById('clear-data').addEventListener('click', clearAllData);
             
-            // Data import
-            document.getElementById('import-data').addEventListener('click', () => {
-                showNotification('Import feature coming soon!', 'info');
+            // Refresh buttons
+            document.getElementById('refresh-products').addEventListener('click', () => {
+                updateUI();
+                showNotification('Products refreshed', 'success');
             });
             
-            // Clear data with confirmation
-            document.getElementById('clear-data').addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear ALL data? This cannot be undone.')) {
-                    localStorage.clear();
-                    showNotification('All data cleared. Refreshing page...', 'warning');
-                    setTimeout(() => location.reload(), 1500);
-                }
-            });
-            
-            // Modal buttons
-            document.getElementById('modal-save').addEventListener('click', saveEdit);
-            document.getElementById('modal-cancel').addEventListener('click', () => closeModal('edit-modal'));
-            document.getElementById('confirm-delete').addEventListener('click', confirmDelete);
-            document.getElementById('cancel-delete').addEventListener('click', () => closeModal('delete-modal'));
-            
-            // Close modals on X click
+            // Close modals
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const modal = this.closest('.modal');
@@ -3378,170 +3382,26 @@
                 });
             });
             
-            // Close modals on outside click
             window.addEventListener('click', (e) => {
                 if (e.target.classList.contains('modal')) {
                     e.target.style.display = 'none';
                 }
             });
             
-            // Auto-save on page unload
-            window.addEventListener('beforeunload', function(e) {
-                if (currentData.settings.autoSave !== false) {
-                    saveData();
-                }
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                // Ctrl+S to save
-                if (e.ctrlKey && e.key === 's') {
-                    e.preventDefault();
-                    saveData();
-                    showNotification('Data saved!', 'success');
-                }
-                
-                // Escape to close modals
-                if (e.key === 'Escape') {
-                    closeModal('edit-modal');
-                    closeModal('delete-modal');
-                }
-            });
-            
             // Help links
             document.getElementById('help-link').addEventListener('click', (e) => {
                 e.preventDefault();
-                showNotification('Help documentation coming soon!', 'info');
+                showNotification('For help, please contact the system administrator.', 'info');
             });
             
-            document.getElementById('docs-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                showNotification('User guide coming soon!', 'info');
-            });
-            
-            document.getElementById('contact-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                showNotification('Contact support at support@solossnacks.com', 'info');
+            // Auto-save on page unload
+            window.addEventListener('beforeunload', function(e) {
+                saveData();
             });
         }
 
-        function switchTab(tabId) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
-            });
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.toggle('active', content.id === tabId);
-            });
-            
-            // Special handling for specific tabs
-            if (tabId === 'stock') {
-                updateStockHistory();
-            } else if (tabId === 'dividends') {
-                updateDividendCalculations();
-            }
-            
-            updateRoundSelectors();
-        }
-
-        function updateRoundSelectors() {
-            const selectors = [
-                'dashboard-round-selector',
-                'procurement-round',
-                'stock-round',
-                'dividend-round'
-            ];
-            
-            selectors.forEach(selectorId => {
-                const select = document.getElementById(selectorId);
-                if (select) {
-                    select.innerHTML = currentData.businessRounds
-                        .map(round => `<option value="${round.id}">${round.name}${round.status === 'Active' ? ' - Current' : ''}</option>`)
-                        .join('');
-                    select.value = currentData.currentRound;
-                }
-            });
-        }
-
-        // ===== UTILITY FUNCTIONS =====
-        function formatDate(dateString) {
-            if (!dateString) return 'Unknown date';
-            
-            try {
-                const date = new Date(dateString);
-                if (isNaN(date.getTime())) return dateString;
-                
-                const now = new Date();
-                const diffTime = Math.abs(now - date);
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (diffDays === 0) return 'Today';
-                if (diffDays === 1) return 'Yesterday';
-                if (diffDays < 7) return `${diffDays} days ago`;
-                
-                return date.toLocaleDateString();
-            } catch (e) {
-                return dateString;
-            }
-        }
-
-        // ===== EXPORT FUNCTIONS =====
-        function exportData(type) {
-            let data, filename;
-            
-            switch(type) {
-                case 'products':
-                    data = currentData.products;
-                    filename = 'solo-snacks-products.json';
-                    break;
-                case 'procurement':
-                    data = currentData.procurement;
-                    filename = 'solo-snacks-procurement.json';
-                    break;
-                case 'shareholders':
-                    data = currentData.shareholders;
-                    filename = 'solo-snacks-shareholders.json';
-                    break;
-                case 'all':
-                    data = currentData;
-                    filename = 'solo-snacks-full-backup.json';
-                    break;
-                default:
-                    return;
-            }
-            
-            try {
-                const json = JSON.stringify(data, null, 2);
-                const blob = new Blob([json], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showNotification(`Data exported to ${filename}`, 'success');
-            } catch (error) {
-                console.error('Export error:', error);
-                showNotification('Error exporting data', 'error');
-            }
-        }
-
-        // ===== MAKE FUNCTIONS GLOBAL =====
-        window.editProduct = editProduct;
-        window.deleteProduct = deleteProduct;
-        window.deleteProcurement = deleteProcurement;
-        window.deleteShareholder = deleteShareholder;
-        window.markDividendPaid = markDividendPaid;
-        window.validateStockInput = validateStockInput;
-        window.exportData = exportData;
-
-        // Initialize when page loads
-        console.log(`${APP_NAME} v${APP_VERSION} ready!`);
+        // ===== INITIALIZE APP =====
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
