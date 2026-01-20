@@ -4436,6 +4436,240 @@
 
         // Initialize when page loads
         console.log(`${APP_NAME} v${APP_VERSION} ready!`);
-    </script>
+
+        <script>
+// ===== FIX MISSING FUNCTION DECLARATIONS =====
+function editProduct(id) {
+    const product = currentData.products.find(p => p.id === id);
+    if (!product) {
+        showNotification('Product not found', 'error');
+        return;
+    }
+    
+    const modal = document.getElementById('edit-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    
+    modalTitle.textContent = 'Edit Product';
+    modalBody.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label for="edit-product-name">Product Name</label>
+                <input type="text" id="edit-product-name" value="${sanitizeInput(product.name)}">
+            </div>
+            <div class="form-group">
+                <label for="edit-items-per-box">Items per Box</label>
+                <input type="number" id="edit-items-per-box" value="${product.itemsPerBox}">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="edit-cost-per-box">Cost per Box (₵)</label>
+                <input type="number" id="edit-cost-per-box" value="${product.costPerBox}" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="edit-selling-price">Selling Price (₵)</label>
+                <input type="number" id="edit-selling-price" value="${product.sellingPrice}" step="0.01">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="edit-current-stock">Current Stock</label>
+                <input type="number" id="edit-current-stock" value="${product.currentStock}">
+            </div>
+        </div>
+        <input type="hidden" id="edit-product-id" value="${product.id}">
+    `;
+    
+    modal.style.display = 'flex';
+    
+    // Setup save handler
+    document.getElementById('modal-save').onclick = () => {
+        const updatedProduct = {
+            name: document.getElementById('edit-product-name').value,
+            itemsPerBox: parseInt(document.getElementById('edit-items-per-box').value),
+            costPerBox: parseFloat(document.getElementById('edit-cost-per-box').value),
+            sellingPrice: parseFloat(document.getElementById('edit-selling-price').value),
+            currentStock: parseInt(document.getElementById('edit-current-stock').value)
+        };
+        
+        if (!updatedProduct.name || isNaN(updatedProduct.itemsPerBox) || isNaN(updatedProduct.costPerBox)) {
+            showNotification('Please fill all fields correctly', 'error');
+            return;
+        }
+        
+        // Update product
+        product.name = updatedProduct.name;
+        product.itemsPerBox = updatedProduct.itemsPerBox;
+        product.costPerBox = updatedProduct.costPerBox;
+        product.sellingPrice = updatedProduct.sellingPrice;
+        product.currentStock = updatedProduct.currentStock;
+        
+        saveData();
+        updateProductTable();
+        modal.style.display = 'none';
+        showNotification('Product updated successfully!', 'success');
+    };
+    
+    document.getElementById('modal-cancel').onclick = () => {
+        modal.style.display = 'none';
+    };
+}
+
+function deleteProduct(id) {
+    const product = currentData.products.find(p => p.id === id);
+    if (!product) return;
+    
+    const modal = document.getElementById('delete-modal');
+    document.getElementById('delete-message').textContent = `Are you sure you want to delete "${product.name}"?`;
+    modal.style.display = 'flex';
+    
+    document.getElementById('confirm-delete').onclick = () => {
+        currentData.products = currentData.products.filter(p => p.id !== id);
+        saveData();
+        updateProductTable();
+        modal.style.display = 'none';
+        showNotification('Product deleted successfully!', 'success');
+    };
+    
+    document.getElementById('cancel-delete').onclick = () => {
+        modal.style.display = 'none';
+    };
+}
+
+function deleteProcurement(id) {
+    const procurement = currentData.procurement.find(p => p.id === id);
+    if (!procurement) return;
+    
+    if (confirm(`Delete purchase record for ${procurement.productName}?`)) {
+        currentData.procurement = currentData.procurement.filter(p => p.id !== id);
+        
+        // Update product stock if needed
+        const product = currentData.products.find(p => p.id === procurement.productId);
+        if (product) {
+            product.currentStock = Math.max(0, product.currentStock - procurement.quantity);
+        }
+        
+        saveData();
+        updateProcurementTable();
+        updateProductTable();
+        showNotification('Purchase record deleted', 'success');
+    }
+}
+
+function deleteShareholder(id) {
+    const shareholder = currentData.shareholders.find(s => s.id === id);
+    if (!shareholder) return;
+    
+    if (confirm(`Delete shareholder "${shareholder.name}"? This cannot be undone.`)) {
+        currentData.shareholders = currentData.shareholders.filter(s => s.id !== id);
+        saveData();
+        updateShareholdersTable();
+        showNotification('Shareholder deleted', 'success');
+    }
+}
+
+function markDividendPaid(id) {
+    const shareholder = currentData.shareholders.find(s => s.id === id);
+    if (!shareholder) return;
+    
+    showNotification(`Marked dividend as paid for ${shareholder.name}`, 'success');
+    // Add your dividend payment logic here
+}
+
+function validateStockInput(productId) {
+    const input = document.getElementById(`stock-count-${productId}`);
+    const hint = document.getElementById(`hint-${productId}`);
+    const currentStock = parseFloat(input.dataset.current) || 0;
+    const countedStock = parseFloat(input.value) || 0;
+    
+    if (countedStock < 0) {
+        input.style.borderColor = 'var(--loss)';
+        hint.textContent = 'Cannot be negative';
+        hint.style.color = 'var(--loss)';
+    } else if (countedStock > currentStock + 100) {
+        input.style.borderColor = 'var(--warning)';
+        hint.textContent = 'Count seems unusually high';
+        hint.style.color = 'var(--warning)';
+    } else if (countedStock > currentStock) {
+        input.style.borderColor = 'var(--profit)';
+        hint.textContent = 'Stock increased (new purchases?)';
+        hint.style.color = 'var(--profit)';
+    } else {
+        input.style.borderColor = 'var(--border)';
+        hint.textContent = '';
+    }
+}
+
+// ===== INITIALIZE ON LOAD =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing application...');
+    
+    // Initialize application
+    if (typeof loadData === 'function') {
+        loadData();
+    }
+    
+    if (typeof initializeUI === 'function') {
+        initializeUI();
+    }
+    
+    if (typeof setupEventListeners === 'function') {
+        setupEventListeners();
+    }
+    
+    if (typeof updateDashboard === 'function') {
+        updateDashboard();
+    }
+    
+    if (typeof checkGoogleSheetsConnection === 'function') {
+        checkGoogleSheetsConnection();
+    }
+    
+    showNotification('Welcome to Solo\'s Snacks Financial System!', 'success');
+    
+    // Make sure key elements exist
+    setTimeout(() => {
+        if (typeof updateProductTable === 'function') {
+            updateProductTable();
+        }
+        
+        // Initialize product dropdown
+        if (currentData && currentData.products) {
+            updateProcurementProductDropdown();
+        }
+    }, 100);
+});
+
+// ===== DEBUG HELPER =====
+function debugCheck() {
+    console.log('Current Data:', currentData);
+    console.log('Products count:', currentData?.products?.length || 0);
+    console.log('Shareholders count:', currentData?.shareholders?.length || 0);
+    console.log('Functions loaded:', {
+        loadData: typeof loadData,
+        saveData: typeof saveData,
+        updateProductTable: typeof updateProductTable,
+        addProduct: typeof addProduct
+    });
+}
+
+// Add debug button (remove in production)
+const debugBtn = document.createElement('button');
+debugBtn.textContent = 'Debug';
+debugBtn.style.position = 'fixed';
+debugBtn.style.bottom = '10px';
+debugBtn.style.right = '10px';
+debugBtn.style.zIndex = '9999';
+debugBtn.style.padding = '5px 10px';
+debugBtn.style.background = '#333';
+debugBtn.style.color = 'white';
+debugBtn.style.border = 'none';
+debugBtn.style.borderRadius = '3px';
+debugBtn.style.cursor = 'pointer';
+debugBtn.onclick = debugCheck;
+document.body.appendChild(debugBtn);
+</script>
 </body>
 </html>
+
