@@ -27,8 +27,6 @@
             --radius-lg: 12px;
             --warning: #F59E0B;
             --warning-light: #FEF3C7;
-            --google-blue: #4285F4;
-            --google-green: #34A853;
         }
         
         /* ===== RESET & BASE ===== */
@@ -472,15 +470,6 @@
             color: white;
         }
         
-        .btn-google {
-            background: var(--google-blue);
-            color: white;
-        }
-        
-        .btn-google:hover {
-            background: #3367D6;
-        }
-        
         .btn-sm {
             padding: 8px 15px;
             font-size: 0.9rem;
@@ -814,14 +803,6 @@
             font-size: 0.9rem;
         }
         
-        .status-badge.syncing {
-            background: var(--warning);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-        
         .data-controls {
             display: flex;
             gap: 10px;
@@ -902,67 +883,6 @@
             justify-content: flex-end;
         }
         
-        /* ===== GOOGLE SHEETS CONFIG ===== */
-        .sheet-config {
-            padding: 20px;
-            background: var(--light);
-            border-radius: var(--radius);
-            margin-bottom: 20px;
-        }
-        
-        .sheet-url-help {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: var(--google-blue);
-            color: white;
-            border-radius: var(--radius);
-            margin-bottom: 15px;
-        }
-        
-        .sheet-url-help i {
-            font-size: 1.2rem;
-        }
-        
-        .sheet-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .sheet-test-results {
-            margin-top: 15px;
-            padding: 15px;
-            background: var(--white);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-        
-        .sheet-test-success {
-            color: var(--profit);
-        }
-        
-        .sheet-test-error {
-            color: var(--loss);
-        }
-        
-        .auto-sync-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .auto-sync-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: var(--light);
-            border-radius: var(--radius);
-        }
-        
         /* ===== LOADER ===== */
         #global-loader {
             position: fixed;
@@ -1020,11 +940,6 @@
         
         .notification.warning {
             background: var(--warning);
-            color: white;
-        }
-        
-        .notification.info {
-            background: var(--google-blue);
             color: white;
         }
         
@@ -1273,8 +1188,8 @@
                     <span class="stat-value profit" id="current-profit">₵2,450</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Google Sheets</span>
-                    <span class="status-badge" id="header-sync-status">Not Connected</span>
+                    <span class="stat-label">Status</span>
+                    <span class="status-badge active">Active</span>
                 </div>
             </div>
         </header>
@@ -1523,9 +1438,6 @@
                         <button class="btn btn-sm btn-success" id="export-products">
                             <i class="fas fa-file-export"></i> Export
                         </button>
-                        <button class="btn btn-sm btn-google" id="sync-products-sheet">
-                            <i class="fas fa-sync-alt"></i> Sync to Sheets
-                        </button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1622,9 +1534,6 @@
                         </button>
                         <button class="btn btn-sm btn-success" id="export-procurement">
                             <i class="fas fa-file-export"></i> Export
-                        </button>
-                        <button class="btn btn-sm btn-google" id="sync-procurement-sheet">
-                            <i class="fas fa-sync-alt"></i> Sync to Sheets
                         </button>
                     </div>
                 </div>
@@ -1741,9 +1650,6 @@
                     <button class="btn btn-success" id="save-stock-btn">
                         <i class="fas fa-save"></i> Save Stock Count
                     </button>
-                    <button class="btn btn-google" id="sync-stock-sheet">
-                        <i class="fas fa-sync-alt"></i> Sync to Sheets
-                    </button>
                     <button class="btn" id="new-stock-btn">
                         <i class="fas fa-redo"></i> Start New Count
                     </button>
@@ -1753,11 +1659,6 @@
             <div class="data-table">
                 <div class="table-header">
                     <h3><i class="fas fa-history"></i> Stock Count History</h3>
-                    <div class="table-actions">
-                        <button class="btn btn-sm btn-google" id="sync-stock-history-sheet">
-                            <i class="fas fa-sync-alt"></i> Sync to Sheets
-                        </button>
-                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -1834,9 +1735,6 @@
                         <button class="btn btn-sm btn-success" id="calculate-shares">
                             <i class="fas fa-calculator"></i> Update Shares
                         </button>
-                        <button class="btn btn-sm btn-google" id="sync-shareholders-sheet">
-                            <i class="fas fa-sync-alt"></i> Sync to Sheets
-                        </button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1905,9 +1803,6 @@
                         <button class="btn btn-sm" id="export-dividends">
                             <i class="fas fa-file-export"></i> Export
                         </button>
-                        <button class="btn btn-sm btn-google" id="sync-dividends-sheet">
-                            <i class="fas fa-sync-alt"></i> Sync to Sheets
-                        </button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1962,62 +1857,23 @@
             <div class="settings-grid">
                 <div class="settings-card">
                     <h3><i class="fas fa-google"></i> Google Sheets Integration</h3>
-                    <div class="sheet-config">
-                        <div class="sheet-url-help">
-                            <i class="fas fa-info-circle"></i>
-                            <span>Get your Google Sheet ID from the URL: https://docs.google.com/spreadsheets/d/<strong>YOUR_SHEET_ID</strong>/edit</span>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label for="sheet-id">Google Sheet ID</label>
+                            <input type="text" id="sheet-id" placeholder="Enter your Google Sheet ID" maxlength="100">
+                            <small>Get this from your Google Sheet URL</small>
                         </div>
-                        
-                        <div class="settings-form">
-                            <div class="form-group">
-                                <label for="sheet-id">Google Sheet ID *</label>
-                                <input type="text" id="sheet-id" placeholder="Enter your Google Sheet ID" maxlength="100">
-                                <small>This is required for automatic data recording</small>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="api-key">API Key (Optional)</label>
-                                <input type="password" id="api-key" placeholder="Enter API key for advanced features" maxlength="200">
-                                <small>Required for automatic sync and background updates</small>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="auto-sync">Auto-Sync Settings</label>
-                                <div class="auto-sync-options">
-                                    <label class="auto-sync-option">
-                                        <input type="checkbox" id="auto-sync-products" checked>
-                                        <span>Sync products automatically</span>
-                                    </label>
-                                    <label class="auto-sync-option">
-                                        <input type="checkbox" id="auto-sync-procurement" checked>
-                                        <span>Sync purchases automatically</span>
-                                    </label>
-                                    <label class="auto-sync-option">
-                                        <input type="checkbox" id="auto-sync-stock" checked>
-                                        <span>Sync stock counts automatically</span>
-                                    </label>
-                                    <label class="auto-sync-option">
-                                        <input type="checkbox" id="auto-sync-dividends" checked>
-                                        <span>Sync dividends automatically</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="sheet-actions">
-                                <button class="btn btn-google" id="connect-sheets">
-                                    <i class="fab fa-google"></i> Connect to Google Sheets
-                                </button>
-                                <button class="btn btn-success" id="test-sheet-connection">
-                                    <i class="fas fa-test-tube"></i> Test Connection
-                                </button>
-                                <button class="btn btn-warning" id="create-sheet-template">
-                                    <i class="fas fa-file-excel"></i> Create Template
-                                </button>
-                            </div>
-                            
-                            <div id="sheet-test-results" class="sheet-test-results" style="display: none;">
-                                <!-- Test results will appear here -->
-                            </div>
+                        <div class="form-group">
+                            <label for="api-key">API Key (Optional)</label>
+                            <input type="password" id="api-key" placeholder="Enter API key" maxlength="200">
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-success" id="connect-sheets">
+                                <i class="fas fa-plug"></i> Connect to Google Sheets
+                            </button>
+                            <button class="btn" id="test-connection">
+                                <i class="fas fa-test"></i> Test Connection
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2050,10 +1906,6 @@
                             <span class="status-label">Connection:</span>
                             <span class="status-badge disconnected" id="connection-status">Disconnected</span>
                         </div>
-                        <div class="status-item">
-                            <span class="status-label">Auto-Sync:</span>
-                            <span class="status-value" id="auto-sync-status">Disabled</span>
-                        </div>
                     </div>
                 </div>
 
@@ -2066,15 +1918,12 @@
                         <button class="btn btn-sm" id="import-data">
                             <i class="fas fa-upload"></i> Import Data
                         </button>
-                        <button class="btn btn-sm btn-success" id="create-backup">
-                            <i class="fas fa-download"></i> Create Backup
-                        </button>
                         <button class="btn btn-sm btn-danger" id="clear-data">
                             <i class="fas fa-trash"></i> Clear All Data
                         </button>
                     </div>
                     <div class="backup-info">
-                        <p><i class="fas fa-info-circle"></i> Data is automatically recorded to Google Sheets when connected. Regular local backups are recommended.</p>
+                        <p><i class="fas fa-info-circle"></i> Regular backups are recommended. Data is stored in your browser's local storage.</p>
                     </div>
                 </div>
 
@@ -2098,139 +1947,10 @@
                             <label for="tax-rate">Tax Rate (%)</label>
                             <input type="number" id="tax-rate" value="0" step="0.1" min="0" max="100">
                         </div>
-                        <div class="form-group">
-                            <label for="sync-interval">Auto-Sync Interval (minutes)</label>
-                            <select id="sync-interval">
-                                <option value="5">5 minutes</option>
-                                <option value="15" selected>15 minutes</option>
-                                <option value="30">30 minutes</option>
-                                <option value="60">60 minutes</option>
-                                <option value="0">Manual only</option>
-                            </select>
-                        </div>
                         <button class="btn btn-primary" id="save-settings">
                             <i class="fas fa-save"></i> Save Settings
                         </button>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Google Sheets Setup Modal -->
-        <div id="sheet-setup-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><i class="fab fa-google"></i> Google Sheets Setup</h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <i class="fab fa-google-drive" style="font-size: 3rem; color: var(--google-blue); margin-bottom: 15px;"></i>
-                        <h3 style="margin-bottom: 10px;">Connect to Google Sheets</h3>
-                        <p style="color: var(--secondary); margin-bottom: 20px;">Set up automatic data recording to Google Sheets</p>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="modal-sheet-id">Google Sheet ID *</label>
-                        <input type="text" id="modal-sheet-id" placeholder="Paste your Google Sheet ID here" style="font-family: monospace;">
-                        <small class="form-text">Get this from your Google Sheet URL: docs.google.com/spreadsheets/d/<strong>YOUR_SHEET_ID</strong>/edit</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="modal-sheet-name">Sheet Name (Optional)</label>
-                        <input type="text" id="modal-sheet-name" placeholder="e.g., Financial Data" value="Solo's Snacks Data">
-                        <small class="form-text">Name of the sheet where data will be recorded</small>
-                    </div>
-                    
-                    <div style="background: var(--light); padding: 15px; border-radius: var(--radius); margin: 20px 0;">
-                        <h4 style="margin-bottom: 10px;"><i class="fas fa-cogs"></i> Automatic Recording Features:</h4>
-                        <ul style="padding-left: 20px; color: var(--secondary);">
-                            <li>All products added will be recorded automatically</li>
-                            <li>All purchases will be logged in real-time</li>
-                            <li>Stock counts will be saved after calculation</li>
-                            <li>Dividend calculations will be recorded</li>
-                            <li>Shareholder information will be updated</li>
-                        </ul>
-                    </div>
-                    
-                    <div id="sheet-setup-instructions" style="display: none;">
-                        <div style="background: var(--profit-light); padding: 15px; border-radius: var(--radius); border-left: 4px solid var(--profit);">
-                            <h4 style="color: var(--profit); margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Setup Instructions:</h4>
-                            <ol style="padding-left: 20px; color: var(--profit-dark);">
-                                <li>Share your Google Sheet with edit permissions to: <code>your-service-account@example.com</code></li>
-                                <li>Click "Test Connection" to verify setup</li>
-                                <li>Data will start recording automatically</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" id="cancel-sheet-setup">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                    <button class="btn btn-google" id="save-sheet-setup">
-                        <i class="fab fa-google"></i> Save & Connect
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sheet Template Modal -->
-        <div id="template-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><i class="fas fa-file-excel"></i> Create Google Sheets Template</h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <i class="fas fa-table" style="font-size: 3rem; color: var(--google-green); margin-bottom: 15px;"></i>
-                        <h3 style="margin-bottom: 10px;">Create Organized Sheets</h3>
-                        <p style="color: var(--secondary); margin-bottom: 20px;">This will create a Google Sheet with organized tabs for all your data</p>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <h4><i class="fas fa-layer-group"></i> Sheets to be created:</h4>
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
-                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
-                                <i class="fas fa-box" style="color: var(--profit);"></i>
-                                <span style="margin-left: 10px;">Products</span>
-                            </div>
-                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
-                                <i class="fas fa-shopping-cart" style="color: var(--profit);"></i>
-                                <span style="margin-left: 10px;">Procurement</span>
-                            </div>
-                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
-                                <i class="fas fa-users" style="color: var(--profit);"></i>
-                                <span style="margin-left: 10px;">Shareholders</span>
-                            </div>
-                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
-                                <i class="fas fa-chart-pie" style="color: var(--profit);"></i>
-                                <span style="margin-left: 10px;">Dividends</span>
-                            </div>
-                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
-                                <i class="fas fa-clipboard-check" style="color: var(--profit);"></i>
-                                <span style="margin-left: 10px;">Stock History</span>
-                            </div>
-                            <div style="padding: 10px; background: var(--light); border-radius: var(--radius);">
-                                <i class="fas fa-chart-bar" style="color: var(--profit);"></i>
-                                <span style="margin-left: 10px;">Dashboard</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="background: var(--warning-light); padding: 15px; border-radius: var(--radius); border-left: 4px solid var(--warning);">
-                        <h4 style="color: var(--warning); margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> Important:</h4>
-                        <p style="color: var(--warning);">This will create a new Google Sheet in your Google Drive. Make sure you're logged into the correct Google account.</p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" id="cancel-template">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                    <button class="btn btn-success" id="create-template">
-                        <i class="fas fa-plus-circle"></i> Create Template
-                    </button>
                 </div>
             </div>
         </div>
@@ -2279,11 +1999,9 @@
                     <a href="#" id="help-link"><i class="fas fa-question-circle"></i> Help</a>
                     <a href="#" id="docs-link"><i class="fas fa-book"></i> Documentation</a>
                     <a href="#" id="contact-link"><i class="fas fa-envelope"></i> Contact</a>
-                    <a href="#" id="sheet-help-link"><i class="fab fa-google"></i> Sheets Help</a>
                 </div>
                 <div class="footer-info">
                     <p>Financial Management System v1.0.0</p>
-                    <p>Google Sheets: <span id="footer-sync-status">Not Connected</span></p>
                     <p>Data last synced: <span id="footer-sync">Never</span></p>
                 </div>
             </div>
@@ -2292,10 +2010,9 @@
 
     <script>
         // ===== APPLICATION CONFIGURATION =====
-        const APP_VERSION = '1.1.0';
+        const APP_VERSION = '1.0.0';
         const APP_NAME = "Solo's Snacks";
         const STORAGE_KEY = 'soloSnacksData_v1';
-        const SHEETS_API_VERSION = 'v4';
         
         // ===== APPLICATION DATA =====
         let currentData = {
@@ -2308,35 +2025,6 @@
             currentRound: 1,
             version: APP_VERSION,
             lastUpdated: null
-        };
-
-        // ===== GOOGLE SHEETS CONFIGURATION =====
-        let googleSheetsConnected = false;
-        let autoSyncInterval = null;
-        let gapiInitialized = false;
-
-        // Google Sheets API Configuration
-        const CLIENT_ID = 'YOUR_CLIENT_ID'; // Replace with your Google API Client ID
-        const API_KEY = ''; // Will be set from user input
-        const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-        const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
-
-        // Sheet structure configuration
-        const SHEET_CONFIG = {
-            PRODUCTS_SHEET: 'Products',
-            PROCUREMENT_SHEET: 'Procurement',
-            SHAREHOLDERS_SHEET: 'Shareholders',
-            STOCK_HISTORY_SHEET: 'Stock_History',
-            DIVIDENDS_SHEET: 'Dividends',
-            DASHBOARD_SHEET: 'Dashboard',
-            
-            // Column headers for each sheet
-            PRODUCTS_HEADERS: ['ID', 'Product Name', 'Items per Box', 'Cost per Box', 'Current Stock', 'Selling Price', 'Profit per Item', 'Status', 'Last Updated'],
-            PROCUREMENT_HEADERS: ['ID', 'Round', 'Date', 'Product ID', 'Product Name', 'Quantity', 'Cost', 'Supplier', 'Notes', 'Timestamp'],
-            SHAREHOLDERS_HEADERS: ['ID', 'Name', 'Email', 'Phone', 'Investment', 'Share %', 'Status', 'Join Date'],
-            STOCK_HISTORY_HEADERS: ['ID', 'Round', 'Date', 'Items Counted', 'Items Sold', 'Revenue', 'Profit', 'Notes', 'Timestamp'],
-            DIVIDENDS_HEADERS: ['ID', 'Round', 'Date', 'Shareholder ID', 'Shareholder Name', 'Investment', 'Share %', 'Dividend Amount', 'ROI', 'Status'],
-            DASHBOARD_HEADERS: ['Round', 'Start Date', 'End Date', 'Procurement Cost', 'Sales Revenue', 'Net Profit', 'Dividend Pool', 'Status', 'Last Updated']
         };
 
         // ===== SAMPLE DATA FOR INITIALIZATION =====
@@ -2390,507 +2078,8 @@
             initializeUI();
             setupEventListeners();
             updateDashboard();
-            checkGoogleSheetsConnection();
             showNotification('Welcome to Solo\'s Snacks Financial System!', 'success');
         });
-
-        // ===== GOOGLE SHEETS INTEGRATION FUNCTIONS =====
-        async function initializeGapi() {
-            return new Promise((resolve, reject) => {
-                if (gapiInitialized) {
-                    resolve(true);
-                    return;
-                }
-
-                gapi.load('client', async () => {
-                    try {
-                        await gapi.client.init({
-                            apiKey: API_KEY || currentData.settings.apiKey,
-                            clientId: CLIENT_ID,
-                            discoveryDocs: DISCOVERY_DOCS,
-                            scope: SCOPES
-                        });
-                        gapiInitialized = true;
-                        console.log('Google API initialized successfully');
-                        resolve(true);
-                    } catch (error) {
-                        console.error('Error initializing Google API:', error);
-                        reject(error);
-                    }
-                });
-            });
-        }
-
-        function checkGoogleSheetsConnection() {
-            const sheetId = currentData.settings.googleSheetId;
-            const apiKey = currentData.settings.apiKey;
-            
-            if (sheetId && apiKey) {
-                updateConnectionStatus(true);
-                startAutoSync();
-                showNotification('Connected to Google Sheets!', 'success');
-            } else if (sheetId) {
-                updateConnectionStatus('partial');
-                showNotification('Google Sheet ID saved. API key needed for auto-sync.', 'warning');
-            } else {
-                updateConnectionStatus(false);
-            }
-        }
-
-        function updateConnectionStatus(connected) {
-            const statusEl = document.getElementById('connection-status');
-            const headerStatus = document.getElementById('header-sync-status');
-            const footerStatus = document.getElementById('footer-sync-status');
-            
-            if (connected === true) {
-                googleSheetsConnected = true;
-                statusEl.textContent = 'Connected';
-                statusEl.className = 'status-badge connected';
-                headerStatus.textContent = 'Connected';
-                headerStatus.className = 'status-badge active';
-                footerStatus.textContent = 'Connected';
-                
-                // Update auto-sync status
-                const autoSync = currentData.settings.autoSync !== false;
-                document.getElementById('auto-sync-status').textContent = autoSync ? 'Enabled' : 'Disabled';
-            } else if (connected === 'partial') {
-                googleSheetsConnected = true;
-                statusEl.textContent = 'Sheet ID Only';
-                statusEl.className = 'status-badge warning';
-                headerStatus.textContent = 'Sheet ID Only';
-                headerStatus.className = 'status-badge';
-                footerStatus.textContent = 'Sheet ID Only';
-                document.getElementById('auto-sync-status').textContent = 'Manual Only';
-            } else {
-                googleSheetsConnected = false;
-                statusEl.textContent = 'Disconnected';
-                statusEl.className = 'status-badge disconnected';
-                headerStatus.textContent = 'Not Connected';
-                headerStatus.className = 'status-badge';
-                footerStatus.textContent = 'Not Connected';
-                document.getElementById('auto-sync-status').textContent = 'Disabled';
-            }
-        }
-
-        async function testSheetConnection() {
-            const sheetId = document.getElementById('sheet-id').value;
-            const apiKey = document.getElementById('api-key').value;
-            
-            if (!sheetId) {
-                showNotification('Please enter a Google Sheet ID', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            
-            try {
-                // Save settings first
-                currentData.settings.googleSheetId = sheetId;
-                currentData.settings.apiKey = apiKey;
-                saveData();
-                
-                // Initialize Google API
-                await initializeGapi();
-                
-                // Test connection by trying to get sheet properties
-                const response = await gapi.client.sheets.spreadsheets.get({
-                    spreadsheetId: sheetId,
-                    fields: 'properties.title,sheets.properties'
-                });
-                
-                const sheetTitle = response.result.properties.title;
-                const sheets = response.result.sheets.map(sheet => sheet.properties.title);
-                
-                const resultsEl = document.getElementById('sheet-test-results');
-                resultsEl.style.display = 'block';
-                resultsEl.innerHTML = `
-                    <div class="sheet-test-success">
-                        <h4><i class="fas fa-check-circle"></i> Connection Successful!</h4>
-                        <p>Connected to Google Sheet: <strong>${sheetTitle}</strong></p>
-                        <p>Sheets found: ${sheets.join(', ')}</p>
-                        <p>You can now start recording data automatically.</p>
-                    </div>
-                `;
-                
-                updateConnectionStatus(true);
-                showNotification('Google Sheets connection successful!', 'success');
-                startAutoSync();
-                
-            } catch (error) {
-                console.error('Error testing sheet connection:', error);
-                
-                const resultsEl = document.getElementById('sheet-test-results');
-                resultsEl.style.display = 'block';
-                
-                let errorMessage = 'Unknown error';
-                if (error.result && error.result.error) {
-                    errorMessage = error.result.error.message;
-                } else if (error.message) {
-                    errorMessage = error.message;
-                }
-                
-                resultsEl.innerHTML = `
-                    <div class="sheet-test-error">
-                        <h4><i class="fas fa-exclamation-circle"></i> Connection Failed</h4>
-                        <p>Error: ${errorMessage}</p>
-                        <p>Please check:</p>
-                        <ul>
-                            <li>Sheet ID is correct</li>
-                            <li>Google Sheet is shared with edit permissions</li>
-                            <li>API key is valid</li>
-                            <li>You have internet connection</li>
-                        </ul>
-                    </div>
-                `;
-                
-                updateConnectionStatus(false);
-                showNotification('Failed to connect to Google Sheets', 'error');
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        async function createSheetTemplate() {
-            const sheetId = document.getElementById('sheet-id').value;
-            
-            if (!sheetId) {
-                showNotification('Please enter a Google Sheet ID first', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            
-            try {
-                await initializeGapi();
-                
-                // Create all sheets with headers
-                const requests = Object.keys(SHEET_CONFIG)
-                    .filter(key => key.endsWith('_SHEET'))
-                    .map(sheetKey => {
-                        const sheetName = SHEET_CONFIG[sheetKey];
-                        const headers = SHEET_CONFIG[sheetKey.replace('_SHEET', '_HEADERS')];
-                        
-                        return {
-                            addSheet: {
-                                properties: {
-                                    title: sheetName
-                                }
-                            }
-                        };
-                    });
-                
-                // Execute batch update
-                await gapi.client.sheets.spreadsheets.batchUpdate({
-                    spreadsheetId: sheetId,
-                    resource: {
-                        requests: requests
-                    }
-                });
-                
-                // Add headers to each sheet
-                for (const sheetKey of Object.keys(SHEET_CONFIG).filter(key => key.endsWith('_SHEET'))) {
-                    const sheetName = SHEET_CONFIG[sheetKey];
-                    const headers = SHEET_CONFIG[sheetKey.replace('_SHEET', '_HEADERS')];
-                    
-                    await gapi.client.sheets.spreadsheets.values.update({
-                        spreadsheetId: sheetId,
-                        range: `${sheetName}!A1:${String.fromCharCode(64 + headers.length)}1`,
-                        valueInputOption: 'RAW',
-                        resource: {
-                            values: [headers]
-                        }
-                    });
-                    
-                    // Format headers
-                    await gapi.client.sheets.spreadsheets.batchUpdate({
-                        spreadsheetId: sheetId,
-                        resource: {
-                            requests: [{
-                                repeatCell: {
-                                    range: {
-                                        sheetId: await getSheetIdByName(sheetId, sheetName),
-                                        startRowIndex: 0,
-                                        endRowIndex: 1,
-                                        startColumnIndex: 0,
-                                        endColumnIndex: headers.length
-                                    },
-                                    cell: {
-                                        userEnteredFormat: {
-                                            backgroundColor: { red: 0.2, green: 0.6, blue: 0.8 },
-                                            textFormat: {
-                                                foregroundColor: { red: 1, green: 1, blue: 1 },
-                                                bold: true,
-                                                fontSize: 12
-                                            },
-                                            horizontalAlignment: 'CENTER'
-                                        }
-                                    },
-                                    fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)'
-                                }
-                            }]
-                        }
-                    });
-                }
-                
-                showNotification('Google Sheets template created successfully!', 'success');
-                updateConnectionStatus(true);
-                
-            } catch (error) {
-                console.error('Error creating sheet template:', error);
-                showNotification('Error creating template: ' + error.message, 'error');
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        async function getSheetIdByName(spreadsheetId, sheetName) {
-            const response = await gapi.client.sheets.spreadsheets.get({
-                spreadsheetId: spreadsheetId
-            });
-            
-            const sheet = response.result.sheets.find(s => s.properties.title === sheetName);
-            return sheet ? sheet.properties.sheetId : null;
-        }
-
-        // ===== AUTOMATIC DATA RECORDING FUNCTIONS =====
-        async function recordToGoogleSheets(sheetName, data) {
-            if (!googleSheetsConnected || !currentData.settings.googleSheetId) {
-                return false;
-            }
-            
-            try {
-                await initializeGapi();
-                
-                // Get the next available row
-                const range = `${sheetName}!A:A`;
-                const response = await gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: currentData.settings.googleSheetId,
-                    range: range
-                });
-                
-                const nextRow = response.result.values ? response.result.values.length + 1 : 2;
-                
-                // Append data
-                await gapi.client.sheets.spreadsheets.values.append({
-                    spreadsheetId: currentData.settings.googleSheetId,
-                    range: `${sheetName}!A${nextRow}`,
-                    valueInputOption: 'USER_ENTERED',
-                    resource: {
-                        values: [data]
-                    }
-                });
-                
-                console.log(`Data recorded to ${sheetName}, row ${nextRow}`);
-                return true;
-                
-            } catch (error) {
-                console.error(`Error recording to ${sheetName}:`, error);
-                showNotification(`Error recording to Google Sheets: ${error.message}`, 'error');
-                return false;
-            }
-        }
-
-        // Product recording
-        async function recordProductToSheets(product) {
-            const profitPerItem = product.sellingPrice - (product.costPerBox / product.itemsPerBox);
-            const status = product.currentStock <= 2 ? 'Low Stock' : 
-                          product.currentStock >= 20 ? 'High Stock' : 'In Stock';
-            
-            const data = [
-                product.id,
-                product.name,
-                product.itemsPerBox,
-                product.costPerBox,
-                product.currentStock,
-                product.sellingPrice,
-                profitPerItem,
-                status,
-                new Date().toISOString()
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.PRODUCTS_SHEET, data);
-        }
-
-        // Procurement recording
-        async function recordProcurementToSheets(procurement) {
-            const data = [
-                procurement.id,
-                procurement.round,
-                procurement.date,
-                procurement.productId,
-                procurement.productName,
-                procurement.quantity,
-                procurement.cost,
-                procurement.supplier || '',
-                procurement.notes || '',
-                new Date().toISOString()
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.PROCUREMENT_SHEET, data);
-        }
-
-        // Shareholder recording
-        async function recordShareholderToSheets(shareholder) {
-            const totalInvestment = currentData.shareholders.reduce((sum, s) => sum + s.investment, 0);
-            const sharePercentage = totalInvestment > 0 
-                ? ((shareholder.investment / totalInvestment) * 100).toFixed(1)
-                : '0.0';
-            
-            const data = [
-                shareholder.id,
-                shareholder.name,
-                shareholder.email,
-                shareholder.phone,
-                shareholder.investment,
-                sharePercentage,
-                'Active',
-                new Date().toISOString().split('T')[0]
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.SHAREHOLDERS_SHEET, data);
-        }
-
-        // Stock count recording
-        async function recordStockCountToSheets(stockCount) {
-            const data = [
-                stockCount.id,
-                stockCount.round,
-                stockCount.date,
-                stockCount.itemsCounted,
-                stockCount.itemsSold,
-                stockCount.revenue,
-                stockCount.profit,
-                stockCount.notes || '',
-                new Date().toISOString()
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.STOCK_HISTORY_SHEET, data);
-        }
-
-        // Dividend recording
-        async function recordDividendToSheets(dividendData) {
-            const data = [
-                dividendData.id,
-                dividendData.round,
-                new Date().toISOString().split('T')[0],
-                dividendData.shareholderId,
-                dividendData.shareholderName,
-                dividendData.investment,
-                dividendData.sharePercentage,
-                dividendData.dividendAmount,
-                dividendData.roi,
-                'Pending'
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.DIVIDENDS_SHEET, data);
-        }
-
-        // Sync all data to Google Sheets
-        async function syncAllDataToSheets() {
-            if (!googleSheetsConnected) {
-                showNotification('Please connect to Google Sheets first', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            const statusEl = document.getElementById('connection-status');
-            statusEl.textContent = 'Syncing...';
-            statusEl.className = 'status-badge syncing';
-            
-            try {
-                let successCount = 0;
-                let totalCount = 0;
-                
-                // Sync products
-                if (currentData.settings.autoSyncProducts !== false) {
-                    for (const product of currentData.products) {
-                        if (await recordProductToSheets(product)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                // Sync procurement
-                if (currentData.settings.autoSyncProcurement !== false) {
-                    for (const procurement of currentData.procurement) {
-                        if (await recordProcurementToSheets(procurement)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                // Sync shareholders
-                if (currentData.settings.autoSyncShareholders !== false) {
-                    for (const shareholder of currentData.shareholders) {
-                        if (await recordShareholderToSheets(shareholder)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                // Sync stock counts
-                if (currentData.settings.autoSyncStock !== false) {
-                    for (const stockCount of currentData.stockCounts) {
-                        if (await recordStockCountToSheets(stockCount)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                updateLastSync();
-                
-                if (successCount > 0) {
-                    showNotification(`Synced ${successCount} of ${totalCount} records to Google Sheets`, 'success');
-                } else {
-                    showNotification('No data to sync', 'info');
-                }
-                
-            } catch (error) {
-                console.error('Error syncing data:', error);
-                showNotification('Error syncing to Google Sheets: ' + error.message, 'error');
-            } finally {
-                setLoading(false);
-                checkGoogleSheetsConnection();
-            }
-        }
-
-        // ===== AUTO-SYNC FUNCTIONS =====
-        function startAutoSync() {
-            // Clear existing interval
-            if (autoSyncInterval) {
-                clearInterval(autoSyncInterval);
-            }
-            
-            // Get sync interval from settings
-            const intervalMinutes = parseInt(currentData.settings.syncInterval) || 15;
-            
-            if (intervalMinutes > 0 && googleSheetsConnected) {
-                // Convert minutes to milliseconds
-                const intervalMs = intervalMinutes * 60 * 1000;
-                
-                // Start auto-sync
-                autoSyncInterval = setInterval(() => {
-                    if (googleSheetsConnected && document.visibilityState === 'visible') {
-                        syncAllDataToSheets();
-                    }
-                }, intervalMs);
-                
-                console.log(`Auto-sync started (${intervalMinutes} minutes)`);
-                showNotification(`Auto-sync enabled (every ${intervalMinutes} minutes)`, 'success');
-            }
-        }
-
-        function stopAutoSync() {
-            if (autoSyncInterval) {
-                clearInterval(autoSyncInterval);
-                autoSyncInterval = null;
-                console.log('Auto-sync stopped');
-            }
-        }
 
         // ===== ENHANCED DATA MANAGEMENT =====
         function safeLocalStorageGet(key) {
@@ -2940,19 +2129,6 @@
                     currentData.currentRound = currentData.currentRound || 1;
                     currentData.version = APP_VERSION;
                     
-                    // Initialize Google Sheets settings if not present
-                    if (!currentData.settings.googleSheetId) {
-                        currentData.settings.googleSheetId = "";
-                        currentData.settings.apiKey = "";
-                        currentData.settings.autoSync = true;
-                        currentData.settings.autoSyncProducts = true;
-                        currentData.settings.autoSyncProcurement = true;
-                        currentData.settings.autoSyncStock = true;
-                        currentData.settings.autoSyncShareholders = true;
-                        currentData.settings.autoSyncDividends = true;
-                        currentData.settings.syncInterval = 15;
-                    }
-                    
                     console.log(`Loaded ${currentData.products.length} products, ${currentData.shareholders.length} shareholders`);
                 } else {
                     // Try old key
@@ -2976,20 +2152,14 @@
                                 netProfit: 0,
                                 dividendPool: 0
                             }],
-                            settings: {
+                            settings: parsed.settings || {
                                 businessName: APP_NAME,
                                 currency: "₵",
                                 taxRate: 0,
                                 googleSheetId: "",
                                 apiKey: "",
                                 lastSync: null,
-                                autoSync: true,
-                                autoSyncProducts: true,
-                                autoSyncProcurement: true,
-                                autoSyncStock: true,
-                                autoSyncShareholders: true,
-                                autoSyncDividends: true,
-                                syncInterval: 15,
+                                autoSave: true,
                                 notifications: true
                             },
                             currentRound: parsed.currentRound || 1,
@@ -3026,13 +2196,7 @@
                 googleSheetId: "",
                 apiKey: "",
                 lastSync: null,
-                autoSync: true,
-                autoSyncProducts: true,
-                autoSyncProcurement: true,
-                autoSyncStock: true,
-                autoSyncShareholders: true,
-                autoSyncDividends: true,
-                syncInterval: 15,
+                autoSave: true,
                 notifications: true
             };
             currentData.currentRound = 1;
@@ -3050,13 +2214,6 @@
                 if (safeLocalStorageSet(STORAGE_KEY, jsonData)) {
                     updateLastSync();
                     console.log('Data saved successfully');
-                    
-                    // Auto-record to Google Sheets if connected
-                    if (googleSheetsConnected && currentData.settings.autoSync !== false) {
-                        setTimeout(() => {
-                            syncAllDataToSheets();
-                        }, 1000);
-                    }
                 }
             } catch (error) {
                 console.error('Error saving data:', error);
@@ -3098,8 +2255,9 @@
             document.getElementById('business-title').textContent = businessName;
             document.getElementById('footer-business-name').textContent = businessName;
             
-            // Check Google Sheets connection
-            checkGoogleSheetsConnection();
+            // Add backup button
+            addBackupButton();
+            addDebugButton();
         }
 
         function setCurrentDate() {
@@ -3150,7 +2308,6 @@
             if (type === 'success') icon = 'check-circle';
             if (type === 'error') icon = 'exclamation-circle';
             if (type === 'warning') icon = 'exclamation-triangle';
-            if (type === 'info') icon = 'info-circle';
             
             notification.innerHTML = `
                 <i class="fas fa-${icon}"></i>
@@ -3215,6 +2372,18 @@
             updateTopProducts();
         }
 
+        function updateProcurementProductDropdown() {
+            const select = document.getElementById('procurement-product');
+            select.innerHTML = '<option value="">Select a product</option>';
+            
+            currentData.products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                select.appendChild(option);
+            });
+        }
+
         function addProduct(productData) {
             const newId = currentData.products.length > 0 
                 ? Math.max(...currentData.products.map(p => p.id)) + 1 
@@ -3233,16 +2402,38 @@
             saveData();
             updateProductTable();
             
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncProducts !== false) {
-                recordProductToSheets(newProduct);
-            }
-            
             // Add to activity log
             addActivity(`Product added: ${newProduct.name}`, 'product');
             
             showNotification('Product added successfully!', 'success');
             return newProduct;
+        }
+
+        function editProduct(productId) {
+            const product = currentData.products.find(p => p.id === productId);
+            if (!product) {
+                showNotification('Product not found', 'error');
+                return;
+            }
+            
+            showEditModal('product', product);
+        }
+
+        function deleteProduct(productId) {
+            const product = currentData.products.find(p => p.id === productId);
+            if (!product) {
+                showNotification('Product not found', 'error');
+                return;
+            }
+            
+            // Check if product is referenced in procurement
+            const hasProcurement = currentData.procurement.some(p => p.productId === productId);
+            let message = `Delete "${product.name}"?`;
+            if (hasProcurement) {
+                message += "\n\nWarning: This product has procurement records. Deleting it will not remove those records.";
+            }
+            
+            showDeleteModal('product', productId, message);
         }
 
         // ===== PROCUREMENT MANAGEMENT =====
@@ -3320,16 +2511,28 @@
             updateProductTable();
             updateDashboard();
             
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncProcurement !== false) {
-                recordProcurementToSheets(newProcurement);
-            }
-            
             // Add to activity log
             addActivity(`Procurement: ${newProcurement.quantity} boxes of ${product.name}`, 'procurement');
             
             showNotification('Purchase recorded successfully!', 'success');
             return newProcurement;
+        }
+
+        function deleteProcurement(procurementId) {
+            const procurement = currentData.procurement.find(p => p.id === procurementId);
+            if (!procurement) {
+                showNotification('Purchase record not found', 'error');
+                return;
+            }
+            
+            // Update product stock
+            const product = currentData.products.find(p => p.id === procurement.productId);
+            if (product) {
+                product.currentStock -= procurement.quantity;
+                if (product.currentStock < 0) product.currentStock = 0;
+            }
+            
+            showDeleteModal('procurement', procurementId, `Delete purchase record for ${procurement.productName}?`);
         }
 
         // ===== SHAREHOLDER MANAGEMENT =====
@@ -3391,16 +2594,21 @@
             saveData();
             updateShareholdersTable();
             
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncShareholders !== false) {
-                recordShareholderToSheets(newShareholder);
-            }
-            
             // Add to activity log
             addActivity(`Shareholder added: ${newShareholder.name}`, 'shareholder');
             
             showNotification('Shareholder added successfully!', 'success');
             return newShareholder;
+        }
+
+        function deleteShareholder(shareholderId) {
+            const shareholder = currentData.shareholders.find(s => s.id === shareholderId);
+            if (!shareholder) {
+                showNotification('Shareholder not found', 'error');
+                return;
+            }
+            
+            showDeleteModal('shareholder', shareholderId, `Delete shareholder "${shareholder.name}"?`);
         }
 
         // ===== STOCK TAKING =====
@@ -3441,6 +2649,26 @@
             
             document.getElementById('stock-count-form').style.display = 'block';
             document.getElementById('stock-results').style.display = 'none';
+        }
+
+        function validateStockInput(productId) {
+            const input = document.getElementById(`stock-count-${productId}`);
+            const hint = document.getElementById(`hint-${productId}`);
+            const currentStock = parseInt(input.dataset.current);
+            const countedStock = parseInt(input.value) || 0;
+            
+            if (countedStock > currentStock + 100) {
+                hint.textContent = 'Warning: Count seems too high';
+                hint.style.color = 'var(--warning)';
+            } else if (countedStock < 0) {
+                hint.textContent = 'Error: Cannot be negative';
+                hint.style.color = 'var(--loss)';
+            } else if (countedStock > currentStock) {
+                hint.textContent = 'Note: Count > current stock';
+                hint.style.color = 'var(--secondary)';
+            } else {
+                hint.textContent = '';
+            }
         }
 
         function calculateStockResults() {
@@ -3567,11 +2795,6 @@
             updateDashboard();
             updateActivityLog();
             
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncStock !== false) {
-                recordStockCountToSheets(newStockCount);
-            }
-            
             // Reset form
             document.getElementById('stock-count-form').style.display = 'none';
             document.getElementById('stock-results').style.display = 'none';
@@ -3581,347 +2804,6 @@
             addActivity(`Stock count completed: ${totalItemsSold} items sold, ₵${totalProfit.toFixed(2)} profit`, 'stock');
             
             showNotification('Stock count saved successfully!', 'success');
-        }
-
-        // ===== SETTINGS =====
-        function updateSettingsForm() {
-            document.getElementById('business-name').value = currentData.settings.businessName || APP_NAME;
-            document.getElementById('currency').value = currentData.settings.currency || "₵";
-            document.getElementById('tax-rate').value = currentData.settings.taxRate || 0;
-            document.getElementById('sheet-id').value = currentData.settings.googleSheetId || "";
-            document.getElementById('api-key').value = currentData.settings.apiKey || "";
-            document.getElementById('sync-interval').value = currentData.settings.syncInterval || 15;
-            
-            // Auto-sync checkboxes
-            document.getElementById('auto-sync-products').checked = currentData.settings.autoSyncProducts !== false;
-            document.getElementById('auto-sync-procurement').checked = currentData.settings.autoSyncProcurement !== false;
-            document.getElementById('auto-sync-stock').checked = currentData.settings.autoSyncStock !== false;
-            document.getElementById('auto-sync-dividends').checked = currentData.settings.autoSyncDividends !== false;
-            
-            if (currentData.settings.lastSync) {
-                document.getElementById('last-sync').textContent = currentData.settings.lastSync;
-                document.getElementById('footer-sync').textContent = currentData.settings.lastSync;
-            }
-        }
-
-        function saveSettings() {
-            const businessName = sanitizeInput(document.getElementById('business-name').value) || APP_NAME;
-            const currency = document.getElementById('currency').value;
-            const taxRate = sanitizeNumber(document.getElementById('tax-rate').value, 0, 0, 100);
-            const sheetId = sanitizeInput(document.getElementById('sheet-id').value);
-            const apiKey = sanitizeInput(document.getElementById('api-key').value);
-            const syncInterval = parseInt(document.getElementById('sync-interval').value) || 15;
-            
-            // Auto-sync settings
-            const autoSyncProducts = document.getElementById('auto-sync-products').checked;
-            const autoSyncProcurement = document.getElementById('auto-sync-procurement').checked;
-            const autoSyncStock = document.getElementById('auto-sync-stock').checked;
-            const autoSyncDividends = document.getElementById('auto-sync-dividends').checked;
-            
-            currentData.settings.businessName = businessName;
-            currentData.settings.currency = currency;
-            currentData.settings.taxRate = taxRate;
-            currentData.settings.googleSheetId = sheetId;
-            currentData.settings.apiKey = apiKey;
-            currentData.settings.syncInterval = syncInterval;
-            currentData.settings.autoSyncProducts = autoSyncProducts;
-            currentData.settings.autoSyncProcurement = autoSyncProcurement;
-            currentData.settings.autoSyncStock = autoSyncStock;
-            currentData.settings.autoSyncDividends = autoSyncDividends;
-            currentData.settings.autoSync = autoSyncProducts || autoSyncProcurement || autoSyncStock || autoSyncDividends;
-            
-            // Update UI
-            document.getElementById('business-title').textContent = businessName;
-            document.getElementById('footer-business-name').textContent = businessName;
-            
-            saveData();
-            checkGoogleSheetsConnection();
-            startAutoSync();
-            showNotification('Settings saved successfully!', 'success');
-        }
-
-        // ===== EVENT LISTENERS SETUP =====
-        function setupEventListeners() {
-            // Tab navigation
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tabId = btn.getAttribute('data-tab');
-                    switchTab(tabId);
-                });
-            });
-            
-            // Quick actions
-            document.getElementById('quick-stock-count').addEventListener('click', () => switchTab('stock'));
-            document.getElementById('quick-procurement').addEventListener('click', () => switchTab('procurement'));
-            document.getElementById('quick-dividend').addEventListener('click', () => switchTab('dividends'));
-            document.getElementById('quick-sync').addEventListener('click', syncAllDataToSheets);
-            
-            // Product form
-            document.getElementById('save-product-btn').addEventListener('click', () => {
-                const productData = {
-                    name: document.getElementById('product-name').value,
-                    itemsPerBox: document.getElementById('items-per-box').value,
-                    costPerBox: document.getElementById('cost-per-box').value,
-                    sellingPrice: document.getElementById('selling-price').value,
-                    currentStock: document.getElementById('initial-stock').value
-                };
-                
-                // Validation
-                if (!productData.name || !productData.itemsPerBox || !productData.costPerBox || 
-                    !productData.sellingPrice || !productData.currentStock) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                if (parseFloat(productData.costPerBox) <= 0 || parseFloat(productData.sellingPrice) <= 0) {
-                    showNotification('Cost and price must be greater than 0', 'error');
-                    return;
-                }
-                
-                addProduct(productData);
-            });
-            
-            // Procurement form
-            document.getElementById('save-procurement-btn').addEventListener('click', () => {
-                const procurementData = {
-                    productId: document.getElementById('procurement-product').value,
-                    quantity: document.getElementById('procurement-qty').value,
-                    cost: document.getElementById('procurement-cost').value,
-                    date: document.getElementById('procurement-date').value,
-                    supplier: document.getElementById('procurement-supplier').value,
-                    notes: document.getElementById('procurement-notes').value
-                };
-                
-                // Validation
-                if (!procurementData.productId || !procurementData.quantity || !procurementData.cost || 
-                    !procurementData.date || !procurementData.supplier) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                addProcurement(procurementData);
-            });
-            
-            // Shareholder form
-            document.getElementById('save-shareholder-btn').addEventListener('click', () => {
-                const shareholderData = {
-                    name: document.getElementById('shareholder-name').value,
-                    email: document.getElementById('shareholder-email').value,
-                    phone: document.getElementById('shareholder-phone').value,
-                    investment: document.getElementById('shareholder-investment').value
-                };
-                
-                // Validation
-                if (!shareholderData.name || !shareholderData.email || !shareholderData.phone || !shareholderData.investment) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(shareholderData.email)) {
-                    showNotification('Please enter a valid email address', 'error');
-                    return;
-                }
-                
-                addShareholder(shareholderData);
-            });
-            
-            // Stock taking
-            document.getElementById('start-stock-btn').addEventListener('click', startStockCount);
-            document.getElementById('calculate-stock-btn').addEventListener('click', calculateStockResults);
-            document.getElementById('save-stock-btn').addEventListener('click', saveStockCount);
-            document.getElementById('sync-stock-sheet').addEventListener('click', () => {
-                if (currentStockCount.length > 0) {
-                    saveStockCount();
-                } else {
-                    showNotification('No stock count data to sync', 'warning');
-                }
-            });
-            
-            // Settings
-            document.getElementById('connect-sheets').addEventListener('click', () => {
-                // Show setup modal
-                document.getElementById('sheet-setup-modal').style.display = 'flex';
-                document.getElementById('modal-sheet-id').value = currentData.settings.googleSheetId || '';
-                document.getElementById('modal-sheet-name').value = currentData.settings.sheetName || "Solo's Snacks Data";
-            });
-            
-            document.getElementById('test-sheet-connection').addEventListener('click', testSheetConnection);
-            document.getElementById('create-sheet-template').addEventListener('click', () => {
-                document.getElementById('template-modal').style.display = 'flex';
-            });
-            
-            document.getElementById('save-settings').addEventListener('click', saveSettings);
-            document.getElementById('sync-all').addEventListener('click', syncAllDataToSheets);
-            
-            // Sheet setup modal
-            document.getElementById('save-sheet-setup').addEventListener('click', () => {
-                const sheetId = document.getElementById('modal-sheet-id').value;
-                const sheetName = document.getElementById('modal-sheet-name').value;
-                
-                if (!sheetId) {
-                    showNotification('Please enter a Google Sheet ID', 'error');
-                    return;
-                }
-                
-                currentData.settings.googleSheetId = sheetId;
-                currentData.settings.sheetName = sheetName;
-                saveData();
-                
-                document.getElementById('sheet-setup-modal').style.display = 'none';
-                showNotification('Google Sheets setup saved! Test connection to start recording.', 'success');
-            });
-            
-            document.getElementById('cancel-sheet-setup').addEventListener('click', () => {
-                document.getElementById('sheet-setup-modal').style.display = 'none';
-            });
-            
-            // Template modal
-            document.getElementById('create-template').addEventListener('click', () => {
-                document.getElementById('template-modal').style.display = 'none';
-                createSheetTemplate();
-            });
-            
-            document.getElementById('cancel-template').addEventListener('click', () => {
-                document.getElementById('template-modal').style.display = 'none';
-            });
-            
-            // Individual sync buttons
-            document.getElementById('sync-products-sheet').addEventListener('click', async () => {
-                if (!googleSheetsConnected) {
-                    showNotification('Please connect to Google Sheets first', 'error');
-                    return;
-                }
-                
-                setLoading(true);
-                let successCount = 0;
-                for (const product of currentData.products) {
-                    if (await recordProductToSheets(product)) {
-                        successCount++;
-                    }
-                }
-                setLoading(false);
-                showNotification(`Synced ${successCount} products to Google Sheets`, 'success');
-            });
-            
-            document.getElementById('sync-procurement-sheet').addEventListener('click', async () => {
-                if (!googleSheetsConnected) {
-                    showNotification('Please connect to Google Sheets first', 'error');
-                    return;
-                }
-                
-                setLoading(true);
-                let successCount = 0;
-                for (const procurement of currentData.procurement) {
-                    if (await recordProcurementToSheets(procurement)) {
-                        successCount++;
-                    }
-                }
-                setLoading(false);
-                showNotification(`Synced ${successCount} purchase records to Google Sheets`, 'success');
-            });
-            
-            // Data export/import
-            document.getElementById('export-all').addEventListener('click', () => exportData('all'));
-            document.getElementById('import-data').addEventListener('click', importData);
-            document.getElementById('clear-data').addEventListener('click', clearAllData);
-            document.getElementById('create-backup').addEventListener('click', createBackup);
-            
-            // Close modals
-            document.querySelectorAll('.close-modal').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = this.closest('.modal');
-                    if (modal) modal.style.display = 'none';
-                });
-            });
-            
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) {
-                    e.target.style.display = 'none';
-                }
-            });
-            
-            // Auto-save on page unload
-            window.addEventListener('beforeunload', function(e) {
-                saveData();
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                // Ctrl+S to save
-                if (e.ctrlKey && e.key === 's') {
-                    e.preventDefault();
-                    saveData();
-                    showNotification('Data saved!', 'success');
-                }
-                
-                // Escape to close modals
-                if (e.key === 'Escape') {
-                    document.querySelectorAll('.modal').forEach(modal => {
-                        modal.style.display = 'none';
-                    });
-                }
-            });
-            
-            // Help links
-            document.getElementById('sheet-help-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                showNotification('Google Sheets setup: Enter your Sheet ID and API key in Settings', 'info');
-            });
-        }
-
-        // ===== UTILITY FUNCTIONS (from original code) =====
-        function switchTab(tabId) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
-            });
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.toggle('active', content.id === tabId);
-            });
-            
-            // Special handling for specific tabs
-            if (tabId === 'stock') {
-                updateStockHistory();
-            } else if (tabId === 'dividends') {
-                updateDividendCalculations();
-            }
-            
-            updateRoundSelectors();
-        }
-
-        function updateRoundSelectors() {
-            const selectors = [
-                'dashboard-round-selector',
-                'procurement-round',
-                'stock-round',
-                'dividend-round'
-            ];
-            
-            selectors.forEach(selectorId => {
-                const select = document.getElementById(selectorId);
-                if (select) {
-                    select.innerHTML = currentData.businessRounds
-                        .map(round => `<option value="${round.id}">${round.name}${round.status === 'Active' ? ' - Current' : ''}</option>`)
-                        .join('');
-                    select.value = currentData.currentRound;
-                }
-            });
-        }
-
-        function updateProcurementProductDropdown() {
-            const select = document.getElementById('procurement-product');
-            select.innerHTML = '<option value="">Select a product</option>';
-            
-            currentData.products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = product.name;
-                select.appendChild(option);
-            });
         }
 
         function updateStockHistory() {
@@ -3955,6 +2837,7 @@
             });
         }
 
+        // ===== DIVIDEND CALCULATIONS =====
         function updateDividendCalculations() {
             const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
             if (!currentRound) {
@@ -4024,6 +2907,14 @@
             document.getElementById('average-roi').textContent = `${averageROI.toFixed(1)}%`;
         }
 
+        function markDividendPaid(shareholderId) {
+            const shareholder = currentData.shareholders.find(s => s.id === shareholderId);
+            if (shareholder) {
+                showNotification(`Dividend marked as paid for ${shareholder.name}`, 'success');
+            }
+        }
+
+        // ===== DASHBOARD UPDATES =====
         function updateDashboard() {
             const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
             if (!currentRound) {
@@ -4066,6 +2957,1034 @@
             saveData();
             updateDashboard();
             updateDividendCalculations();
+        }
+
+        function updateActivityLog() {
+            const container = document.getElementById('activity-list');
+            if (!container) return;
+            
+            // Get recent activities (last 5)
+            const activities = [];
+            
+            // Add recent stock counts
+            const recentStockCounts = [...currentData.stockCounts]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 2);
+            
+            recentStockCounts.forEach(count => {
+                activities.push({
+                    type: 'stock',
+                    title: 'Stock Count Completed',
+                    desc: `${count.itemsSold} items sold, ₵${count.revenue.toFixed(2)} revenue`,
+                    time: formatDate(count.date),
+                    icon: 'chart-line'
+                });
+            });
+            
+            // Add recent procurement
+            const recentProcurement = [...currentData.procurement]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 2);
+            
+            recentProcurement.forEach(proc => {
+                activities.push({
+                    type: 'procurement',
+                    title: 'New Procurement',
+                    desc: `${proc.productName} - ${proc.quantity} boxes`,
+                    time: formatDate(proc.date),
+                    icon: 'shopping-cart'
+                });
+            });
+            
+            // Sort by date
+            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+            
+            // Update UI
+            container.innerHTML = '';
+            activities.slice(0, 5).forEach(activity => {
+                const item = document.createElement('div');
+                item.className = `activity-item ${activity.type === 'stock' ? 'profit' : ''}`;
+                item.innerHTML = `
+                    <i class="fas fa-${activity.icon}"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-desc">${activity.desc}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateTopProducts() {
+            const container = document.getElementById('top-products-list');
+            if (!container) return;
+            
+            // Calculate product performance from stock counts
+            const productPerformance = {};
+            
+            currentData.stockCounts.forEach(count => {
+                if (count.details) {
+                    count.details.forEach(detail => {
+                        if (!productPerformance[detail.productId]) {
+                            productPerformance[detail.productId] = {
+                                itemsSold: 0,
+                                revenue: 0,
+                                productName: detail.productName
+                            };
+                        }
+                        productPerformance[detail.productId].itemsSold += detail.itemsSold;
+                        productPerformance[detail.productId].revenue += detail.revenue;
+                    });
+                }
+            });
+            
+            // Convert to array and sort by items sold
+            const topProducts = Object.values(productPerformance)
+                .sort((a, b) => b.itemsSold - a.itemsSold)
+                .slice(0, 3);
+            
+            container.innerHTML = '';
+            
+            if (topProducts.length === 0) {
+                container.innerHTML = '<div class="text-center">No sales data available</div>';
+                return;
+            }
+            
+            topProducts.forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'product-item profit';
+                item.innerHTML = `
+                    <div class="product-name">${product.productName}</div>
+                    <div class="product-stats">
+                        <span class="product-sales">${product.itemsSold} items sold</span>
+                        <span class="product-profit">₵${product.revenue.toFixed(2)} revenue</span>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function addActivity(message, type = 'info') {
+            // In a real app, you would save activities to currentData
+            console.log(`Activity [${type}]: ${message}`);
+        }
+
+        // ===== SETTINGS =====
+        function updateSettingsForm() {
+            document.getElementById('business-name').value = currentData.settings.businessName || APP_NAME;
+            document.getElementById('currency').value = currentData.settings.currency || "₵";
+            document.getElementById('tax-rate').value = currentData.settings.taxRate || 0;
+            document.getElementById('sheet-id').value = currentData.settings.googleSheetId || "";
+            document.getElementById('api-key').value = currentData.settings.apiKey || "";
+            
+            if (currentData.settings.lastSync) {
+                document.getElementById('last-sync').textContent = currentData.settings.lastSync;
+                document.getElementById('footer-sync').textContent = currentData.settings.lastSync;
+            }
+            
+            // Update connection status
+            const statusEl = document.getElementById('connection-status');
+            if (currentData.settings.googleSheetId && currentData.settings.apiKey) {
+                statusEl.textContent = 'Connected';
+                statusEl.className = 'status-badge connected';
+            }
+        }
+
+        function saveSettings() {
+            const businessName = sanitizeInput(document.getElementById('business-name').value) || APP_NAME;
+            const currency = document.getElementById('currency').value;
+            const taxRate = sanitizeNumber(document.getElementById('tax-rate').value, 0, 0, 100);
+            const sheetId = sanitizeInput(document.getElementById('sheet-id').value);
+            const apiKey = sanitizeInput(document.getElementById('api-key').value);
+            
+            currentData.settings.businessName = businessName;
+            currentData.settings.currency = currency;
+            currentData.settings.taxRate = taxRate;
+            currentData.settings.googleSheetId = sheetId;
+            currentData.settings.apiKey = apiKey;
+            
+            // Update UI
+            document.getElementById('business-title').textContent = businessName;
+            document.getElementById('footer-business-name').textContent = businessName;
+            
+            saveData();
+            showNotification('Settings saved successfully!', 'success');
+        }
+
+        // ===== GOOGLE SHEETS INTEGRATION =====
+        let googleSheetsConnected = false;
+
+        function connectGoogleSheets() {
+            const sheetId = document.getElementById('sheet-id').value;
+            if (!sheetId) {
+                showNotification('Please enter a Google Sheet ID', 'error');
+                return;
+            }
+            
+            // Save sheet ID to settings
+            currentData.settings.googleSheetId = sheetId;
+            currentData.settings.apiKey = document.getElementById('api-key').value;
+            saveData();
+            
+            // Update connection status
+            googleSheetsConnected = true;
+            document.getElementById('connection-status').textContent = 'Connected';
+            document.getElementById('connection-status').className = 'status-badge connected';
+            
+            showNotification('Connected to Google Sheets!', 'success');
+        }
+
+        function syncAllData() {
+            if (!googleSheetsConnected) {
+                showNotification('Please connect to Google Sheets first', 'error');
+                return;
+            }
+            
+            setLoading(true);
+            showNotification('Syncing data to Google Sheets...', 'success');
+            
+            // Simulate sync process
+            setTimeout(() => {
+                setLoading(false);
+                updateLastSync();
+                showNotification('Data synced successfully!', 'success');
+            }, 2000);
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        let currentEditItem = null;
+        let currentDeleteItem = { type: null, id: null };
+
+        function showEditModal(type, item) {
+            currentEditItem = { type, item };
+            
+            let title = '';
+            let content = '';
+            
+            if (type === 'product') {
+                title = 'Edit Product';
+                content = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-product-name">Product Name</label>
+                            <input type="text" id="edit-product-name" value="${sanitizeInput(item.name)}">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-items-per-box">Items per Box</label>
+                            <input type="number" id="edit-items-per-box" value="${item.itemsPerBox}" min="1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-cost-per-box">Cost per Box (₵)</label>
+                            <input type="number" id="edit-cost-per-box" value="${item.costPerBox}" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-current-stock">Current Stock</label>
+                            <input type="number" id="edit-current-stock" value="${item.currentStock}" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-selling-price">Selling Price (₵)</label>
+                            <input type="number" id="edit-selling-price" value="${item.sellingPrice}" step="0.01" min="0">
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = content;
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function showDeleteModal(type, id, message) {
+            currentDeleteItem = { type, id };
+            document.getElementById('delete-message').textContent = message;
+            document.getElementById('delete-modal').style.display = 'flex';
+        }
+
+        function saveEdit() {
+            if (!currentEditItem) return;
+            
+            const { type, item } = currentEditItem;
+            
+            if (type === 'product') {
+                const updatedProduct = {
+                    ...item,
+                    name: sanitizeInput(document.getElementById('edit-product-name').value),
+                    itemsPerBox: sanitizeNumber(document.getElementById('edit-items-per-box').value, 1, 1),
+                    costPerBox: sanitizeNumber(document.getElementById('edit-cost-per-box').value, 0, 0),
+                    currentStock: sanitizeNumber(document.getElementById('edit-current-stock').value, 0, 0),
+                    sellingPrice: sanitizeNumber(document.getElementById('edit-selling-price').value, 0, 0)
+                };
+                
+                const index = currentData.products.findIndex(p => p.id === item.id);
+                if (index !== -1) {
+                    currentData.products[index] = updatedProduct;
+                    saveData();
+                    updateProductTable();
+                    showNotification('Product updated successfully!', 'success');
+                }
+            }
+            
+            closeModal('edit-modal');
+            currentEditItem = null;
+        }
+
+        function confirmDelete() {
+            const { type, id } = currentDeleteItem;
+            let successMessage = '';
+            
+            if (type === 'product') {
+                currentData.products = currentData.products.filter(p => p.id !== id);
+                successMessage = 'Product deleted successfully!';
+            } else if (type === 'procurement') {
+                currentData.procurement = currentData.procurement.filter(p => p.id !== id);
+                successMessage = 'Purchase record deleted successfully!';
+            } else if (type === 'shareholder') {
+                currentData.shareholders = currentData.shareholders.filter(s => s.id !== id);
+                successMessage = 'Shareholder deleted successfully!';
+            }
+            
+            if (successMessage) {
+                saveData();
+                updateProductTable();
+                updateProcurementTable();
+                updateShareholdersTable();
+                updateDashboard();
+                showNotification(successMessage, 'success');
+            }
+            
+            closeModal('delete-modal');
+            currentDeleteItem = { type: null, id: null };
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // ===== CLEAR ALL DATA FUNCTIONALITY =====
+        function clearAllData() {
+            // Create confirmation modal
+            const modal = document.createElement('div');
+            modal.className = 'modal confirmation-modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Clear All Data</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="text-align: center; padding: 20px;">
+                            <i class="fas fa-trash-alt" style="font-size: 4rem; color: var(--loss); margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 10px; color: var(--loss);">Warning: This Cannot Be Undone!</h3>
+                            <p style="margin-bottom: 20px; color: var(--secondary);">
+                                You are about to delete ALL data including:<br>
+                                • All products<br>
+                                • All purchase records<br>
+                                • All shareholders<br>
+                                • All stock counts<br>
+                                • All financial data
+                            </p>
+                            <div class="warning-box">
+                                <p style="color: var(--loss-dark); margin: 0;">
+                                    <i class="fas fa-exclamation-circle"></i> 
+                                    This action is permanent and cannot be undone!
+                                </p>
+                            </div>
+                            <p>Type <strong>"DELETE ALL"</strong> below to confirm:</p>
+                            <input type="text" id="confirm-delete-input" 
+                                   placeholder="Type DELETE ALL here">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" id="cancel-clear-data">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button class="btn btn-danger" id="confirm-clear-data" disabled>
+                            <i class="fas fa-trash"></i> Clear All Data
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Set up event listeners for the modal
+            const confirmInput = document.getElementById('confirm-delete-input');
+            const confirmBtn = document.getElementById('confirm-clear-data');
+            const cancelBtn = document.getElementById('cancel-clear-data');
+            const closeBtn = modal.querySelector('.close-modal');
+            
+            // Enable/disable confirm button based on input
+            confirmInput.addEventListener('input', function() {
+                const isCorrect = this.value === 'DELETE ALL';
+                confirmBtn.disabled = !isCorrect;
+                this.classList.toggle('correct', isCorrect);
+            });
+            
+            // Confirm clear data
+            confirmBtn.addEventListener('click', function() {
+                if (confirmInput.value === 'DELETE ALL') {
+                    performClearAllData();
+                    modal.remove();
+                }
+            });
+            
+            // Cancel or close
+            const closeModal = () => modal.remove();
+            cancelBtn.addEventListener('click', closeModal);
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+        }
+
+        function performClearAllData() {
+            setLoading(true);
+            
+            try {
+                // Clear all data from memory
+                currentData = {
+                    products: [],
+                    procurement: [],
+                    shareholders: [],
+                    stockCounts: [],
+                    businessRounds: [{
+                        id: 1,
+                        name: "Round 1",
+                        startDate: new Date().toISOString().split('T')[0],
+                        endDate: null,
+                        status: 'Active',
+                        procurementCost: 0,
+                        salesRevenue: 0,
+                        netProfit: 0,
+                        dividendPool: 0
+                    }],
+                    settings: {
+                        businessName: APP_NAME,
+                        currency: "₵",
+                        taxRate: 0,
+                        googleSheetId: "",
+                        apiKey: "",
+                        lastSync: null,
+                        autoSave: true,
+                        notifications: true
+                    },
+                    currentRound: 1,
+                    version: APP_VERSION,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                // Clear localStorage
+                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem('soloSnacksData'); // Old key
+                
+                // Save empty data
+                saveData();
+                
+                // Update UI
+                setTimeout(() => {
+                    initializeUI();
+                    updateDashboard();
+                    showNotification('All data cleared successfully!', 'success');
+                    setLoading(false);
+                    
+                    // Show welcome message
+                    setTimeout(() => {
+                        showNotification('System reset. Add your first product to get started!', 'info');
+                    }, 1000);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                showNotification('Error clearing data', 'error');
+                setLoading(false);
+            }
+        }
+
+        // ===== IMPORT DATA FUNCTIONALITY =====
+        function importData() {
+            // Create file input
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json';
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        
+                        // Validate imported data structure
+                        if (!validateImportedData(importedData)) {
+                            showNotification('Invalid data format', 'error');
+                            return;
+                        }
+                        
+                        // Show confirmation modal
+                        const modal = document.createElement('div');
+                        modal.className = 'modal confirmation-modal';
+                        modal.style.display = 'flex';
+                        modal.innerHTML = `
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3><i class="fas fa-file-import"></i> Import Data</h3>
+                                    <button class="close-modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div style="text-align: center; padding: 20px;">
+                                        <i class="fas fa-database" style="font-size: 4rem; color: var(--profit); margin-bottom: 20px;"></i>
+                                        <h3 style="margin-bottom: 10px;">Import Data Confirmation</h3>
+                                        <div class="warning-box" style="background: var(--profit-light); border-left-color: var(--profit);">
+                                            <p style="color: var(--profit-dark); margin: 0;">
+                                                <i class="fas fa-info-circle"></i> 
+                                                This will replace all current data with the imported data.
+                                            </p>
+                                        </div>
+                                        <p>Imported data contains:</p>
+                                        <div style="text-align: left; margin: 20px 0; padding: 15px; background: var(--light); border-radius: var(--radius);">
+                                            ${importedData.products ? `<p><i class="fas fa-box"></i> ${importedData.products.length} products</p>` : ''}
+                                            ${importedData.procurement ? `<p><i class="fas fa-shopping-cart"></i> ${importedData.procurement.length} purchase records</p>` : ''}
+                                            ${importedData.shareholders ? `<p><i class="fas fa-users"></i> ${importedData.shareholders.length} shareholders</p>` : ''}
+                                            ${importedData.stockCounts ? `<p><i class="fas fa-clipboard-check"></i> ${importedData.stockCounts.length} stock counts</p>` : ''}
+                                        </div>
+                                        <p>Type <strong>"IMPORT"</strong> below to confirm:</p>
+                                        <input type="text" id="confirm-import-input" 
+                                               placeholder="Type IMPORT here">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn" id="cancel-import">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button class="btn btn-success" id="confirm-import" disabled>
+                                        <i class="fas fa-file-import"></i> Import Data
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        document.body.appendChild(modal);
+                        
+                        // Set up event listeners
+                        const confirmInput = document.getElementById('confirm-import-input');
+                        const confirmBtn = document.getElementById('confirm-import');
+                        const cancelBtn = document.getElementById('cancel-import');
+                        const closeBtn = modal.querySelector('.close-modal');
+                        
+                        confirmInput.addEventListener('input', function() {
+                            const isCorrect = this.value === 'IMPORT';
+                            confirmBtn.disabled = !isCorrect;
+                            this.classList.toggle('correct', isCorrect);
+                        });
+                        
+                        confirmBtn.addEventListener('click', function() {
+                            if (confirmInput.value === 'IMPORT') {
+                                performDataImport(importedData);
+                                modal.remove();
+                            }
+                        });
+                        
+                        const closeModal = () => modal.remove();
+                        cancelBtn.addEventListener('click', closeModal);
+                        closeBtn.addEventListener('click', closeModal);
+                        modal.addEventListener('click', (e) => {
+                            if (e.target === modal) closeModal();
+                        });
+                        
+                    } catch (error) {
+                        console.error('Error parsing imported data:', error);
+                        showNotification('Error reading file. Please check the format.', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+            });
+            
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            document.body.removeChild(fileInput);
+        }
+
+        function validateImportedData(data) {
+            // Basic validation
+            if (!data || typeof data !== 'object') return false;
+            
+            // Check for expected properties
+            const hasProducts = Array.isArray(data.products);
+            const hasShareholders = Array.isArray(data.shareholders);
+            const hasProcurement = Array.isArray(data.procurement);
+            
+            // Must have at least one of the main data arrays
+            return hasProducts || hasShareholders || hasProcurement;
+        }
+
+        function performDataImport(importedData) {
+            setLoading(true);
+            
+            try {
+                // Merge imported data with current structure
+                currentData = {
+                    ...currentData, // Keep settings and version
+                    products: importedData.products || [],
+                    procurement: importedData.procurement || [],
+                    shareholders: importedData.shareholders || [],
+                    stockCounts: importedData.stockCounts || [],
+                    businessRounds: importedData.businessRounds || [{
+                        id: 1,
+                        name: "Round 1",
+                        startDate: new Date().toISOString().split('T')[0],
+                        endDate: null,
+                        status: 'Active',
+                        procurementCost: 0,
+                        salesRevenue: 0,
+                        netProfit: 0,
+                        dividendPool: 0
+                    }],
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                // Recalculate business round data
+                updateBusinessRoundCosts();
+                
+                // Save imported data
+                saveData();
+                
+                // Update UI
+                setTimeout(() => {
+                    initializeUI();
+                    updateDashboard();
+                    showNotification('Data imported successfully!', 'success');
+                    setLoading(false);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error importing data:', error);
+                showNotification('Error importing data', 'error');
+                setLoading(false);
+            }
+        }
+
+        // ===== BACKUP FUNCTIONALITY =====
+        function createBackup() {
+            const backupData = {
+                ...currentData,
+                backupDate: new Date().toISOString(),
+                backupNote: 'Manual backup from Solo\'s Snacks'
+            };
+            
+            const json = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `solo-snacks-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Backup created successfully!', 'success');
+        }
+
+        function addBackupButton() {
+            const dataControls = document.getElementById('data-controls');
+            if (dataControls) {
+                const backupBtn = document.createElement('button');
+                backupBtn.className = 'btn btn-sm btn-success';
+                backupBtn.innerHTML = '<i class="fas fa-download"></i> Create Backup';
+                backupBtn.id = 'create-backup';
+                backupBtn.style.marginLeft = '10px';
+                dataControls.appendChild(backupBtn);
+                
+                backupBtn.addEventListener('click', createBackup);
+            }
+        }
+
+        // ===== DEBUG FUNCTIONALITY =====
+        function addDebugButton() {
+            const footerLinks = document.querySelector('.footer-links');
+            if (footerLinks) {
+                const debugClear = document.createElement('a');
+                debugClear.href = '#';
+                debugClear.innerHTML = '<i class="fas fa-bug"></i> Debug Clear';
+                debugClear.style.color = 'var(--loss)';
+                debugClear.style.cursor = 'pointer';
+                debugClear.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Debug: Clear all data without confirmation?')) {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                });
+                footerLinks.appendChild(debugClear);
+            }
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown date';
+            
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) return 'Today';
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
+                
+                return date.toLocaleDateString();
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // ===== EXPORT FUNCTIONS =====
+        function exportData(type) {
+            let data, filename;
+            
+            switch(type) {
+                case 'products':
+                    data = currentData.products;
+                    filename = 'solo-snacks-products.json';
+                    break;
+                case 'procurement':
+                    data = currentData.procurement;
+                    filename = 'solo-snacks-procurement.json';
+                    break;
+                case 'shareholders':
+                    data = currentData.shareholders;
+                    filename = 'solo-snacks-shareholders.json';
+                    break;
+                case 'all':
+                    data = currentData;
+                    filename = 'solo-snacks-full-backup.json';
+                    break;
+                default:
+                    return;
+            }
+            
+            try {
+                const json = JSON.stringify(data, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification(`Data exported to ${filename}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Error exporting data', 'error');
+            }
+        }
+
+        // ===== EVENT LISTENERS SETUP =====
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+            
+            // Quick actions
+            document.getElementById('quick-stock-count').addEventListener('click', () => switchTab('stock'));
+            document.getElementById('quick-procurement').addEventListener('click', () => switchTab('procurement'));
+            document.getElementById('quick-dividend').addEventListener('click', () => switchTab('dividends'));
+            document.getElementById('quick-sync').addEventListener('click', syncAllData);
+            
+            // Product form
+            document.getElementById('save-product-btn').addEventListener('click', () => {
+                const productData = {
+                    name: document.getElementById('product-name').value,
+                    itemsPerBox: document.getElementById('items-per-box').value,
+                    costPerBox: document.getElementById('cost-per-box').value,
+                    sellingPrice: document.getElementById('selling-price').value,
+                    currentStock: document.getElementById('initial-stock').value
+                };
+                
+                // Validation
+                if (!productData.name || !productData.itemsPerBox || !productData.costPerBox || 
+                    !productData.sellingPrice || !productData.currentStock) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                if (parseFloat(productData.costPerBox) <= 0 || parseFloat(productData.sellingPrice) <= 0) {
+                    showNotification('Cost and price must be greater than 0', 'error');
+                    return;
+                }
+                
+                addProduct(productData);
+            });
+            
+            document.getElementById('clear-product-form').addEventListener('click', () => {
+                document.getElementById('product-name').value = '';
+                document.getElementById('items-per-box').value = '';
+                document.getElementById('cost-per-box').value = '';
+                document.getElementById('selling-price').value = '';
+                document.getElementById('initial-stock').value = '';
+                showNotification('Form cleared', 'info');
+            });
+            
+            // Procurement form
+            document.getElementById('save-procurement-btn').addEventListener('click', () => {
+                const procurementData = {
+                    productId: document.getElementById('procurement-product').value,
+                    quantity: document.getElementById('procurement-qty').value,
+                    cost: document.getElementById('procurement-cost').value,
+                    date: document.getElementById('procurement-date').value,
+                    supplier: document.getElementById('procurement-supplier').value,
+                    notes: document.getElementById('procurement-notes').value
+                };
+                
+                // Validation
+                if (!procurementData.productId || !procurementData.quantity || !procurementData.cost || 
+                    !procurementData.date || !procurementData.supplier) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                addProcurement(procurementData);
+            });
+            
+            document.getElementById('clear-procurement-form').addEventListener('click', () => {
+                document.getElementById('procurement-product').value = '';
+                document.getElementById('procurement-qty').value = '';
+                document.getElementById('procurement-cost').value = '';
+                document.getElementById('procurement-supplier').value = '';
+                document.getElementById('procurement-notes').value = '';
+                showNotification('Form cleared', 'info');
+            });
+            
+            // Auto-calculate procurement cost based on product selection
+            document.getElementById('procurement-product').addEventListener('change', function() {
+                const productId = this.value;
+                if (!productId) return;
+                
+                const product = currentData.products.find(p => p.id === parseInt(productId));
+                if (product && !document.getElementById('procurement-cost').value) {
+                    const qty = document.getElementById('procurement-qty').value || 1;
+                    const estimatedCost = qty * product.costPerBox;
+                    document.getElementById('procurement-cost').value = estimatedCost.toFixed(2);
+                }
+            });
+            
+            document.getElementById('procurement-qty').addEventListener('input', function() {
+                const productId = document.getElementById('procurement-product').value;
+                if (!productId) return;
+                
+                const product = currentData.products.find(p => p.id === parseInt(productId));
+                if (product) {
+                    const qty = this.value || 0;
+                    const estimatedCost = qty * product.costPerBox;
+                    document.getElementById('procurement-cost').value = estimatedCost.toFixed(2);
+                }
+            });
+            
+            // Shareholder form
+            document.getElementById('save-shareholder-btn').addEventListener('click', () => {
+                const shareholderData = {
+                    name: document.getElementById('shareholder-name').value,
+                    email: document.getElementById('shareholder-email').value,
+                    phone: document.getElementById('shareholder-phone').value,
+                    investment: document.getElementById('shareholder-investment').value
+                };
+                
+                // Validation
+                if (!shareholderData.name || !shareholderData.email || !shareholderData.phone || !shareholderData.investment) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(shareholderData.email)) {
+                    showNotification('Please enter a valid email address', 'error');
+                    return;
+                }
+                
+                addShareholder(shareholderData);
+            });
+            
+            document.getElementById('clear-shareholder-form').addEventListener('click', () => {
+                document.getElementById('shareholder-name').value = '';
+                document.getElementById('shareholder-email').value = '';
+                document.getElementById('shareholder-phone').value = '';
+                document.getElementById('shareholder-investment').value = '';
+                document.getElementById('shareholder-percentage').value = '';
+                showNotification('Form cleared', 'info');
+            });
+            
+            // Auto-calculate share percentage
+            document.getElementById('shareholder-investment').addEventListener('input', () => {
+                const investment = parseFloat(document.getElementById('shareholder-investment').value) || 0;
+                const totalInvestment = currentData.shareholders.reduce((sum, s) => sum + s.investment, 0);
+                const total = totalInvestment + investment;
+                const percentage = total > 0 ? ((investment / total) * 100).toFixed(1) : '0.0';
+                document.getElementById('shareholder-percentage').value = `${percentage}%`;
+            });
+            
+            // Stock taking
+            document.getElementById('start-stock-btn').addEventListener('click', startStockCount);
+            document.getElementById('calculate-stock-btn').addEventListener('click', calculateStockResults);
+            document.getElementById('save-stock-btn').addEventListener('click', saveStockCount);
+            document.getElementById('cancel-stock-btn').addEventListener('click', () => {
+                document.getElementById('stock-count-form').style.display = 'none';
+            });
+            document.getElementById('new-stock-btn').addEventListener('click', () => {
+                document.getElementById('stock-results').style.display = 'none';
+                startStockCount();
+            });
+            document.getElementById('auto-fill-stock').addEventListener('click', () => {
+                currentData.products.forEach(product => {
+                    const input = document.getElementById(`stock-count-${product.id}`);
+                    if (input) {
+                        input.value = product.currentStock;
+                    }
+                });
+                showNotification('Stock counts auto-filled with current values', 'success');
+            });
+            
+            // Dividends
+            document.getElementById('calculate-dividends-btn').addEventListener('click', updateDividendCalculations);
+            document.getElementById('dividend-percentage').addEventListener('change', updateDividendCalculations);
+            document.getElementById('declare-dividends').addEventListener('click', () => {
+                showNotification('Dividends declared successfully!', 'success');
+            });
+            
+            // Settings
+            document.getElementById('connect-sheets').addEventListener('click', connectGoogleSheets);
+            document.getElementById('save-settings').addEventListener('click', saveSettings);
+            document.getElementById('sync-all').addEventListener('click', syncAllData);
+            
+            // Data export
+            document.getElementById('export-products').addEventListener('click', () => exportData('products'));
+            document.getElementById('export-procurement').addEventListener('click', () => exportData('procurement'));
+            document.getElementById('export-dividends').addEventListener('click', () => exportData('shareholders'));
+            document.getElementById('export-all').addEventListener('click', () => exportData('all'));
+            
+            // Data import and clear
+            document.getElementById('import-data').addEventListener('click', importData);
+            document.getElementById('clear-data').addEventListener('click', clearAllData);
+            
+            // Modal buttons
+            document.getElementById('modal-save').addEventListener('click', saveEdit);
+            document.getElementById('modal-cancel').addEventListener('click', () => closeModal('edit-modal'));
+            document.getElementById('confirm-delete').addEventListener('click', confirmDelete);
+            document.getElementById('cancel-delete').addEventListener('click', () => closeModal('delete-modal'));
+            
+            // Close modals on X click
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    if (modal) modal.style.display = 'none';
+                });
+            });
+            
+            // Close modals on outside click
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+            
+            // Auto-save on page unload
+            window.addEventListener('beforeunload', function(e) {
+                if (currentData.settings.autoSave !== false) {
+                    saveData();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+S to save
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    saveData();
+                    showNotification('Data saved!', 'success');
+                }
+                
+                // Escape to close modals
+                if (e.key === 'Escape') {
+                    closeModal('edit-modal');
+                    closeModal('delete-modal');
+                }
+            });
+            
+            // Help links
+            document.getElementById('help-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification('Help documentation coming soon!', 'info');
+            });
+            
+            document.getElementById('docs-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification('User guide coming soon!', 'info');
+            });
+            
+            document.getElementById('contact-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification('Contact support at support@solossnacks.com', 'info');
+            });
+        }
+
+        function switchTab(tabId) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+            });
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === tabId);
+            });
+            
+            // Special handling for specific tabs
+            if (tabId === 'stock') {
+                updateStockHistory();
+            } else if (tabId === 'dividends') {
+                updateDividendCalculations();
+            }
+            
+            updateRoundSelectors();
+        }
+
+        function updateRoundSelectors() {
+            const selectors = [
+                'dashboard-round-selector',
+                'procurement-round',
+                'stock-round',
+                'dividend-round'
+            ];
+            
+            selectors.forEach(selectorId => {
+                const select = document.getElementById(selectorId);
+                if (select) {
+                    select.innerHTML = currentData.businessRounds
+                        .map(round => `<option value="${round.id}">${round.name}${round.status === 'Active' ? ' - Current' : ''}</option>`)
+                        .join('');
+                    select.value = currentData.currentRound;
+                }
+            });
         }
 
         // ===== MAKE FUNCTIONS GLOBAL =====
