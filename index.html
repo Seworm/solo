@@ -1404,7 +1404,6 @@
                 <div class="dashboard-card recent-activity">
                     <h3><i class="fas fa-history"></i> Recent Activity</h3>
                     <div class="activity-list" id="activity-list">
-                        <!-- Activity items will be loaded by JavaScript -->
                         <div class="activity-item profit">
                             <i class="fas fa-info-circle"></i>
                             <div class="activity-content">
@@ -2268,7 +2267,6 @@
         const APP_VERSION = '1.1.0';
         const APP_NAME = "Solo's Snacks";
         const STORAGE_KEY = 'soloSnacksData_v1';
-        const SHEETS_API_VERSION = 'v4';
         
         // ===== APPLICATION DATA =====
         let currentData = {
@@ -2286,740 +2284,40 @@
         // ===== GOOGLE SHEETS CONFIGURATION =====
         let googleSheetsConnected = false;
         let autoSyncInterval = null;
-        let gapiInitialized = false;
-
-        // Google Sheets API Configuration
-        const CLIENT_ID = 'YOUR_CLIENT_ID'; // Replace with your Google API Client ID
-        const API_KEY = ''; // Will be set from user input
-        const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-        const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
-
-        // Sheet structure configuration
-        const SHEET_CONFIG = {
-            PRODUCTS_SHEET: 'Products',
-            PROCUREMENT_SHEET: 'Procurement',
-            SHAREHOLDERS_SHEET: 'Shareholders',
-            STOCK_HISTORY_SHEET: 'Stock_History',
-            DIVIDENDS_SHEET: 'Dividends',
-            DASHBOARD_SHEET: 'Dashboard',
-            
-            // Column headers for each sheet
-            PRODUCTS_HEADERS: ['ID', 'Product Name', 'Items per Box', 'Cost per Box', 'Current Stock', 'Selling Price', 'Profit per Item', 'Status', 'Last Updated'],
-            PROCUREMENT_HEADERS: ['ID', 'Round', 'Date', 'Product ID', 'Product Name', 'Quantity', 'Cost', 'Supplier', 'Notes', 'Timestamp'],
-            SHAREHOLDERS_HEADERS: ['ID', 'Name', 'Email', 'Phone', 'Investment', 'Share %', 'Status', 'Join Date'],
-            STOCK_HISTORY_HEADERS: ['ID', 'Round', 'Date', 'Items Counted', 'Items Sold', 'Revenue', 'Profit', 'Notes', 'Timestamp'],
-            DIVIDENDS_HEADERS: ['ID', 'Round', 'Date', 'Shareholder ID', 'Shareholder Name', 'Investment', 'Share %', 'Dividend Amount', 'ROI', 'Status'],
-            DASHBOARD_HEADERS: ['Round', 'Start Date', 'End Date', 'Procurement Cost', 'Sales Revenue', 'Net Profit', 'Dividend Pool', 'Status', 'Last Updated']
-        };
-
-        // ===== SAMPLE DATA FOR INITIALIZATION =====
-        const sampleProducts = [
-            { id: 1, name: "BIGO DRINKS", itemsPerBox: 24, costPerBox: 45.00, currentStock: 10, sellingPrice: 3.00 },
-            { id: 2, name: "MALT", itemsPerBox: 24, costPerBox: 48.00, currentStock: 8, sellingPrice: 3.50 },
-            { id: 3, name: "BEL COLA", itemsPerBox: 24, costPerBox: 42.00, currentStock: 12, sellingPrice: 2.80 },
-            { id: 4, name: "STORM", itemsPerBox: 24, costPerBox: 50.00, currentStock: 6, sellingPrice: 3.80 },
-            { id: 5, name: "KAESAR APPLE", itemsPerBox: 24, costPerBox: 46.00, currentStock: 9, sellingPrice: 3.20 },
-            { id: 6, name: "LAYERZ - CHOCOLATE-COATED CAKE", itemsPerBox: 12, costPerBox: 36.00, currentStock: 15, sellingPrice: 4.50 },
-            { id: 7, name: "PERK", itemsPerBox: 24, costPerBox: 40.00, currentStock: 11, sellingPrice: 2.50 },
-            { id: 8, name: "BREAKFAST CEREAL", itemsPerBox: 12, costPerBox: 60.00, currentStock: 7, sellingPrice: 7.00 },
-            { id: 9, name: "MAXI CHOCO", itemsPerBox: 24, costPerBox: 52.00, currentStock: 5, sellingPrice: 3.50 },
-            { id: 10, name: "SIMPLY GOOD", itemsPerBox: 12, costPerBox: 44.00, currentStock: 10, sellingPrice: 5.00 },
-            { id: 11, name: "OBA SPAGETTI", itemsPerBox: 24, costPerBox: 55.00, currentStock: 8, sellingPrice: 3.80 },
-            { id: 12, name: "LOVAL WAFER", itemsPerBox: 24, costPerBox: 38.00, currentStock: 14, sellingPrice: 2.50 },
-            { id: 13, name: "FRESH DONUT", itemsPerBox: 12, costPerBox: 42.00, currentStock: 9, sellingPrice: 5.00 },
-            { id: 14, name: "BELLA CAKE", itemsPerBox: 12, costPerBox: 48.00, currentStock: 6, sellingPrice: 5.50 },
-            { id: 15, name: "NUTRIBARS", itemsPerBox: 24, costPerBox: 65.00, currentStock: 4, sellingPrice: 4.00 },
-            { id: 16, name: "KALYPO", itemsPerBox: 24, costPerBox: 44.00, currentStock: 10, sellingPrice: 3.00 },
-            { id: 17, name: "GRANOLA BAR", itemsPerBox: 24, costPerBox: 58.00, currentStock: 7, sellingPrice: 3.80 },
-            { id: 18, name: "TIGERNUTS BISCUIT", itemsPerBox: 24, costPerBox: 40.00, currentStock: 12, sellingPrice: 2.80 },
-            { id: 19, name: "STORM (SMALL)", itemsPerBox: 24, costPerBox: 35.00, currentStock: 15, sellingPrice: 2.50 },
-            { id: 20, name: "RUSH", itemsPerBox: 24, costPerBox: 46.00, currentStock: 8, sellingPrice: 3.20 },
-            { id: 21, name: "Tampico", itemsPerBox: 24, costPerBox: 42.00, currentStock: 11, sellingPrice: 3.00 },
-            { id: 22, name: "KIVO GARI MIX", itemsPerBox: 12, costPerBox: 54.00, currentStock: 6, sellingPrice: 6.00 }
-        ];
-
-        const sampleProcurement = [
-            { id: 1, round: 1, date: '2023-10-01', productId: 1, productName: "BIGO DRINKS", quantity: 10, cost: 450, supplier: "Beverages Wholesale", notes: "Initial stock" },
-            { id: 2, round: 1, date: '2023-10-02', productId: 2, productName: "MALT", quantity: 8, cost: 384, supplier: "Beverages Wholesale", notes: "Restock" },
-            { id: 3, round: 1, date: '2023-10-03', productId: 6, productName: "LAYERZ - CHOCOLATE-COATED CAKE", quantity: 15, cost: 540, supplier: "Confectionery Distributors", notes: "New product" }
-        ];
-
-        const sampleShareholders = [
-            { id: 1, name: "Kwame Solo", email: "kwame@example.com", phone: "024-123-4567", investment: 2000 },
-            { id: 2, name: "Ama Mensah", email: "ama@example.com", phone: "024-234-5678", investment: 1250 },
-            { id: 3, name: "Kofi Asante", email: "kofi@example.com", phone: "024-345-6789", investment: 1000 },
-            { id: 4, name: "Esi Boateng", email: "esi@example.com", phone: "024-456-7890", investment: 500 },
-            { id: 5, name: "Yaw Appiah", email: "yaw@example.com", phone: "024-567-8901", investment: 250 }
-        ];
-
-        const sampleBusinessRounds = [
-            { id: 1, name: "Round 1", startDate: '2023-10-01', endDate: null, status: 'Active', procurementCost: 3370, salesRevenue: 5820, netProfit: 2450, dividendPool: 2450 }
-        ];
 
         // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', function() {
+        function initializeApp() {
             console.log(`${APP_NAME} v${APP_VERSION} initializing...`);
             loadData();
-            initializeUI();
             setupEventListeners();
-            updateDashboard();
-            checkGoogleSheetsConnection();
+            updateUI();
+            setCurrentDate();
             showNotification('Welcome to Solo\'s Snacks Financial System!', 'success');
-        });
-
-        // ===== GOOGLE SHEETS INTEGRATION FUNCTIONS =====
-        async function initializeGapi() {
-            return new Promise((resolve, reject) => {
-                if (gapiInitialized) {
-                    resolve(true);
-                    return;
-                }
-
-                gapi.load('client', async () => {
-                    try {
-                        await gapi.client.init({
-                            apiKey: API_KEY || currentData.settings.apiKey,
-                            clientId: CLIENT_ID,
-                            discoveryDocs: DISCOVERY_DOCS,
-                            scope: SCOPES
-                        });
-                        gapiInitialized = true;
-                        console.log('Google API initialized successfully');
-                        resolve(true);
-                    } catch (error) {
-                        console.error('Error initializing Google API:', error);
-                        reject(error);
-                    }
-                });
-            });
         }
 
-        function checkGoogleSheetsConnection() {
-            const sheetId = currentData.settings.googleSheetId;
-            const apiKey = currentData.settings.apiKey;
-            
-            if (sheetId && apiKey) {
-                updateConnectionStatus(true);
-                startAutoSync();
-                showNotification('Connected to Google Sheets!', 'success');
-            } else if (sheetId) {
-                updateConnectionStatus('partial');
-                showNotification('Google Sheet ID saved. API key needed for auto-sync.', 'warning');
-            } else {
-                updateConnectionStatus(false);
-            }
-        }
-
-        function updateConnectionStatus(connected) {
-            const statusEl = document.getElementById('connection-status');
-            const headerStatus = document.getElementById('header-sync-status');
-            const footerStatus = document.getElementById('footer-sync-status');
-            
-            if (connected === true) {
-                googleSheetsConnected = true;
-                statusEl.textContent = 'Connected';
-                statusEl.className = 'status-badge connected';
-                headerStatus.textContent = 'Connected';
-                headerStatus.className = 'status-badge active';
-                footerStatus.textContent = 'Connected';
-                
-                // Update auto-sync status
-                const autoSync = currentData.settings.autoSync !== false;
-                document.getElementById('auto-sync-status').textContent = autoSync ? 'Enabled' : 'Disabled';
-            } else if (connected === 'partial') {
-                googleSheetsConnected = true;
-                statusEl.textContent = 'Sheet ID Only';
-                statusEl.className = 'status-badge warning';
-                headerStatus.textContent = 'Sheet ID Only';
-                headerStatus.className = 'status-badge';
-                footerStatus.textContent = 'Sheet ID Only';
-                document.getElementById('auto-sync-status').textContent = 'Manual Only';
-            } else {
-                googleSheetsConnected = false;
-                statusEl.textContent = 'Disconnected';
-                statusEl.className = 'status-badge disconnected';
-                headerStatus.textContent = 'Not Connected';
-                headerStatus.className = 'status-badge';
-                footerStatus.textContent = 'Not Connected';
-                document.getElementById('auto-sync-status').textContent = 'Disabled';
-            }
-        }
-
-        async function testSheetConnection() {
-            const sheetId = document.getElementById('sheet-id').value;
-            const apiKey = document.getElementById('api-key').value;
-            
-            if (!sheetId) {
-                showNotification('Please enter a Google Sheet ID', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            
-            try {
-                // Save settings first
-                currentData.settings.googleSheetId = sheetId;
-                currentData.settings.apiKey = apiKey;
-                saveData();
-                
-                // Initialize Google API
-                await initializeGapi();
-                
-                // Test connection by trying to get sheet properties
-                const response = await gapi.client.sheets.spreadsheets.get({
-                    spreadsheetId: sheetId,
-                    fields: 'properties.title,sheets.properties'
-                });
-                
-                const sheetTitle = response.result.properties.title;
-                const sheets = response.result.sheets.map(sheet => sheet.properties.title);
-                
-                const resultsEl = document.getElementById('sheet-test-results');
-                resultsEl.style.display = 'block';
-                resultsEl.innerHTML = `
-                    <div class="sheet-test-success">
-                        <h4><i class="fas fa-check-circle"></i> Connection Successful!</h4>
-                        <p>Connected to Google Sheet: <strong>${sheetTitle}</strong></p>
-                        <p>Sheets found: ${sheets.join(', ')}</p>
-                        <p>You can now start recording data automatically.</p>
-                    </div>
-                `;
-                
-                updateConnectionStatus(true);
-                showNotification('Google Sheets connection successful!', 'success');
-                startAutoSync();
-                
-            } catch (error) {
-                console.error('Error testing sheet connection:', error);
-                
-                const resultsEl = document.getElementById('sheet-test-results');
-                resultsEl.style.display = 'block';
-                
-                let errorMessage = 'Unknown error';
-                if (error.result && error.result.error) {
-                    errorMessage = error.result.error.message;
-                } else if (error.message) {
-                    errorMessage = error.message;
-                }
-                
-                resultsEl.innerHTML = `
-                    <div class="sheet-test-error">
-                        <h4><i class="fas fa-exclamation-circle"></i> Connection Failed</h4>
-                        <p>Error: ${errorMessage}</p>
-                        <p>Please check:</p>
-                        <ul>
-                            <li>Sheet ID is correct</li>
-                            <li>Google Sheet is shared with edit permissions</li>
-                            <li>API key is valid</li>
-                            <li>You have internet connection</li>
-                        </ul>
-                    </div>
-                `;
-                
-                updateConnectionStatus(false);
-                showNotification('Failed to connect to Google Sheets', 'error');
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        async function createSheetTemplate() {
-            const sheetId = document.getElementById('sheet-id').value;
-            
-            if (!sheetId) {
-                showNotification('Please enter a Google Sheet ID first', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            
-            try {
-                await initializeGapi();
-                
-                // Create all sheets with headers
-                const requests = Object.keys(SHEET_CONFIG)
-                    .filter(key => key.endsWith('_SHEET'))
-                    .map(sheetKey => {
-                        const sheetName = SHEET_CONFIG[sheetKey];
-                        const headers = SHEET_CONFIG[sheetKey.replace('_SHEET', '_HEADERS')];
-                        
-                        return {
-                            addSheet: {
-                                properties: {
-                                    title: sheetName
-                                }
-                            }
-                        };
-                    });
-                
-                // Execute batch update
-                await gapi.client.sheets.spreadsheets.batchUpdate({
-                    spreadsheetId: sheetId,
-                    resource: {
-                        requests: requests
-                    }
-                });
-                
-                // Add headers to each sheet
-                for (const sheetKey of Object.keys(SHEET_CONFIG).filter(key => key.endsWith('_SHEET'))) {
-                    const sheetName = SHEET_CONFIG[sheetKey];
-                    const headers = SHEET_CONFIG[sheetKey.replace('_SHEET', '_HEADERS')];
-                    
-                    await gapi.client.sheets.spreadsheets.values.update({
-                        spreadsheetId: sheetId,
-                        range: `${sheetName}!A1:${String.fromCharCode(64 + headers.length)}1`,
-                        valueInputOption: 'RAW',
-                        resource: {
-                            values: [headers]
-                        }
-                    });
-                    
-                    // Format headers
-                    await gapi.client.sheets.spreadsheets.batchUpdate({
-                        spreadsheetId: sheetId,
-                        resource: {
-                            requests: [{
-                                repeatCell: {
-                                    range: {
-                                        sheetId: await getSheetIdByName(sheetId, sheetName),
-                                        startRowIndex: 0,
-                                        endRowIndex: 1,
-                                        startColumnIndex: 0,
-                                        endColumnIndex: headers.length
-                                    },
-                                    cell: {
-                                        userEnteredFormat: {
-                                            backgroundColor: { red: 0.2, green: 0.6, blue: 0.8 },
-                                            textFormat: {
-                                                foregroundColor: { red: 1, green: 1, blue: 1 },
-                                                bold: true,
-                                                fontSize: 12
-                                            },
-                                            horizontalAlignment: 'CENTER'
-                                        }
-                                    },
-                                    fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)'
-                                }
-                            }]
-                        }
-                    });
-                }
-                
-                showNotification('Google Sheets template created successfully!', 'success');
-                updateConnectionStatus(true);
-                
-            } catch (error) {
-                console.error('Error creating sheet template:', error);
-                showNotification('Error creating template: ' + error.message, 'error');
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        async function getSheetIdByName(spreadsheetId, sheetName) {
-            const response = await gapi.client.sheets.spreadsheets.get({
-                spreadsheetId: spreadsheetId
-            });
-            
-            const sheet = response.result.sheets.find(s => s.properties.title === sheetName);
-            return sheet ? sheet.properties.sheetId : null;
-        }
-
-        // ===== AUTOMATIC DATA RECORDING FUNCTIONS =====
-        async function recordToGoogleSheets(sheetName, data) {
-            if (!googleSheetsConnected || !currentData.settings.googleSheetId) {
-                return false;
-            }
-            
-            try {
-                await initializeGapi();
-                
-                // Get the next available row
-                const range = `${sheetName}!A:A`;
-                const response = await gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: currentData.settings.googleSheetId,
-                    range: range
-                });
-                
-                const nextRow = response.result.values ? response.result.values.length + 1 : 2;
-                
-                // Append data
-                await gapi.client.sheets.spreadsheets.values.append({
-                    spreadsheetId: currentData.settings.googleSheetId,
-                    range: `${sheetName}!A${nextRow}`,
-                    valueInputOption: 'USER_ENTERED',
-                    resource: {
-                        values: [data]
-                    }
-                });
-                
-                console.log(`Data recorded to ${sheetName}, row ${nextRow}`);
-                return true;
-                
-            } catch (error) {
-                console.error(`Error recording to ${sheetName}:`, error);
-                showNotification(`Error recording to Google Sheets: ${error.message}`, 'error');
-                return false;
-            }
-        }
-
-        // Product recording
-        async function recordProductToSheets(product) {
-            const profitPerItem = product.sellingPrice - (product.costPerBox / product.itemsPerBox);
-            const status = product.currentStock <= 2 ? 'Low Stock' : 
-                          product.currentStock >= 20 ? 'High Stock' : 'In Stock';
-            
-            const data = [
-                product.id,
-                product.name,
-                product.itemsPerBox,
-                product.costPerBox,
-                product.currentStock,
-                product.sellingPrice,
-                profitPerItem,
-                status,
-                new Date().toISOString()
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.PRODUCTS_SHEET, data);
-        }
-
-        // Procurement recording
-        async function recordProcurementToSheets(procurement) {
-            const data = [
-                procurement.id,
-                procurement.round,
-                procurement.date,
-                procurement.productId,
-                procurement.productName,
-                procurement.quantity,
-                procurement.cost,
-                procurement.supplier || '',
-                procurement.notes || '',
-                new Date().toISOString()
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.PROCUREMENT_SHEET, data);
-        }
-
-        // Shareholder recording
-        async function recordShareholderToSheets(shareholder) {
-            const totalInvestment = currentData.shareholders.reduce((sum, s) => sum + s.investment, 0);
-            const sharePercentage = totalInvestment > 0 
-                ? ((shareholder.investment / totalInvestment) * 100).toFixed(1)
-                : '0.0';
-            
-            const data = [
-                shareholder.id,
-                shareholder.name,
-                shareholder.email,
-                shareholder.phone,
-                shareholder.investment,
-                sharePercentage,
-                'Active',
-                new Date().toISOString().split('T')[0]
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.SHAREHOLDERS_SHEET, data);
-        }
-
-        // Stock count recording
-        async function recordStockCountToSheets(stockCount) {
-            const data = [
-                stockCount.id,
-                stockCount.round,
-                stockCount.date,
-                stockCount.itemsCounted,
-                stockCount.itemsSold,
-                stockCount.revenue,
-                stockCount.profit,
-                stockCount.notes || '',
-                new Date().toISOString()
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.STOCK_HISTORY_SHEET, data);
-        }
-
-        // Dividend recording
-        async function recordDividendToSheets(dividendData) {
-            const data = [
-                dividendData.id,
-                dividendData.round,
-                new Date().toISOString().split('T')[0],
-                dividendData.shareholderId,
-                dividendData.shareholderName,
-                dividendData.investment,
-                dividendData.sharePercentage,
-                dividendData.dividendAmount,
-                dividendData.roi,
-                'Pending'
-            ];
-            
-            return await recordToGoogleSheets(SHEET_CONFIG.DIVIDENDS_SHEET, data);
-        }
-
-        // Sync all data to Google Sheets
-        async function syncAllDataToSheets() {
-            if (!googleSheetsConnected) {
-                showNotification('Please connect to Google Sheets first', 'error');
-                return;
-            }
-            
-            setLoading(true);
-            const statusEl = document.getElementById('connection-status');
-            statusEl.textContent = 'Syncing...';
-            statusEl.className = 'status-badge syncing';
-            
-            try {
-                let successCount = 0;
-                let totalCount = 0;
-                
-                // Sync products
-                if (currentData.settings.autoSyncProducts !== false) {
-                    for (const product of currentData.products) {
-                        if (await recordProductToSheets(product)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                // Sync procurement
-                if (currentData.settings.autoSyncProcurement !== false) {
-                    for (const procurement of currentData.procurement) {
-                        if (await recordProcurementToSheets(procurement)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                // Sync shareholders
-                if (currentData.settings.autoSyncShareholders !== false) {
-                    for (const shareholder of currentData.shareholders) {
-                        if (await recordShareholderToSheets(shareholder)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                // Sync stock counts
-                if (currentData.settings.autoSyncStock !== false) {
-                    for (const stockCount of currentData.stockCounts) {
-                        if (await recordStockCountToSheets(stockCount)) {
-                            successCount++;
-                        }
-                        totalCount++;
-                    }
-                }
-                
-                updateLastSync();
-                
-                if (successCount > 0) {
-                    showNotification(`Synced ${successCount} of ${totalCount} records to Google Sheets`, 'success');
-                } else {
-                    showNotification('No data to sync', 'info');
-                }
-                
-            } catch (error) {
-                console.error('Error syncing data:', error);
-                showNotification('Error syncing to Google Sheets: ' + error.message, 'error');
-            } finally {
-                setLoading(false);
-                checkGoogleSheetsConnection();
-            }
-        }
-
-        // ===== AUTO-SYNC FUNCTIONS =====
-        function startAutoSync() {
-            // Clear existing interval
-            if (autoSyncInterval) {
-                clearInterval(autoSyncInterval);
-            }
-            
-            // Get sync interval from settings
-            const intervalMinutes = parseInt(currentData.settings.syncInterval) || 15;
-            
-            if (intervalMinutes > 0 && googleSheetsConnected) {
-                // Convert minutes to milliseconds
-                const intervalMs = intervalMinutes * 60 * 1000;
-                
-                // Start auto-sync
-                autoSyncInterval = setInterval(() => {
-                    if (googleSheetsConnected && document.visibilityState === 'visible') {
-                        syncAllDataToSheets();
-                    }
-                }, intervalMs);
-                
-                console.log(`Auto-sync started (${intervalMinutes} minutes)`);
-                showNotification(`Auto-sync enabled (every ${intervalMinutes} minutes)`, 'success');
-            }
-        }
-
-        function stopAutoSync() {
-            if (autoSyncInterval) {
-                clearInterval(autoSyncInterval);
-                autoSyncInterval = null;
-                console.log('Auto-sync stopped');
-            }
-        }
-
-        // ===== ENHANCED DATA MANAGEMENT =====
-        function safeLocalStorageGet(key) {
-            try {
-                return localStorage.getItem(key);
-            } catch (e) {
-                console.error('LocalStorage read error:', e);
-                showNotification('Storage error - using default data', 'warning');
-                return null;
-            }
-        }
-
-        function safeLocalStorageSet(key, value) {
-            try {
-                localStorage.setItem(key, value);
-                return true;
-            } catch (e) {
-                console.error('LocalStorage write error:', e);
-                showNotification('Failed to save data to storage', 'error');
-                return false;
-            }
-        }
-
+        // ===== DATA MANAGEMENT =====
         function loadData() {
-            setLoading(true);
             try {
-                const savedData = safeLocalStorageGet(STORAGE_KEY);
+                const savedData = localStorage.getItem(STORAGE_KEY);
                 
                 if (savedData) {
                     const parsed = JSON.parse(savedData);
                     
-                    // Version check for data migration
-                    if (parsed.version !== APP_VERSION) {
-                        console.warn(`Data version mismatch: ${parsed.version} -> ${APP_VERSION}`);
-                        showNotification('Data format updated to new version', 'warning');
-                    }
-                    
-                    currentData = parsed;
-                    
-                    // Ensure arrays exist
-                    currentData.products = currentData.products || [];
-                    currentData.procurement = currentData.procurement || [];
-                    currentData.shareholders = currentData.shareholders || [];
-                    currentData.stockCounts = currentData.stockCounts || [];
-                    currentData.businessRounds = currentData.businessRounds || [];
-                    currentData.settings = currentData.settings || {};
-                    currentData.currentRound = currentData.currentRound || 1;
-                    currentData.version = APP_VERSION;
-                    
-                    // Initialize Google Sheets settings if not present
-                    if (!currentData.settings.googleSheetId) {
-                        currentData.settings.googleSheetId = "";
-                        currentData.settings.apiKey = "";
-                        currentData.settings.autoSync = true;
-                        currentData.settings.autoSyncProducts = true;
-                        currentData.settings.autoSyncProcurement = true;
-                        currentData.settings.autoSyncStock = true;
-                        currentData.settings.autoSyncShareholders = true;
-                        currentData.settings.autoSyncDividends = true;
-                        currentData.settings.syncInterval = 15;
-                    }
+                    // Merge with current structure
+                    currentData = {
+                        ...currentData,
+                        ...parsed,
+                        version: APP_VERSION
+                    };
                     
                     console.log(`Loaded ${currentData.products.length} products, ${currentData.shareholders.length} shareholders`);
                 } else {
-                    // Try old key
-                    const oldData = safeLocalStorageGet('soloSnacksData');
-                    if (oldData) {
-                        console.log('Found data in old format, migrating...');
-                        const parsed = JSON.parse(oldData);
-                        currentData = {
-                            products: parsed.products || [],
-                            procurement: parsed.procurement || [],
-                            shareholders: parsed.shareholders || [],
-                            stockCounts: parsed.stockCounts || [],
-                            businessRounds: parsed.businessRounds || [{
-                                id: 1,
-                                name: "Round 1",
-                                startDate: new Date().toISOString().split('T')[0],
-                                endDate: null,
-                                status: 'Active',
-                                procurementCost: 0,
-                                salesRevenue: 0,
-                                netProfit: 0,
-                                dividendPool: 0
-                            }],
-                            settings: {
-                                businessName: APP_NAME,
-                                currency: "₵",
-                                taxRate: 0,
-                                googleSheetId: "",
-                                apiKey: "",
-                                lastSync: null,
-                                autoSync: true,
-                                autoSyncProducts: true,
-                                autoSyncProcurement: true,
-                                autoSyncStock: true,
-                                autoSyncShareholders: true,
-                                autoSyncDividends: true,
-                                syncInterval: 15,
-                                notifications: true
-                            },
-                            currentRound: parsed.currentRound || 1,
-                            version: APP_VERSION,
-                            lastUpdated: new Date().toISOString()
-                        };
-                        saveData(); // Save in new format
-                        localStorage.removeItem('soloSnacksData'); // Remove old key
-                        showNotification('Data migrated to new format', 'success');
-                    } else {
-                        // Initialize with EMPTY data, not sample data
-                        currentData = {
-                            products: [],
-                            procurement: [],
-                            shareholders: [],
-                            stockCounts: [],
-                            businessRounds: [{
-                                id: 1,
-                                name: "Round 1",
-                                startDate: new Date().toISOString().split('T')[0],
-                                endDate: null,
-                                status: 'Active',
-                                procurementCost: 0,
-                                salesRevenue: 0,
-                                netProfit: 0,
-                                dividendPool: 0
-                            }],
-                            settings: {
-                                businessName: APP_NAME,
-                                currency: "₵",
-                                taxRate: 0,
-                                googleSheetId: "",
-                                apiKey: "",
-                                lastSync: null,
-                                autoSync: true,
-                                autoSyncProducts: true,
-                                autoSyncProcurement: true,
-                                autoSyncStock: true,
-                                autoSyncShareholders: true,
-                                autoSyncDividends: true,
-                                syncInterval: 15,
-                                notifications: true
-                            },
-                            currentRound: 1,
-                            version: APP_VERSION,
-                            lastUpdated: new Date().toISOString()
-                        };
-                        saveData();
-                        showNotification('New empty database created', 'info');
-                    }
+                    // Initialize with default data
+                    initializeEmptyData();
                 }
             } catch (error) {
                 console.error('Error loading data:', error);
-                showNotification('Error loading saved data', 'error');
                 initializeEmptyData();
-            } finally {
-                setLoading(false);
             }
         }
 
@@ -3063,56 +2361,15 @@
             saveData();
         }
 
-        function initializeSampleData() {
-            currentData.products = [...sampleProducts];
-            currentData.procurement = [...sampleProcurement];
-            currentData.shareholders = [...sampleShareholders];
-            currentData.businessRounds = [...sampleBusinessRounds];
-            currentData.stockCounts = [];
-            currentData.settings = {
-                businessName: APP_NAME,
-                currency: "₵",
-                taxRate: 0,
-                googleSheetId: "",
-                apiKey: "",
-                lastSync: null,
-                autoSync: true,
-                autoSyncProducts: true,
-                autoSyncProcurement: true,
-                autoSyncStock: true,
-                autoSyncShareholders: true,
-                autoSyncDividends: true,
-                syncInterval: 15,
-                notifications: true
-            };
-            currentData.currentRound = 1;
-            currentData.version = APP_VERSION;
-            currentData.lastUpdated = new Date().toISOString();
-            saveData();
-        }
-
         function saveData() {
-            setLoading(true);
             try {
                 currentData.lastUpdated = new Date().toISOString();
-                const jsonData = JSON.stringify(currentData, null, 2);
-                
-                if (safeLocalStorageSet(STORAGE_KEY, jsonData)) {
-                    updateLastSync();
-                    console.log('Data saved successfully');
-                    
-                    // Auto-record to Google Sheets if connected
-                    if (googleSheetsConnected && currentData.settings.autoSync !== false) {
-                        setTimeout(() => {
-                            syncAllDataToSheets();
-                        }, 1000);
-                    }
-                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData, null, 2));
+                console.log('Data saved successfully');
+                updateLastSync();
             } catch (error) {
                 console.error('Error saving data:', error);
                 showNotification('Error saving data', 'error');
-            } finally {
-                setLoading(false);
             }
         }
 
@@ -3124,172 +2381,12 @@
             
             document.getElementById('last-sync').textContent = lastSync;
             document.getElementById('footer-sync').textContent = lastSync;
-            
-            // Update settings
-            if (currentData.settings) {
-                currentData.settings.lastSync = lastSync;
-            }
         }
 
-        // ===== CLEAR ALL DATA FUNCTION =====
-        function clearAllData() {
-            // Show confirmation modal
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content" style="max-width: 500px;">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Clear All Data</h3>
-                        <button class="close-modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <i class="fas fa-trash-alt" style="font-size: 4rem; color: var(--loss); margin-bottom: 15px;"></i>
-                            <h3 style="color: var(--loss); margin-bottom: 10px;">Warning: This Cannot Be Undone!</h3>
-                            <p style="color: var(--secondary);">This will delete ALL data including products, shareholders, procurement records, and stock history.</p>
-                        </div>
-                        
-                        <div style="background: var(--loss-light); padding: 15px; border-radius: var(--radius); margin: 20px 0; border-left: 4px solid var(--loss);">
-                            <p><i class="fas fa-exclamation-circle"></i> All data will be permanently deleted. This action cannot be reversed.</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="confirm-delete-input">Type "DELETE" to confirm</label>
-                            <input type="text" id="confirm-delete-input" placeholder="Type DELETE here" style="text-align: center; font-weight: bold;">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" id="cancel-clear">Cancel</button>
-                        <button class="btn btn-danger" id="confirm-clear" disabled>Clear All Data</button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            modal.style.display = 'flex';
-            
-            // Close modal handlers
-            modal.querySelector('.close-modal').addEventListener('click', () => {
-                modal.remove();
-            });
-            
-            modal.querySelector('#cancel-clear').addEventListener('click', () => {
-                modal.remove();
-            });
-            
-            // Confirm input validation
-            const confirmInput = modal.querySelector('#confirm-delete-input');
-            const confirmBtn = modal.querySelector('#confirm-clear');
-            
-            confirmInput.addEventListener('input', function() {
-                if (this.value.toUpperCase() === 'DELETE') {
-                    confirmBtn.disabled = false;
-                    this.classList.add('correct');
-                } else {
-                    confirmBtn.disabled = true;
-                    this.classList.remove('correct');
-                }
-            });
-            
-            // Clear data when confirmed
-            confirmBtn.addEventListener('click', () => {
-                performDataClear();
-                modal.remove();
-            });
-        }
-
-        function performDataClear() {
-            setLoading(true);
-            
-            try {
-                // Create empty data structure
-                currentData = {
-                    products: [],
-                    procurement: [],
-                    shareholders: [],
-                    stockCounts: [],
-                    businessRounds: [{
-                        id: 1,
-                        name: "Round 1",
-                        startDate: new Date().toISOString().split('T')[0],
-                        endDate: null,
-                        status: 'Active',
-                        procurementCost: 0,
-                        salesRevenue: 0,
-                        netProfit: 0,
-                        dividendPool: 0
-                    }],
-                    settings: {
-                        businessName: APP_NAME,
-                        currency: "₵",
-                        taxRate: 0,
-                        googleSheetId: "",
-                        apiKey: "",
-                        lastSync: null,
-                        autoSync: true,
-                        autoSyncProducts: true,
-                        autoSyncProcurement: true,
-                        autoSyncStock: true,
-                        autoSyncShareholders: true,
-                        autoSyncDividends: true,
-                        syncInterval: 15,
-                        notifications: true
-                    },
-                    currentRound: 1,
-                    version: APP_VERSION,
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                // Save empty data
-                saveData();
-                
-                // Update all UI elements
-                initializeUI();
-                
-                showNotification('All data has been cleared successfully!', 'success');
-                
-            } catch (error) {
-                console.error('Error clearing data:', error);
-                showNotification('Error clearing data: ' + error.message, 'error');
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        // ===== UI INITIALIZATION =====
-        function initializeUI() {
-            updateProductTable();
-            updateProcurementTable();
-            updateShareholdersTable();
-            updateStockHistory();
-            updateRoundSelectors();
-            updateSettingsForm();
-            setCurrentDate();
-            updateActivityLog();
-            updateTopProducts();
-            
-            // Set business name
-            const businessName = currentData.settings.businessName || APP_NAME;
-            document.getElementById('business-title').textContent = businessName;
-            document.getElementById('footer-business-name').textContent = businessName;
-            
-            // Check Google Sheets connection
-            checkGoogleSheetsConnection();
-        }
-
-        function setCurrentDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('procurement-date').value = today;
-            document.getElementById('stock-date').value = today;
-        }
-
-        // ===== INPUT SANITIZATION =====
+        // ===== UTILITY FUNCTIONS =====
         function sanitizeInput(text) {
             if (typeof text !== 'string') return '';
-            return text
-                .replace(/[<>]/g, '') // Remove HTML tags
-                .trim()
-                .substring(0, 500); // Limit length
+            return text.trim().substring(0, 500);
         }
 
         function sanitizeNumber(value, defaultValue = 0, min = null, max = null) {
@@ -3303,49 +2400,30 @@
             return result;
         }
 
-        // ===== LOADER MANAGEMENT =====
-        function setLoading(state) {
-            const loader = document.getElementById('global-loader');
-            if (loader) {
-                loader.style.display = state ? 'flex' : 'none';
-            }
+        function setCurrentDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('procurement-date').value = today;
+            document.getElementById('stock-date').value = today;
         }
 
-        // ===== NOTIFICATION SYSTEM =====
-        function showNotification(message, type = 'success') {
-            if (currentData.settings && currentData.settings.notifications === false) {
-                return;
-            }
+        // ===== UI UPDATES =====
+        function updateUI() {
+            updateProductTable();
+            updateProcurementTable();
+            updateShareholdersTable();
+            updateStockHistory();
+            updateRoundSelectors();
+            updateSettingsForm();
+            updateDashboard();
+            updateActivityLog();
+            updateTopProducts();
             
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            
-            let icon = 'info-circle';
-            if (type === 'success') icon = 'check-circle';
-            if (type === 'error') icon = 'exclamation-circle';
-            if (type === 'warning') icon = 'exclamation-triangle';
-            if (type === 'info') icon = 'info-circle';
-            
-            notification.innerHTML = `
-                <i class="fas fa-${icon}"></i>
-                <span>${sanitizeInput(message)}</span>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 4 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-in';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 4000);
+            // Set business name
+            const businessName = currentData.settings.businessName || APP_NAME;
+            document.getElementById('business-title').textContent = businessName;
+            document.getElementById('footer-business-name').textContent = businessName;
         }
 
-        // ===== PRODUCT MANAGEMENT =====
         function updateProductTable() {
             const tbody = document.getElementById('products-table-body');
             tbody.innerHTML = '';
@@ -3354,6 +2432,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="8" class="text-center">No products found. Add your first product!</td>`;
                 tbody.appendChild(row);
+                document.getElementById('product-count').textContent = '0';
                 return;
             }
             
@@ -3387,40 +2466,20 @@
             
             document.getElementById('product-count').textContent = currentData.products.length;
             updateProcurementProductDropdown();
-            updateTopProducts();
         }
 
-        function addProduct(productData) {
-            const newId = currentData.products.length > 0 
-                ? Math.max(...currentData.products.map(p => p.id)) + 1 
-                : 1;
+        function updateProcurementProductDropdown() {
+            const select = document.getElementById('procurement-product');
+            select.innerHTML = '<option value="">Select a product</option>';
             
-            const newProduct = {
-                id: newId,
-                name: sanitizeInput(productData.name),
-                itemsPerBox: sanitizeNumber(productData.itemsPerBox, 1, 1),
-                costPerBox: sanitizeNumber(productData.costPerBox, 0, 0),
-                sellingPrice: sanitizeNumber(productData.sellingPrice, 0, 0),
-                currentStock: sanitizeNumber(productData.currentStock, 0, 0)
-            };
-            
-            currentData.products.push(newProduct);
-            saveData();
-            updateProductTable();
-            
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncProducts !== false) {
-                recordProductToSheets(newProduct);
-            }
-            
-            // Add to activity log
-            addActivity(`Product added: ${newProduct.name}`, 'product');
-            
-            showNotification('Product added successfully!', 'success');
-            return newProduct;
+            currentData.products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                select.appendChild(option);
+            });
         }
 
-        // ===== PROCUREMENT MANAGEMENT =====
         function updateProcurementTable() {
             const tbody = document.getElementById('procurement-table-body');
             tbody.innerHTML = '';
@@ -3431,15 +2490,11 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="7" class="text-center">No purchase records found.</td>`;
                 tbody.appendChild(row);
+                document.getElementById('total-procurement').textContent = '₵0.00';
                 return;
             }
             
-            // Sort by date descending
-            const sortedProcurement = [...currentData.procurement].sort((a, b) => 
-                new Date(b.date) - new Date(a.date)
-            );
-            
-            sortedProcurement.forEach(record => {
+            currentData.procurement.forEach(record => {
                 totalCost += record.cost;
                 
                 const row = document.createElement('tr');
@@ -3460,54 +2515,8 @@
             });
             
             document.getElementById('total-procurement').textContent = `₵${totalCost.toFixed(2)}`;
-            updateBusinessRoundCosts();
         }
 
-        function addProcurement(procurementData) {
-            const product = currentData.products.find(p => p.id === parseInt(procurementData.productId));
-            if (!product) {
-                showNotification('Product not found!', 'error');
-                return;
-            }
-            
-            const newId = currentData.procurement.length > 0 
-                ? Math.max(...currentData.procurement.map(p => p.id)) + 1 
-                : 1;
-            
-            const newProcurement = {
-                id: newId,
-                round: currentData.currentRound,
-                date: procurementData.date || new Date().toISOString().split('T')[0],
-                productId: parseInt(procurementData.productId),
-                productName: product.name,
-                quantity: sanitizeNumber(procurementData.quantity, 1, 1),
-                cost: sanitizeNumber(procurementData.cost, 0, 0),
-                supplier: sanitizeInput(procurementData.supplier),
-                notes: sanitizeInput(procurementData.notes)
-            };
-            
-            // Update product stock
-            product.currentStock += newProcurement.quantity;
-            
-            currentData.procurement.push(newProcurement);
-            saveData();
-            updateProcurementTable();
-            updateProductTable();
-            updateDashboard();
-            
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncProcurement !== false) {
-                recordProcurementToSheets(newProcurement);
-            }
-            
-            // Add to activity log
-            addActivity(`Procurement: ${newProcurement.quantity} boxes of ${product.name}`, 'procurement');
-            
-            showNotification('Purchase recorded successfully!', 'success');
-            return newProcurement;
-        }
-
-        // ===== SHAREHOLDER MANAGEMENT =====
         function updateShareholdersTable() {
             const tbody = document.getElementById('shareholders-table-body');
             tbody.innerHTML = '';
@@ -3516,6 +2525,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="6" class="text-center">No shareholders found. Add your first shareholder!</td>`;
                 tbody.appendChild(row);
+                document.getElementById('shareholder-count').textContent = '0';
                 return;
             }
             
@@ -3546,39 +2556,459 @@
             });
             
             document.getElementById('shareholder-count').textContent = currentData.shareholders.length;
-            updateDividendCalculations();
         }
 
-        function addShareholder(shareholderData) {
+        function updateStockHistory() {
+            const tbody = document.getElementById('stock-history-body');
+            tbody.innerHTML = '';
+            
+            if (currentData.stockCounts.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="7" class="text-center">No stock count history found.</td>`;
+                tbody.appendChild(row);
+                return;
+            }
+            
+            currentData.stockCounts.forEach(count => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${count.date}</td>
+                    <td>Round ${count.round}</td>
+                    <td>${count.itemsCounted}</td>
+                    <td class="profit">${count.itemsSold.toLocaleString()}</td>
+                    <td class="profit">₵${count.revenue.toFixed(2)}</td>
+                    <td class="${count.profit >= 0 ? 'profit' : 'loss'}">₵${count.profit.toFixed(2)}</td>
+                    <td>${sanitizeInput(count.notes)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateRoundSelectors() {
+            const selectors = [
+                'dashboard-round-selector',
+                'procurement-round',
+                'stock-round',
+                'dividend-round'
+            ];
+            
+            selectors.forEach(selectorId => {
+                const select = document.getElementById(selectorId);
+                if (select) {
+                    select.innerHTML = currentData.businessRounds
+                        .map(round => `<option value="${round.id}">${round.name}${round.status === 'Active' ? ' - Current' : ''}</option>`)
+                        .join('');
+                    select.value = currentData.currentRound;
+                }
+            });
+        }
+
+        function updateSettingsForm() {
+            document.getElementById('business-name').value = currentData.settings.businessName || APP_NAME;
+            document.getElementById('currency').value = currentData.settings.currency || "₵";
+            document.getElementById('tax-rate').value = currentData.settings.taxRate || 0;
+            document.getElementById('sheet-id').value = currentData.settings.googleSheetId || "";
+            document.getElementById('api-key').value = currentData.settings.apiKey || "";
+            document.getElementById('sync-interval').value = currentData.settings.syncInterval || 15;
+            
+            // Auto-sync checkboxes
+            document.getElementById('auto-sync-products').checked = currentData.settings.autoSyncProducts !== false;
+            document.getElementById('auto-sync-procurement').checked = currentData.settings.autoSyncProcurement !== false;
+            document.getElementById('auto-sync-stock').checked = currentData.settings.autoSyncStock !== false;
+            document.getElementById('auto-sync-dividends').checked = currentData.settings.autoSyncDividends !== false;
+            
+            if (currentData.settings.lastSync) {
+                document.getElementById('last-sync').textContent = currentData.settings.lastSync;
+                document.getElementById('footer-sync').textContent = currentData.settings.lastSync;
+            }
+        }
+
+        function updateDashboard() {
+            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
+            if (!currentRound) return;
+            
+            // Update main stats
+            document.getElementById('current-round-display').textContent = currentRound.name;
+            document.getElementById('current-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
+            document.getElementById('total-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
+            document.getElementById('dividend-pool').textContent = `₵${currentRound.dividendPool.toFixed(2)}`;
+            
+            // Calculate profit margin
+            const profitMargin = currentRound.salesRevenue > 0 
+                ? ((currentRound.netProfit / currentRound.salesRevenue) * 100).toFixed(1)
+                : '0.0';
+            
+            // Update summary
+            document.getElementById('summary-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
+            document.getElementById('summary-sales').textContent = `₵${currentRound.salesRevenue.toFixed(2)}`;
+            document.getElementById('summary-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
+            document.getElementById('summary-margin').textContent = `${profitMargin}%`;
+        }
+
+        function updateActivityLog() {
+            const activityList = document.getElementById('activity-list');
+            activityList.innerHTML = '';
+            
+            if (currentData.products.length === 0 && currentData.shareholders.length === 0) {
+                const welcomeItem = document.createElement('div');
+                welcomeItem.className = 'activity-item profit';
+                welcomeItem.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">Welcome!</div>
+                        <div class="activity-desc">Add your first product or shareholder to get started</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                `;
+                activityList.appendChild(welcomeItem);
+                return;
+            }
+            
+            // Add recent activities
+            if (currentData.products.length > 0) {
+                const recentProduct = currentData.products[currentData.products.length - 1];
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item profit';
+                activityItem.innerHTML = `
+                    <i class="fas fa-box-open"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">Product Added</div>
+                        <div class="activity-desc">${recentProduct.name}</div>
+                        <div class="activity-time">Recently</div>
+                    </div>
+                `;
+                activityList.appendChild(activityItem);
+            }
+            
+            if (currentData.shareholders.length > 0) {
+                const recentShareholder = currentData.shareholders[currentData.shareholders.length - 1];
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item profit';
+                activityItem.innerHTML = `
+                    <i class="fas fa-user-plus"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">Shareholder Added</div>
+                        <div class="activity-desc">${recentShareholder.name}</div>
+                        <div class="activity-time">Recently</div>
+                    </div>
+                `;
+                activityList.appendChild(activityItem);
+            }
+        }
+
+        function updateTopProducts() {
+            const topProductsList = document.getElementById('top-products-list');
+            topProductsList.innerHTML = '';
+            
+            if (currentData.products.length === 0) {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-item profit';
+                productItem.innerHTML = `
+                    <div class="product-name">No products yet</div>
+                    <div class="product-stats">
+                        <span class="product-sales">Add your first product</span>
+                    </div>
+                `;
+                topProductsList.appendChild(productItem);
+                return;
+            }
+            
+            // Sort products by current stock
+            const sortedProducts = [...currentData.products]
+                .sort((a, b) => b.currentStock - a.currentStock)
+                .slice(0, 3);
+            
+            sortedProducts.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = `product-item ${product.currentStock <= 2 ? 'loss' : 'profit'}`;
+                productItem.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-stats">
+                        <span class="product-sales">${product.currentStock} boxes in stock</span>
+                        <span class="product-profit">₵${product.sellingPrice.toFixed(2)}/item</span>
+                    </div>
+                `;
+                topProductsList.appendChild(productItem);
+            });
+        }
+
+        // ===== PRODUCT FUNCTIONS =====
+        function addProduct() {
+            const name = document.getElementById('product-name').value.trim();
+            const itemsPerBox = document.getElementById('items-per-box').value;
+            const costPerBox = document.getElementById('cost-per-box').value;
+            const sellingPrice = document.getElementById('selling-price').value;
+            const initialStock = document.getElementById('initial-stock').value;
+            
+            // Validation
+            if (!name || !itemsPerBox || !costPerBox || !sellingPrice || !initialStock) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (parseFloat(costPerBox) <= 0 || parseFloat(sellingPrice) <= 0) {
+                showNotification('Cost and price must be greater than 0', 'error');
+                return;
+            }
+            
+            const newId = currentData.products.length > 0 
+                ? Math.max(...currentData.products.map(p => p.id)) + 1 
+                : 1;
+            
+            const newProduct = {
+                id: newId,
+                name: sanitizeInput(name),
+                itemsPerBox: sanitizeNumber(itemsPerBox, 1, 1),
+                costPerBox: sanitizeNumber(costPerBox, 0, 0),
+                sellingPrice: sanitizeNumber(sellingPrice, 0, 0),
+                currentStock: sanitizeNumber(initialStock, 0, 0)
+            };
+            
+            currentData.products.push(newProduct);
+            saveData();
+            updateUI();
+            clearProductForm();
+            showNotification('Product added successfully!', 'success');
+        }
+
+        function editProduct(id) {
+            const product = currentData.products.find(p => p.id === id);
+            if (!product) {
+                showNotification('Product not found', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('edit-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = 'Edit Product';
+            modalBody.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-name">Product Name</label>
+                        <input type="text" id="edit-product-name" value="${sanitizeInput(product.name)}">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-items-per-box">Items per Box</label>
+                        <input type="number" id="edit-items-per-box" value="${product.itemsPerBox}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-cost-per-box">Cost per Box (₵)</label>
+                        <input type="number" id="edit-cost-per-box" value="${product.costPerBox}" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-selling-price">Selling Price (₵)</label>
+                        <input type="number" id="edit-selling-price" value="${product.sellingPrice}" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-current-stock">Current Stock</label>
+                        <input type="number" id="edit-current-stock" value="${product.currentStock}">
+                    </div>
+                </div>
+                <input type="hidden" id="edit-product-id" value="${product.id}">
+            `;
+            
+            modal.style.display = 'flex';
+            
+            document.getElementById('modal-save').onclick = () => {
+                const updatedProduct = {
+                    name: document.getElementById('edit-product-name').value,
+                    itemsPerBox: parseInt(document.getElementById('edit-items-per-box').value),
+                    costPerBox: parseFloat(document.getElementById('edit-cost-per-box').value),
+                    sellingPrice: parseFloat(document.getElementById('edit-selling-price').value),
+                    currentStock: parseInt(document.getElementById('edit-current-stock').value)
+                };
+                
+                if (!updatedProduct.name || isNaN(updatedProduct.itemsPerBox) || isNaN(updatedProduct.costPerBox)) {
+                    showNotification('Please fill all fields correctly', 'error');
+                    return;
+                }
+                
+                product.name = updatedProduct.name;
+                product.itemsPerBox = updatedProduct.itemsPerBox;
+                product.costPerBox = updatedProduct.costPerBox;
+                product.sellingPrice = updatedProduct.sellingPrice;
+                product.currentStock = updatedProduct.currentStock;
+                
+                saveData();
+                updateUI();
+                modal.style.display = 'none';
+                showNotification('Product updated successfully!', 'success');
+            };
+            
+            document.getElementById('modal-cancel').onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+
+        function deleteProduct(id) {
+            const product = currentData.products.find(p => p.id === id);
+            if (!product) return;
+            
+            const modal = document.getElementById('delete-modal');
+            document.getElementById('delete-message').textContent = `Are you sure you want to delete "${product.name}"?`;
+            modal.style.display = 'flex';
+            
+            document.getElementById('confirm-delete').onclick = () => {
+                currentData.products = currentData.products.filter(p => p.id !== id);
+                saveData();
+                updateUI();
+                modal.style.display = 'none';
+                showNotification('Product deleted successfully!', 'success');
+            };
+            
+            document.getElementById('cancel-delete').onclick = () => {
+                modal.style.display = 'none';
+            };
+        }
+
+        function clearProductForm() {
+            document.getElementById('product-name').value = '';
+            document.getElementById('items-per-box').value = '';
+            document.getElementById('cost-per-box').value = '';
+            document.getElementById('selling-price').value = '';
+            document.getElementById('initial-stock').value = '';
+        }
+
+        // ===== PROCUREMENT FUNCTIONS =====
+        function addProcurement() {
+            const productId = document.getElementById('procurement-product').value;
+            const quantity = document.getElementById('procurement-qty').value;
+            const cost = document.getElementById('procurement-cost').value;
+            const date = document.getElementById('procurement-date').value;
+            const supplier = document.getElementById('procurement-supplier').value;
+            
+            // Validation
+            if (!productId || !quantity || !cost || !date || !supplier) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const product = currentData.products.find(p => p.id === parseInt(productId));
+            if (!product) {
+                showNotification('Product not found!', 'error');
+                return;
+            }
+            
+            const newId = currentData.procurement.length > 0 
+                ? Math.max(...currentData.procurement.map(p => p.id)) + 1 
+                : 1;
+            
+            const newProcurement = {
+                id: newId,
+                round: currentData.currentRound,
+                date: date,
+                productId: parseInt(productId),
+                productName: product.name,
+                quantity: sanitizeNumber(quantity, 1, 1),
+                cost: sanitizeNumber(cost, 0, 0),
+                supplier: sanitizeInput(supplier),
+                notes: sanitizeInput(document.getElementById('procurement-notes').value)
+            };
+            
+            // Update product stock
+            product.currentStock += newProcurement.quantity;
+            
+            currentData.procurement.push(newProcurement);
+            saveData();
+            updateUI();
+            clearProcurementForm();
+            showNotification('Purchase recorded successfully!', 'success');
+        }
+
+        function deleteProcurement(id) {
+            const procurement = currentData.procurement.find(p => p.id === id);
+            if (!procurement) return;
+            
+            if (confirm(`Delete purchase record for ${procurement.productName}?`)) {
+                currentData.procurement = currentData.procurement.filter(p => p.id !== id);
+                
+                // Update product stock
+                const product = currentData.products.find(p => p.id === procurement.productId);
+                if (product) {
+                    product.currentStock = Math.max(0, product.currentStock - procurement.quantity);
+                }
+                
+                saveData();
+                updateUI();
+                showNotification('Purchase record deleted', 'success');
+            }
+        }
+
+        function clearProcurementForm() {
+            document.getElementById('procurement-product').value = '';
+            document.getElementById('procurement-qty').value = '';
+            document.getElementById('procurement-cost').value = '';
+            document.getElementById('procurement-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('procurement-supplier').value = '';
+            document.getElementById('procurement-notes').value = '';
+        }
+
+        // ===== SHAREHOLDER FUNCTIONS =====
+        function addShareholder() {
+            const name = document.getElementById('shareholder-name').value.trim();
+            const email = document.getElementById('shareholder-email').value.trim();
+            const phone = document.getElementById('shareholder-phone').value.trim();
+            const investment = document.getElementById('shareholder-investment').value;
+            
+            // Validation
+            if (!name || !email || !phone || !investment) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+            
             const newId = currentData.shareholders.length > 0 
                 ? Math.max(...currentData.shareholders.map(s => s.id)) + 1 
                 : 1;
             
             const newShareholder = {
                 id: newId,
-                name: sanitizeInput(shareholderData.name),
-                email: sanitizeInput(shareholderData.email),
-                phone: sanitizeInput(shareholderData.phone),
-                investment: sanitizeNumber(shareholderData.investment, 0, 0)
+                name: sanitizeInput(name),
+                email: sanitizeInput(email),
+                phone: sanitizeInput(phone),
+                investment: sanitizeNumber(investment, 0, 0)
             };
             
             currentData.shareholders.push(newShareholder);
             saveData();
-            updateShareholdersTable();
-            
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncShareholders !== false) {
-                recordShareholderToSheets(newShareholder);
-            }
-            
-            // Add to activity log
-            addActivity(`Shareholder added: ${newShareholder.name}`, 'shareholder');
-            
+            updateUI();
+            clearShareholderForm();
             showNotification('Shareholder added successfully!', 'success');
-            return newShareholder;
         }
 
-        // ===== STOCK TAKING =====
+        function deleteShareholder(id) {
+            const shareholder = currentData.shareholders.find(s => s.id === id);
+            if (!shareholder) return;
+            
+            if (confirm(`Delete shareholder "${shareholder.name}"? This cannot be undone.`)) {
+                currentData.shareholders = currentData.shareholders.filter(s => s.id !== id);
+                saveData();
+                updateUI();
+                showNotification('Shareholder deleted', 'success');
+            }
+        }
+
+        function clearShareholderForm() {
+            document.getElementById('shareholder-name').value = '';
+            document.getElementById('shareholder-email').value = '';
+            document.getElementById('shareholder-phone').value = '';
+            document.getElementById('shareholder-investment').value = '';
+            document.getElementById('shareholder-percentage').value = '';
+        }
+
+        // ===== STOCK TAKING FUNCTIONS =====
         let currentStockCount = [];
 
         function startStockCount() {
@@ -3605,9 +3035,7 @@
                     <div class="stock-item-input">
                         <label>Counted Stock (Boxes)</label>
                         <input type="number" id="stock-count-${product.id}" 
-                               value="${product.currentStock}" min="0" max="${product.currentStock + 100}"
-                               data-current="${product.currentStock}"
-                               onchange="validateStockInput(${product.id})">
+                               value="${product.currentStock}" min="0">
                         <small class="input-hint" id="hint-${product.id}"></small>
                     </div>
                 `;
@@ -3622,34 +3050,15 @@
             let totalItemsSold = 0;
             let totalRevenue = 0;
             let totalCost = 0;
-            let hasErrors = false;
             
             currentStockCount = [];
-            
-            // Validate all inputs first
-            currentData.products.forEach(product => {
-                const countedStock = parseInt(document.getElementById(`stock-count-${product.id}`).value) || 0;
-                const previousStock = product.currentStock;
-                
-                if (countedStock < 0) {
-                    showNotification(`Stock count cannot be negative for ${product.name}`, 'error');
-                    hasErrors = true;
-                    return;
-                }
-                
-                if (countedStock > previousStock + 100) {
-                    showNotification(`Stock count for ${product.name} seems unusually high`, 'warning');
-                }
-            });
-            
-            if (hasErrors) return;
             
             // Calculate results
             currentData.products.forEach(product => {
                 const countedStock = parseInt(document.getElementById(`stock-count-${product.id}`).value) || 0;
                 const previousStock = product.currentStock;
                 
-                if (countedStock <= previousStock) {
+                if (countedStock < previousStock) {
                     const boxesSold = previousStock - countedStock;
                     const itemsSold = boxesSold * product.itemsPerBox;
                     const costPerItem = product.costPerBox / product.itemsPerBox;
@@ -3716,14 +3125,7 @@
                 itemsSold: totalItemsSold,
                 revenue: totalRevenue,
                 profit: totalProfit,
-                notes: notes,
-                details: currentStockCount.map(item => ({
-                    productId: item.productId,
-                    productName: item.productName,
-                    countedStock: item.countedStock,
-                    itemsSold: item.itemsSold,
-                    revenue: item.revenue
-                }))
+                notes: notes
             };
             
             currentData.stockCounts.push(newStockCount);
@@ -3737,48 +3139,17 @@
             }
             
             saveData();
-            updateProductTable();
-            updateStockHistory();
-            updateDashboard();
-            updateActivityLog();
-            
-            // Record to Google Sheets if connected
-            if (googleSheetsConnected && currentData.settings.autoSyncStock !== false) {
-                recordStockCountToSheets(newStockCount);
-            }
+            updateUI();
             
             // Reset form
             document.getElementById('stock-count-form').style.display = 'none';
             document.getElementById('stock-results').style.display = 'none';
             document.getElementById('stock-notes').value = '';
             
-            // Add to activity log
-            addActivity(`Stock count completed: ${totalItemsSold} items sold, ₵${totalProfit.toFixed(2)} profit`, 'stock');
-            
             showNotification('Stock count saved successfully!', 'success');
         }
 
-        // ===== SETTINGS =====
-        function updateSettingsForm() {
-            document.getElementById('business-name').value = currentData.settings.businessName || APP_NAME;
-            document.getElementById('currency').value = currentData.settings.currency || "₵";
-            document.getElementById('tax-rate').value = currentData.settings.taxRate || 0;
-            document.getElementById('sheet-id').value = currentData.settings.googleSheetId || "";
-            document.getElementById('api-key').value = currentData.settings.apiKey || "";
-            document.getElementById('sync-interval').value = currentData.settings.syncInterval || 15;
-            
-            // Auto-sync checkboxes
-            document.getElementById('auto-sync-products').checked = currentData.settings.autoSyncProducts !== false;
-            document.getElementById('auto-sync-procurement').checked = currentData.settings.autoSyncProcurement !== false;
-            document.getElementById('auto-sync-stock').checked = currentData.settings.autoSyncStock !== false;
-            document.getElementById('auto-sync-dividends').checked = currentData.settings.autoSyncDividends !== false;
-            
-            if (currentData.settings.lastSync) {
-                document.getElementById('last-sync').textContent = currentData.settings.lastSync;
-                document.getElementById('footer-sync').textContent = currentData.settings.lastSync;
-            }
-        }
-
+        // ===== SETTINGS FUNCTIONS =====
         function saveSettings() {
             const businessName = sanitizeInput(document.getElementById('business-name').value) || APP_NAME;
             const currency = document.getElementById('currency').value;
@@ -3803,19 +3174,15 @@
             currentData.settings.autoSyncProcurement = autoSyncProcurement;
             currentData.settings.autoSyncStock = autoSyncStock;
             currentData.settings.autoSyncDividends = autoSyncDividends;
-            currentData.settings.autoSync = autoSyncProducts || autoSyncProcurement || autoSyncStock || autoSyncDividends;
             
             // Update UI
             document.getElementById('business-title').textContent = businessName;
             document.getElementById('footer-business-name').textContent = businessName;
             
             saveData();
-            checkGoogleSheetsConnection();
-            startAutoSync();
             showNotification('Settings saved successfully!', 'success');
         }
 
-        // ===== DATA EXPORT FUNCTIONS =====
         function exportData(type = 'all') {
             let dataToExport;
             let filename;
@@ -3851,137 +3218,113 @@
             showNotification(`Data exported to ${filename}`, 'success');
         }
 
-        // ===== UTILITY FUNCTIONS =====
-        function updateActivityLog() {
-            const activityList = document.getElementById('activity-list');
-            activityList.innerHTML = '';
-            
-            // Add welcome message if no activities
-            if (currentData.products.length === 0 && currentData.shareholders.length === 0) {
-                const welcomeItem = document.createElement('div');
-                welcomeItem.className = 'activity-item profit';
-                welcomeItem.innerHTML = `
-                    <i class="fas fa-info-circle"></i>
-                    <div class="activity-content">
-                        <div class="activity-title">Welcome!</div>
-                        <div class="activity-desc">Add your first product or shareholder to get started</div>
-                        <div class="activity-time">Just now</div>
-                    </div>
-                `;
-                activityList.appendChild(welcomeItem);
-                return;
+        function clearAllData() {
+            if (confirm('WARNING: This will delete ALL data including products, shareholders, and purchase records. This cannot be undone. Continue?')) {
+                currentData = {
+                    products: [],
+                    procurement: [],
+                    shareholders: [],
+                    stockCounts: [],
+                    businessRounds: [{
+                        id: 1,
+                        name: "Round 1",
+                        startDate: new Date().toISOString().split('T')[0],
+                        endDate: null,
+                        status: 'Active',
+                        procurementCost: 0,
+                        salesRevenue: 0,
+                        netProfit: 0,
+                        dividendPool: 0
+                    }],
+                    settings: {
+                        businessName: APP_NAME,
+                        currency: "₵",
+                        taxRate: 0,
+                        googleSheetId: "",
+                        apiKey: "",
+                        lastSync: null,
+                        autoSync: true,
+                        autoSyncProducts: true,
+                        autoSyncProcurement: true,
+                        autoSyncStock: true,
+                        autoSyncShareholders: true,
+                        autoSyncDividends: true,
+                        syncInterval: 15,
+                        notifications: true
+                    },
+                    currentRound: 1,
+                    version: APP_VERSION,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                saveData();
+                updateUI();
+                showNotification('All data has been cleared successfully!', 'success');
             }
-            
-            // Add recent activities
-            const activities = [];
-            
-            // Add product activities
-            if (currentData.products.length > 0) {
-                const recentProduct = currentData.products[currentData.products.length - 1];
-                activities.push({
-                    type: 'product',
-                    title: 'Product Added',
-                    desc: recentProduct.name,
-                    time: 'Recently',
-                    icon: 'box-open',
-                    profit: true
-                });
+        }
+
+        function loadSampleData() {
+            if (confirm('Load sample data? This will replace current data with example data.')) {
+                currentData.products = [
+                    { id: 1, name: "BIGO DRINKS", itemsPerBox: 24, costPerBox: 45.00, currentStock: 10, sellingPrice: 3.00 },
+                    { id: 2, name: "MALT", itemsPerBox: 24, costPerBox: 48.00, currentStock: 8, sellingPrice: 3.50 },
+                    { id: 3, name: "BEL COLA", itemsPerBox: 24, costPerBox: 42.00, currentStock: 12, sellingPrice: 2.80 }
+                ];
+                
+                currentData.procurement = [
+                    { id: 1, round: 1, date: new Date().toISOString().split('T')[0], productId: 1, productName: "BIGO DRINKS", quantity: 10, cost: 450, supplier: "Beverages Wholesale", notes: "Initial stock" }
+                ];
+                
+                currentData.shareholders = [
+                    { id: 1, name: "Kwame Solo", email: "kwame@example.com", phone: "024-123-4567", investment: 2000 },
+                    { id: 2, name: "Ama Mensah", email: "ama@example.com", phone: "024-234-5678", investment: 1250 }
+                ];
+                
+                saveData();
+                updateUI();
+                showNotification('Sample data loaded successfully!', 'success');
             }
+        }
+
+        // ===== NOTIFICATION SYSTEM =====
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
             
-            // Add shareholder activities
-            if (currentData.shareholders.length > 0) {
-                const recentShareholder = currentData.shareholders[currentData.shareholders.length - 1];
-                activities.push({
-                    type: 'shareholder',
-                    title: 'Shareholder Added',
-                    desc: recentShareholder.name,
-                    time: 'Recently',
-                    icon: 'user-plus',
-                    profit: true
-                });
-            }
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
             
-            // Add procurement activities
-            if (currentData.procurement.length > 0) {
-                const recentProcurement = currentData.procurement[currentData.procurement.length - 1];
-                activities.push({
-                    type: 'procurement',
-                    title: 'Purchase Recorded',
-                    desc: `${recentProcurement.quantity} boxes of ${recentProcurement.productName}`,
-                    time: 'Recently',
-                    icon: 'shopping-cart',
-                    profit: false
-                });
-            }
+            notification.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${sanitizeInput(message)}</span>
+            `;
             
-            // Add stock count activities
-            if (currentData.stockCounts.length > 0) {
-                const recentStock = currentData.stockCounts[currentData.stockCounts.length - 1];
-                activities.push({
-                    type: 'stock',
-                    title: 'Stock Count Completed',
-                    desc: `${recentStock.itemsSold} items sold, ₵${recentStock.profit.toFixed(2)} profit`,
-                    time: 'Recently',
-                    icon: 'clipboard-check',
-                    profit: true
-                });
-            }
+            document.body.appendChild(notification);
             
-            // Display activities (limit to 5)
-            activities.slice(-5).forEach(activity => {
-                const activityItem = document.createElement('div');
-                activityItem.className = `activity-item ${activity.profit ? 'profit' : ''}`;
-                activityItem.innerHTML = `
-                    <i class="fas fa-${activity.icon}"></i>
-                    <div class="activity-content">
-                        <div class="activity-title">${activity.title}</div>
-                        <div class="activity-desc">${activity.desc}</div>
-                        <div class="activity-time">${activity.time}</div>
-                    </div>
-                `;
-                activityList.appendChild(activityItem);
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // ===== TAB NAVIGATION =====
+        function switchTab(tabId) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
             });
-        }
-
-        function addActivity(message, type) {
-            // This function adds activities to the log
-            // In a real implementation, you would store activities and update the UI
-            updateActivityLog();
-        }
-
-        function updateTopProducts() {
-            const topProductsList = document.getElementById('top-products-list');
-            topProductsList.innerHTML = '';
             
-            if (currentData.products.length === 0) {
-                const productItem = document.createElement('div');
-                productItem.className = 'product-item profit';
-                productItem.innerHTML = `
-                    <div class="product-name">No products yet</div>
-                    <div class="product-stats">
-                        <span class="product-sales">Add your first product</span>
-                    </div>
-                `;
-                topProductsList.appendChild(productItem);
-                return;
-            }
-            
-            // Sort products by current stock (or any other metric)
-            const sortedProducts = [...currentData.products]
-                .sort((a, b) => b.currentStock - a.currentStock)
-                .slice(0, 3);
-            
-            sortedProducts.forEach(product => {
-                const productItem = document.createElement('div');
-                productItem.className = `product-item ${product.currentStock <= 2 ? 'loss' : 'profit'}`;
-                productItem.innerHTML = `
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-stats">
-                        <span class="product-sales">${product.currentStock} boxes in stock</span>
-                        <span class="product-profit">₵${product.sellingPrice.toFixed(2)}/item</span>
-                    </div>
-                `;
-                topProductsList.appendChild(productItem);
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === tabId);
             });
         }
 
@@ -3999,190 +3342,36 @@
             document.getElementById('quick-stock-count').addEventListener('click', () => switchTab('stock'));
             document.getElementById('quick-procurement').addEventListener('click', () => switchTab('procurement'));
             document.getElementById('quick-dividend').addEventListener('click', () => switchTab('dividends'));
-            document.getElementById('quick-sync').addEventListener('click', syncAllDataToSheets);
             
             // Product form
-            document.getElementById('save-product-btn').addEventListener('click', () => {
-                const productData = {
-                    name: document.getElementById('product-name').value,
-                    itemsPerBox: document.getElementById('items-per-box').value,
-                    costPerBox: document.getElementById('cost-per-box').value,
-                    sellingPrice: document.getElementById('selling-price').value,
-                    currentStock: document.getElementById('initial-stock').value
-                };
-                
-                // Validation
-                if (!productData.name || !productData.itemsPerBox || !productData.costPerBox || 
-                    !productData.sellingPrice || !productData.currentStock) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                if (parseFloat(productData.costPerBox) <= 0 || parseFloat(productData.sellingPrice) <= 0) {
-                    showNotification('Cost and price must be greater than 0', 'error');
-                    return;
-                }
-                
-                addProduct(productData);
-            });
+            document.getElementById('save-product-btn').addEventListener('click', addProduct);
+            document.getElementById('clear-product-form').addEventListener('click', clearProductForm);
             
             // Procurement form
-            document.getElementById('save-procurement-btn').addEventListener('click', () => {
-                const procurementData = {
-                    productId: document.getElementById('procurement-product').value,
-                    quantity: document.getElementById('procurement-qty').value,
-                    cost: document.getElementById('procurement-cost').value,
-                    date: document.getElementById('procurement-date').value,
-                    supplier: document.getElementById('procurement-supplier').value,
-                    notes: document.getElementById('procurement-notes').value
-                };
-                
-                // Validation
-                if (!procurementData.productId || !procurementData.quantity || !procurementData.cost || 
-                    !procurementData.date || !procurementData.supplier) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                addProcurement(procurementData);
-            });
+            document.getElementById('save-procurement-btn').addEventListener('click', addProcurement);
+            document.getElementById('clear-procurement-form').addEventListener('click', clearProcurementForm);
             
             // Shareholder form
-            document.getElementById('save-shareholder-btn').addEventListener('click', () => {
-                const shareholderData = {
-                    name: document.getElementById('shareholder-name').value,
-                    email: document.getElementById('shareholder-email').value,
-                    phone: document.getElementById('shareholder-phone').value,
-                    investment: document.getElementById('shareholder-investment').value
-                };
-                
-                // Validation
-                if (!shareholderData.name || !shareholderData.email || !shareholderData.phone || !shareholderData.investment) {
-                    showNotification('Please fill in all required fields', 'error');
-                    return;
-                }
-                
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(shareholderData.email)) {
-                    showNotification('Please enter a valid email address', 'error');
-                    return;
-                }
-                
-                addShareholder(shareholderData);
-            });
+            document.getElementById('save-shareholder-btn').addEventListener('click', addShareholder);
+            document.getElementById('clear-shareholder-form').addEventListener('click', clearShareholderForm);
             
             // Stock taking
             document.getElementById('start-stock-btn').addEventListener('click', startStockCount);
             document.getElementById('calculate-stock-btn').addEventListener('click', calculateStockResults);
             document.getElementById('save-stock-btn').addEventListener('click', saveStockCount);
-            document.getElementById('sync-stock-sheet').addEventListener('click', () => {
-                if (currentStockCount.length > 0) {
-                    saveStockCount();
-                } else {
-                    showNotification('No stock count data to sync', 'warning');
-                }
-            });
             
             // Settings
-            document.getElementById('connect-sheets').addEventListener('click', () => {
-                // Show setup modal
-                document.getElementById('sheet-setup-modal').style.display = 'flex';
-                document.getElementById('modal-sheet-id').value = currentData.settings.googleSheetId || '';
-                document.getElementById('modal-sheet-name').value = currentData.settings.sheetName || "Solo's Snacks Data";
-            });
-            
-            document.getElementById('test-sheet-connection').addEventListener('click', testSheetConnection);
-            document.getElementById('create-sheet-template').addEventListener('click', () => {
-                document.getElementById('template-modal').style.display = 'flex';
-            });
-            
             document.getElementById('save-settings').addEventListener('click', saveSettings);
-            document.getElementById('sync-all').addEventListener('click', syncAllDataToSheets);
-            
-            // Load sample data button
-            document.getElementById('load-sample-data').addEventListener('click', () => {
-                if (confirm('Load sample data? This will replace current data with example data.')) {
-                    initializeSampleData();
-                    initializeUI();
-                    showNotification('Sample data loaded successfully!', 'success');
-                }
-            });
-            
-            // Clear data button
-            document.getElementById('clear-data').addEventListener('click', clearAllData);
-            
-            // Export data buttons
             document.getElementById('export-all').addEventListener('click', () => exportData('all'));
             document.getElementById('export-products').addEventListener('click', () => exportData('products'));
             document.getElementById('export-procurement').addEventListener('click', () => exportData('procurement'));
-            document.getElementById('export-dividends').addEventListener('click', () => exportData('dividends'));
+            document.getElementById('load-sample-data').addEventListener('click', loadSampleData);
+            document.getElementById('clear-data').addEventListener('click', clearAllData);
             
-            // Sheet setup modal
-            document.getElementById('save-sheet-setup').addEventListener('click', () => {
-                const sheetId = document.getElementById('modal-sheet-id').value;
-                const sheetName = document.getElementById('modal-sheet-name').value;
-                
-                if (!sheetId) {
-                    showNotification('Please enter a Google Sheet ID', 'error');
-                    return;
-                }
-                
-                currentData.settings.googleSheetId = sheetId;
-                currentData.settings.sheetName = sheetName;
-                saveData();
-                
-                document.getElementById('sheet-setup-modal').style.display = 'none';
-                showNotification('Google Sheets setup saved! Test connection to start recording.', 'success');
-            });
-            
-            document.getElementById('cancel-sheet-setup').addEventListener('click', () => {
-                document.getElementById('sheet-setup-modal').style.display = 'none';
-            });
-            
-            // Template modal
-            document.getElementById('create-template').addEventListener('click', () => {
-                document.getElementById('template-modal').style.display = 'none';
-                createSheetTemplate();
-            });
-            
-            document.getElementById('cancel-template').addEventListener('click', () => {
-                document.getElementById('template-modal').style.display = 'none';
-            });
-            
-            // Individual sync buttons
-            document.getElementById('sync-products-sheet').addEventListener('click', async () => {
-                if (!googleSheetsConnected) {
-                    showNotification('Please connect to Google Sheets first', 'error');
-                    return;
-                }
-                
-                setLoading(true);
-                let successCount = 0;
-                for (const product of currentData.products) {
-                    if (await recordProductToSheets(product)) {
-                        successCount++;
-                    }
-                }
-                setLoading(false);
-                showNotification(`Synced ${successCount} products to Google Sheets`, 'success');
-            });
-            
-            document.getElementById('sync-procurement-sheet').addEventListener('click', async () => {
-                if (!googleSheetsConnected) {
-                    showNotification('Please connect to Google Sheets first', 'error');
-                    return;
-                }
-                
-                setLoading(true);
-                let successCount = 0;
-                for (const procurement of currentData.procurement) {
-                    if (await recordProcurementToSheets(procurement)) {
-                        successCount++;
-                    }
-                }
-                setLoading(false);
-                showNotification(`Synced ${successCount} purchase records to Google Sheets`, 'success');
+            // Refresh buttons
+            document.getElementById('refresh-products').addEventListener('click', () => {
+                updateUI();
+                showNotification('Products refreshed', 'success');
             });
             
             // Close modals
@@ -4199,477 +3388,20 @@
                 }
             });
             
+            // Help links
+            document.getElementById('help-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification('For help, please contact the system administrator.', 'info');
+            });
+            
             // Auto-save on page unload
             window.addEventListener('beforeunload', function(e) {
                 saveData();
             });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                // Ctrl+S to save
-                if (e.ctrlKey && e.key === 's') {
-                    e.preventDefault();
-                    saveData();
-                    showNotification('Data saved!', 'success');
-                }
-                
-                // Escape to close modals
-                if (e.key === 'Escape') {
-                    document.querySelectorAll('.modal').forEach(modal => {
-                        modal.style.display = 'none';
-                    });
-                }
-            });
-            
-            // Help links
-            document.getElementById('sheet-help-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                showNotification('Google Sheets setup: Enter your Sheet ID and API key in Settings', 'info');
-            });
         }
 
-        // ===== UTILITY FUNCTIONS (from original code) =====
-        function switchTab(tabId) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
-            });
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.toggle('active', content.id === tabId);
-            });
-            
-            // Special handling for specific tabs
-            if (tabId === 'stock') {
-                updateStockHistory();
-            } else if (tabId === 'dividends') {
-                updateDividendCalculations();
-            }
-            
-            updateRoundSelectors();
-        }
-
-        function updateRoundSelectors() {
-            const selectors = [
-                'dashboard-round-selector',
-                'procurement-round',
-                'stock-round',
-                'dividend-round'
-            ];
-            
-            selectors.forEach(selectorId => {
-                const select = document.getElementById(selectorId);
-                if (select) {
-                    select.innerHTML = currentData.businessRounds
-                        .map(round => `<option value="${round.id}">${round.name}${round.status === 'Active' ? ' - Current' : ''}</option>`)
-                        .join('');
-                    select.value = currentData.currentRound;
-                }
-            });
-        }
-
-        function updateProcurementProductDropdown() {
-            const select = document.getElementById('procurement-product');
-            select.innerHTML = '<option value="">Select a product</option>';
-            
-            currentData.products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = product.name;
-                select.appendChild(option);
-            });
-        }
-
-        function updateStockHistory() {
-            const tbody = document.getElementById('stock-history-body');
-            tbody.innerHTML = '';
-            
-            if (currentData.stockCounts.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">No stock count history found.</td>`;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            // Sort by date descending
-            const sortedCounts = [...currentData.stockCounts].sort((a, b) => 
-                new Date(b.date) - new Date(a.date)
-            );
-            
-            sortedCounts.forEach(count => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${count.date}</td>
-                    <td>Round ${count.round}</td>
-                    <td>${count.itemsCounted}</td>
-                    <td class="profit">${count.itemsSold.toLocaleString()}</td>
-                    <td class="profit">₵${count.revenue.toFixed(2)}</td>
-                    <td class="${count.profit >= 0 ? 'profit' : 'loss'}">₵${count.profit.toFixed(2)}</td>
-                    <td>${sanitizeInput(count.notes)}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function updateDividendCalculations() {
-            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
-            if (!currentRound) {
-                showNotification('No active business round found', 'warning');
-                return;
-            }
-            
-            const totalInvestment = currentData.shareholders.reduce((sum, s) => sum + s.investment, 0);
-            const dividendPercentage = parseInt(document.getElementById('dividend-percentage').value) || 100;
-            const dividendPool = currentRound.netProfit * (dividendPercentage / 100);
-            
-            // Update displays
-            document.getElementById('round-profit-display').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('dividend-pool-display').textContent = `₵${dividendPool.toFixed(2)}`;
-            document.getElementById('current-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('dividend-pool').textContent = `₵${dividendPool.toFixed(2)}`;
-            
-            // Update summary
-            document.getElementById('total-investment').textContent = `₵${totalInvestment.toFixed(2)}`;
-            document.getElementById('total-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('total-dividend-pool').textContent = `₵${dividendPool.toFixed(2)}`;
-            
-            // Update dividend table
-            const tbody = document.getElementById('dividends-table-body');
-            tbody.innerHTML = '';
-            
-            if (currentData.shareholders.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">No shareholders found.</td>`;
-                tbody.appendChild(row);
-                
-                // Update average ROI
-                document.getElementById('average-roi').textContent = '0%';
-                return;
-            }
-            
-            let totalROI = 0;
-            
-            currentData.shareholders.forEach(shareholder => {
-                const sharePercentage = totalInvestment > 0 
-                    ? (shareholder.investment / totalInvestment) 
-                    : 0;
-                
-                const dividend = dividendPool * sharePercentage;
-                const roi = totalInvestment > 0 ? (dividend / shareholder.investment * 100) : 0;
-                totalROI += roi;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${shareholder.name}</td>
-                    <td>₵${shareholder.investment.toFixed(2)}</td>
-                    <td>${(sharePercentage * 100).toFixed(1)}%</td>
-                    <td class="profit">₵${dividend.toFixed(2)}</td>
-                    <td class="${roi >= 0 ? 'profit' : 'loss'}">${roi.toFixed(1)}%</td>
-                    <td><span class="profit">Pending</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-success" onclick="markDividendPaid(${shareholder.id})" title="Mark as Paid">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            // Update average ROI
-            const averageROI = totalROI / currentData.shareholders.length;
-            document.getElementById('average-roi').textContent = `${averageROI.toFixed(1)}%`;
-        }
-
-        function updateDashboard() {
-            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
-            if (!currentRound) {
-                console.warn('No current round found');
-                return;
-            }
-            
-            // Update main stats
-            document.getElementById('current-round-display').textContent = currentRound.name;
-            document.getElementById('current-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('total-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
-            document.getElementById('dividend-pool').textContent = `₵${currentRound.dividendPool.toFixed(2)}`;
-            
-            // Calculate profit margin
-            const profitMargin = currentRound.salesRevenue > 0 
-                ? ((currentRound.netProfit / currentRound.salesRevenue) * 100).toFixed(1)
-                : '0.0';
-            
-            // Update summary
-            document.getElementById('summary-procurement').textContent = `₵${currentRound.procurementCost.toFixed(2)}`;
-            document.getElementById('summary-sales').textContent = `₵${currentRound.salesRevenue.toFixed(2)}`;
-            document.getElementById('summary-profit').textContent = `₵${currentRound.netProfit.toFixed(2)}`;
-            document.getElementById('summary-margin').textContent = `${profitMargin}%`;
-            
-            updateActivityLog();
-            updateTopProducts();
-        }
-
-        function updateBusinessRoundCosts() {
-            const currentRound = currentData.businessRounds.find(r => r.id === currentData.currentRound);
-            if (!currentRound) return;
-            
-            const roundProcurement = currentData.procurement.filter(p => p.round === currentData.currentRound);
-            const totalCost = roundProcurement.reduce((sum, p) => sum + p.cost, 0);
-            
-            currentRound.procurementCost = totalCost;
-            currentRound.netProfit = currentRound.salesRevenue - totalCost;
-            currentRound.dividendPool = currentRound.netProfit;
-            
-            saveData();
-            updateDashboard();
-            updateDividendCalculations();
-        }
-
-        // ===== MAKE FUNCTIONS GLOBAL =====
-        window.editProduct = editProduct;
-        window.deleteProduct = deleteProduct;
-        window.deleteProcurement = deleteProcurement;
-        window.deleteShareholder = deleteShareholder;
-        window.markDividendPaid = markDividendPaid;
-        window.validateStockInput = validateStockInput;
-        window.exportData = exportData;
-
-        // Initialize when page loads
-        console.log(`${APP_NAME} v${APP_VERSION} ready!`);
-
-        <script>
-// ===== FIX MISSING FUNCTION DECLARATIONS =====
-function editProduct(id) {
-    const product = currentData.products.find(p => p.id === id);
-    if (!product) {
-        showNotification('Product not found', 'error');
-        return;
-    }
-    
-    const modal = document.getElementById('edit-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalBody = document.getElementById('modal-body');
-    
-    modalTitle.textContent = 'Edit Product';
-    modalBody.innerHTML = `
-        <div class="form-row">
-            <div class="form-group">
-                <label for="edit-product-name">Product Name</label>
-                <input type="text" id="edit-product-name" value="${sanitizeInput(product.name)}">
-            </div>
-            <div class="form-group">
-                <label for="edit-items-per-box">Items per Box</label>
-                <input type="number" id="edit-items-per-box" value="${product.itemsPerBox}">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="edit-cost-per-box">Cost per Box (₵)</label>
-                <input type="number" id="edit-cost-per-box" value="${product.costPerBox}" step="0.01">
-            </div>
-            <div class="form-group">
-                <label for="edit-selling-price">Selling Price (₵)</label>
-                <input type="number" id="edit-selling-price" value="${product.sellingPrice}" step="0.01">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="edit-current-stock">Current Stock</label>
-                <input type="number" id="edit-current-stock" value="${product.currentStock}">
-            </div>
-        </div>
-        <input type="hidden" id="edit-product-id" value="${product.id}">
-    `;
-    
-    modal.style.display = 'flex';
-    
-    // Setup save handler
-    document.getElementById('modal-save').onclick = () => {
-        const updatedProduct = {
-            name: document.getElementById('edit-product-name').value,
-            itemsPerBox: parseInt(document.getElementById('edit-items-per-box').value),
-            costPerBox: parseFloat(document.getElementById('edit-cost-per-box').value),
-            sellingPrice: parseFloat(document.getElementById('edit-selling-price').value),
-            currentStock: parseInt(document.getElementById('edit-current-stock').value)
-        };
-        
-        if (!updatedProduct.name || isNaN(updatedProduct.itemsPerBox) || isNaN(updatedProduct.costPerBox)) {
-            showNotification('Please fill all fields correctly', 'error');
-            return;
-        }
-        
-        // Update product
-        product.name = updatedProduct.name;
-        product.itemsPerBox = updatedProduct.itemsPerBox;
-        product.costPerBox = updatedProduct.costPerBox;
-        product.sellingPrice = updatedProduct.sellingPrice;
-        product.currentStock = updatedProduct.currentStock;
-        
-        saveData();
-        updateProductTable();
-        modal.style.display = 'none';
-        showNotification('Product updated successfully!', 'success');
-    };
-    
-    document.getElementById('modal-cancel').onclick = () => {
-        modal.style.display = 'none';
-    };
-}
-
-function deleteProduct(id) {
-    const product = currentData.products.find(p => p.id === id);
-    if (!product) return;
-    
-    const modal = document.getElementById('delete-modal');
-    document.getElementById('delete-message').textContent = `Are you sure you want to delete "${product.name}"?`;
-    modal.style.display = 'flex';
-    
-    document.getElementById('confirm-delete').onclick = () => {
-        currentData.products = currentData.products.filter(p => p.id !== id);
-        saveData();
-        updateProductTable();
-        modal.style.display = 'none';
-        showNotification('Product deleted successfully!', 'success');
-    };
-    
-    document.getElementById('cancel-delete').onclick = () => {
-        modal.style.display = 'none';
-    };
-}
-
-function deleteProcurement(id) {
-    const procurement = currentData.procurement.find(p => p.id === id);
-    if (!procurement) return;
-    
-    if (confirm(`Delete purchase record for ${procurement.productName}?`)) {
-        currentData.procurement = currentData.procurement.filter(p => p.id !== id);
-        
-        // Update product stock if needed
-        const product = currentData.products.find(p => p.id === procurement.productId);
-        if (product) {
-            product.currentStock = Math.max(0, product.currentStock - procurement.quantity);
-        }
-        
-        saveData();
-        updateProcurementTable();
-        updateProductTable();
-        showNotification('Purchase record deleted', 'success');
-    }
-}
-
-function deleteShareholder(id) {
-    const shareholder = currentData.shareholders.find(s => s.id === id);
-    if (!shareholder) return;
-    
-    if (confirm(`Delete shareholder "${shareholder.name}"? This cannot be undone.`)) {
-        currentData.shareholders = currentData.shareholders.filter(s => s.id !== id);
-        saveData();
-        updateShareholdersTable();
-        showNotification('Shareholder deleted', 'success');
-    }
-}
-
-function markDividendPaid(id) {
-    const shareholder = currentData.shareholders.find(s => s.id === id);
-    if (!shareholder) return;
-    
-    showNotification(`Marked dividend as paid for ${shareholder.name}`, 'success');
-    // Add your dividend payment logic here
-}
-
-function validateStockInput(productId) {
-    const input = document.getElementById(`stock-count-${productId}`);
-    const hint = document.getElementById(`hint-${productId}`);
-    const currentStock = parseFloat(input.dataset.current) || 0;
-    const countedStock = parseFloat(input.value) || 0;
-    
-    if (countedStock < 0) {
-        input.style.borderColor = 'var(--loss)';
-        hint.textContent = 'Cannot be negative';
-        hint.style.color = 'var(--loss)';
-    } else if (countedStock > currentStock + 100) {
-        input.style.borderColor = 'var(--warning)';
-        hint.textContent = 'Count seems unusually high';
-        hint.style.color = 'var(--warning)';
-    } else if (countedStock > currentStock) {
-        input.style.borderColor = 'var(--profit)';
-        hint.textContent = 'Stock increased (new purchases?)';
-        hint.style.color = 'var(--profit)';
-    } else {
-        input.style.borderColor = 'var(--border)';
-        hint.textContent = '';
-    }
-}
-
-// ===== INITIALIZE ON LOAD =====
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Initializing application...');
-    
-    // Initialize application
-    if (typeof loadData === 'function') {
-        loadData();
-    }
-    
-    if (typeof initializeUI === 'function') {
-        initializeUI();
-    }
-    
-    if (typeof setupEventListeners === 'function') {
-        setupEventListeners();
-    }
-    
-    if (typeof updateDashboard === 'function') {
-        updateDashboard();
-    }
-    
-    if (typeof checkGoogleSheetsConnection === 'function') {
-        checkGoogleSheetsConnection();
-    }
-    
-    showNotification('Welcome to Solo\'s Snacks Financial System!', 'success');
-    
-    // Make sure key elements exist
-    setTimeout(() => {
-        if (typeof updateProductTable === 'function') {
-            updateProductTable();
-        }
-        
-        // Initialize product dropdown
-        if (currentData && currentData.products) {
-            updateProcurementProductDropdown();
-        }
-    }, 100);
-});
-
-// ===== DEBUG HELPER =====
-function debugCheck() {
-    console.log('Current Data:', currentData);
-    console.log('Products count:', currentData?.products?.length || 0);
-    console.log('Shareholders count:', currentData?.shareholders?.length || 0);
-    console.log('Functions loaded:', {
-        loadData: typeof loadData,
-        saveData: typeof saveData,
-        updateProductTable: typeof updateProductTable,
-        addProduct: typeof addProduct
-    });
-}
-
-// Add debug button (remove in production)
-const debugBtn = document.createElement('button');
-debugBtn.textContent = 'Debug';
-debugBtn.style.position = 'fixed';
-debugBtn.style.bottom = '10px';
-debugBtn.style.right = '10px';
-debugBtn.style.zIndex = '9999';
-debugBtn.style.padding = '5px 10px';
-debugBtn.style.background = '#333';
-debugBtn.style.color = 'white';
-debugBtn.style.border = 'none';
-debugBtn.style.borderRadius = '3px';
-debugBtn.style.cursor = 'pointer';
-debugBtn.onclick = debugCheck;
-document.body.appendChild(debugBtn);
-</script>
+        // ===== INITIALIZE APP =====
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
 </body>
 </html>
-
