@@ -1270,7 +1270,7 @@
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">Round Profit</span>
-                    <span class="stat-value profit" id="current-profit">₵2,450</span>
+                    <span class="stat-value profit" id="current-profit">₵0.00</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">Google Sheets</span>
@@ -1286,7 +1286,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number" id="shareholder-count">5</div>
+                    <div class="stat-number" id="shareholder-count">0</div>
                     <div class="stat-title">Shareholders</div>
                 </div>
             </div>
@@ -1295,7 +1295,7 @@
                     <i class="fas fa-boxes"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number" id="product-count">23</div>
+                    <div class="stat-number" id="product-count">0</div>
                     <div class="stat-title">Products</div>
                 </div>
             </div>
@@ -1304,7 +1304,7 @@
                     <i class="fas fa-shopping-cart"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number loss" id="total-procurement">₵3,370</div>
+                    <div class="stat-number loss" id="total-procurement">₵0.00</div>
                     <div class="stat-title">Procurement</div>
                 </div>
             </div>
@@ -1313,7 +1313,7 @@
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="stat-content">
-                    <div class="stat-number profit" id="dividend-pool">₵2,450</div>
+                    <div class="stat-number profit" id="dividend-pool">₵0.00</div>
                     <div class="stat-title">Dividend Pool</div>
                 </div>
             </div>
@@ -1362,19 +1362,19 @@
                     <div class="summary-grid">
                         <div class="summary-item">
                             <div class="summary-label">Total Procurement</div>
-                            <div class="summary-value loss" id="summary-procurement">₵3,370</div>
+                            <div class="summary-value loss" id="summary-procurement">₵0.00</div>
                         </div>
                         <div class="summary-item">
                             <div class="summary-label">Total Sales</div>
-                            <div class="summary-value profit" id="summary-sales">₵5,820</div>
+                            <div class="summary-value profit" id="summary-sales">₵0.00</div>
                         </div>
                         <div class="summary-item">
                             <div class="summary-label">Net Profit</div>
-                            <div class="summary-value profit" id="summary-profit">₵2,450</div>
+                            <div class="summary-value profit" id="summary-profit">₵0.00</div>
                         </div>
                         <div class="summary-item">
                             <div class="summary-label">Profit Margin</div>
-                            <div class="summary-value profit" id="summary-margin">42.1%</div>
+                            <div class="summary-value profit" id="summary-margin">0%</div>
                         </div>
                     </div>
                 </div>
@@ -1404,28 +1404,13 @@
                 <div class="dashboard-card recent-activity">
                     <h3><i class="fas fa-history"></i> Recent Activity</h3>
                     <div class="activity-list" id="activity-list">
+                        <!-- Activity items will be loaded by JavaScript -->
                         <div class="activity-item profit">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="fas fa-info-circle"></i>
                             <div class="activity-content">
-                                <div class="activity-title">Stock Count Completed</div>
-                                <div class="activity-desc">120 items sold, ₵420 revenue</div>
-                                <div class="activity-time">Today, 2:30 PM</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <i class="fas fa-shopping-cart"></i>
-                            <div class="activity-content">
-                                <div class="activity-title">New Procurement</div>
-                                <div class="activity-desc">BIGO DRINKS - 10 boxes</div>
-                                <div class="activity-time">Yesterday, 10:15 AM</div>
-                            </div>
-                        </div>
-                        <div class="activity-item profit">
-                            <i class="fas fa-user-plus"></i>
-                            <div class="activity-content">
-                                <div class="activity-title">New Shareholder Added</div>
-                                <div class="activity-desc">Kwame Solo - ₵2,000 investment</div>
-                                <div class="activity-time">Oct 15, 2023</div>
+                                <div class="activity-title">Welcome!</div>
+                                <div class="activity-desc">Add your first product or shareholder to get started</div>
+                                <div class="activity-time">Just now</div>
                             </div>
                         </div>
                     </div>
@@ -1435,24 +1420,9 @@
                     <h3><i class="fas fa-star"></i> Top Performing Products</h3>
                     <div class="products-list" id="top-products-list">
                         <div class="product-item profit">
-                            <div class="product-name">LAYERZ CAKE</div>
+                            <div class="product-name">No products yet</div>
                             <div class="product-stats">
-                                <span class="product-sales">54 items sold</span>
-                                <span class="product-profit">₵108 profit</span>
-                            </div>
-                        </div>
-                        <div class="product-item profit">
-                            <div class="product-name">MALT</div>
-                            <div class="product-stats">
-                                <span class="product-sales">36 items sold</span>
-                                <span class="product-profit">₵60 profit</span>
-                            </div>
-                        </div>
-                        <div class="product-item loss">
-                            <div class="product-name">BREAKFAST CEREAL</div>
-                            <div class="product-stats">
-                                <span class="product-sales">7 items sold</span>
-                                <span class="product-profit">Low stock</span>
+                                <span class="product-sales">Add your first product</span>
                             </div>
                         </div>
                     </div>
@@ -1887,11 +1857,11 @@
                 </div>
                 <div class="control-group">
                     <label>Round Profit</label>
-                    <div class="value-display profit" id="round-profit-display">₵2,450</div>
+                    <div class="value-display profit" id="round-profit-display">₵0.00</div>
                 </div>
                 <div class="control-group">
                     <label>Dividend Pool</label>
-                    <div class="value-display profit" id="dividend-pool-display">₵2,450</div>
+                    <div class="value-display profit" id="dividend-pool-display">₵0.00</div>
                 </div>
             </div>
 
@@ -1935,19 +1905,19 @@
                 <div class="summary-grid">
                     <div class="summary-item">
                         <div class="summary-label">Total Investment</div>
-                        <div class="summary-value" id="total-investment">₵5,000</div>
+                        <div class="summary-value" id="total-investment">₵0.00</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Total Profit</div>
-                        <div class="summary-value profit" id="total-profit">₵2,450</div>
+                        <div class="summary-value profit" id="total-profit">₵0.00</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Dividend Pool</div>
-                        <div class="summary-value profit" id="total-dividend-pool">₵2,450</div>
+                        <div class="summary-value profit" id="total-dividend-pool">₵0.00</div>
                     </div>
                     <div class="summary-item">
                         <div class="summary-label">Average ROI</div>
-                        <div class="summary-value profit" id="average-roi">49%</div>
+                        <div class="summary-value profit" id="average-roi">0%</div>
                     </div>
                 </div>
             </div>
@@ -2068,6 +2038,9 @@
                         </button>
                         <button class="btn btn-sm btn-success" id="create-backup">
                             <i class="fas fa-download"></i> Create Backup
+                        </button>
+                        <button class="btn btn-sm btn-warning" id="load-sample-data">
+                            <i class="fas fa-vial"></i> Load Sample Data
                         </button>
                         <button class="btn btn-sm btn-danger" id="clear-data">
                             <i class="fas fa-trash"></i> Clear All Data
@@ -3000,17 +2973,94 @@
                         localStorage.removeItem('soloSnacksData'); // Remove old key
                         showNotification('Data migrated to new format', 'success');
                     } else {
-                        // Initialize with sample data
-                        initializeSampleData();
+                        // Initialize with EMPTY data, not sample data
+                        currentData = {
+                            products: [],
+                            procurement: [],
+                            shareholders: [],
+                            stockCounts: [],
+                            businessRounds: [{
+                                id: 1,
+                                name: "Round 1",
+                                startDate: new Date().toISOString().split('T')[0],
+                                endDate: null,
+                                status: 'Active',
+                                procurementCost: 0,
+                                salesRevenue: 0,
+                                netProfit: 0,
+                                dividendPool: 0
+                            }],
+                            settings: {
+                                businessName: APP_NAME,
+                                currency: "₵",
+                                taxRate: 0,
+                                googleSheetId: "",
+                                apiKey: "",
+                                lastSync: null,
+                                autoSync: true,
+                                autoSyncProducts: true,
+                                autoSyncProcurement: true,
+                                autoSyncStock: true,
+                                autoSyncShareholders: true,
+                                autoSyncDividends: true,
+                                syncInterval: 15,
+                                notifications: true
+                            },
+                            currentRound: 1,
+                            version: APP_VERSION,
+                            lastUpdated: new Date().toISOString()
+                        };
+                        saveData();
+                        showNotification('New empty database created', 'info');
                     }
                 }
             } catch (error) {
                 console.error('Error loading data:', error);
                 showNotification('Error loading saved data', 'error');
-                initializeSampleData();
+                initializeEmptyData();
             } finally {
                 setLoading(false);
             }
+        }
+
+        function initializeEmptyData() {
+            currentData = {
+                products: [],
+                procurement: [],
+                shareholders: [],
+                stockCounts: [],
+                businessRounds: [{
+                    id: 1,
+                    name: "Round 1",
+                    startDate: new Date().toISOString().split('T')[0],
+                    endDate: null,
+                    status: 'Active',
+                    procurementCost: 0,
+                    salesRevenue: 0,
+                    netProfit: 0,
+                    dividendPool: 0
+                }],
+                settings: {
+                    businessName: APP_NAME,
+                    currency: "₵",
+                    taxRate: 0,
+                    googleSheetId: "",
+                    apiKey: "",
+                    lastSync: null,
+                    autoSync: true,
+                    autoSyncProducts: true,
+                    autoSyncProcurement: true,
+                    autoSyncStock: true,
+                    autoSyncShareholders: true,
+                    autoSyncDividends: true,
+                    syncInterval: 15,
+                    notifications: true
+                },
+                currentRound: 1,
+                version: APP_VERSION,
+                lastUpdated: new Date().toISOString()
+            };
+            saveData();
         }
 
         function initializeSampleData() {
@@ -3078,6 +3128,131 @@
             // Update settings
             if (currentData.settings) {
                 currentData.settings.lastSync = lastSync;
+            }
+        }
+
+        // ===== CLEAR ALL DATA FUNCTION =====
+        function clearAllData() {
+            // Show confirmation modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Clear All Data</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <i class="fas fa-trash-alt" style="font-size: 4rem; color: var(--loss); margin-bottom: 15px;"></i>
+                            <h3 style="color: var(--loss); margin-bottom: 10px;">Warning: This Cannot Be Undone!</h3>
+                            <p style="color: var(--secondary);">This will delete ALL data including products, shareholders, procurement records, and stock history.</p>
+                        </div>
+                        
+                        <div style="background: var(--loss-light); padding: 15px; border-radius: var(--radius); margin: 20px 0; border-left: 4px solid var(--loss);">
+                            <p><i class="fas fa-exclamation-circle"></i> All data will be permanently deleted. This action cannot be reversed.</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-delete-input">Type "DELETE" to confirm</label>
+                            <input type="text" id="confirm-delete-input" placeholder="Type DELETE here" style="text-align: center; font-weight: bold;">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" id="cancel-clear">Cancel</button>
+                        <button class="btn btn-danger" id="confirm-clear" disabled>Clear All Data</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+            
+            // Close modal handlers
+            modal.querySelector('.close-modal').addEventListener('click', () => {
+                modal.remove();
+            });
+            
+            modal.querySelector('#cancel-clear').addEventListener('click', () => {
+                modal.remove();
+            });
+            
+            // Confirm input validation
+            const confirmInput = modal.querySelector('#confirm-delete-input');
+            const confirmBtn = modal.querySelector('#confirm-clear');
+            
+            confirmInput.addEventListener('input', function() {
+                if (this.value.toUpperCase() === 'DELETE') {
+                    confirmBtn.disabled = false;
+                    this.classList.add('correct');
+                } else {
+                    confirmBtn.disabled = true;
+                    this.classList.remove('correct');
+                }
+            });
+            
+            // Clear data when confirmed
+            confirmBtn.addEventListener('click', () => {
+                performDataClear();
+                modal.remove();
+            });
+        }
+
+        function performDataClear() {
+            setLoading(true);
+            
+            try {
+                // Create empty data structure
+                currentData = {
+                    products: [],
+                    procurement: [],
+                    shareholders: [],
+                    stockCounts: [],
+                    businessRounds: [{
+                        id: 1,
+                        name: "Round 1",
+                        startDate: new Date().toISOString().split('T')[0],
+                        endDate: null,
+                        status: 'Active',
+                        procurementCost: 0,
+                        salesRevenue: 0,
+                        netProfit: 0,
+                        dividendPool: 0
+                    }],
+                    settings: {
+                        businessName: APP_NAME,
+                        currency: "₵",
+                        taxRate: 0,
+                        googleSheetId: "",
+                        apiKey: "",
+                        lastSync: null,
+                        autoSync: true,
+                        autoSyncProducts: true,
+                        autoSyncProcurement: true,
+                        autoSyncStock: true,
+                        autoSyncShareholders: true,
+                        autoSyncDividends: true,
+                        syncInterval: 15,
+                        notifications: true
+                    },
+                    currentRound: 1,
+                    version: APP_VERSION,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                // Save empty data
+                saveData();
+                
+                // Update all UI elements
+                initializeUI();
+                
+                showNotification('All data has been cleared successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                showNotification('Error clearing data: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -3640,6 +3815,176 @@
             showNotification('Settings saved successfully!', 'success');
         }
 
+        // ===== DATA EXPORT FUNCTIONS =====
+        function exportData(type = 'all') {
+            let dataToExport;
+            let filename;
+            
+            switch(type) {
+                case 'products':
+                    dataToExport = currentData.products;
+                    filename = `${APP_NAME}_Products_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                case 'shareholders':
+                    dataToExport = currentData.shareholders;
+                    filename = `${APP_NAME}_Shareholders_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                case 'procurement':
+                    dataToExport = currentData.procurement;
+                    filename = `${APP_NAME}_Procurement_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                default:
+                    dataToExport = currentData;
+                    filename = `${APP_NAME}_FullBackup_${new Date().toISOString().split('T')[0]}.json`;
+            }
+            
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification(`Data exported to ${filename}`, 'success');
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function updateActivityLog() {
+            const activityList = document.getElementById('activity-list');
+            activityList.innerHTML = '';
+            
+            // Add welcome message if no activities
+            if (currentData.products.length === 0 && currentData.shareholders.length === 0) {
+                const welcomeItem = document.createElement('div');
+                welcomeItem.className = 'activity-item profit';
+                welcomeItem.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">Welcome!</div>
+                        <div class="activity-desc">Add your first product or shareholder to get started</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                `;
+                activityList.appendChild(welcomeItem);
+                return;
+            }
+            
+            // Add recent activities
+            const activities = [];
+            
+            // Add product activities
+            if (currentData.products.length > 0) {
+                const recentProduct = currentData.products[currentData.products.length - 1];
+                activities.push({
+                    type: 'product',
+                    title: 'Product Added',
+                    desc: recentProduct.name,
+                    time: 'Recently',
+                    icon: 'box-open',
+                    profit: true
+                });
+            }
+            
+            // Add shareholder activities
+            if (currentData.shareholders.length > 0) {
+                const recentShareholder = currentData.shareholders[currentData.shareholders.length - 1];
+                activities.push({
+                    type: 'shareholder',
+                    title: 'Shareholder Added',
+                    desc: recentShareholder.name,
+                    time: 'Recently',
+                    icon: 'user-plus',
+                    profit: true
+                });
+            }
+            
+            // Add procurement activities
+            if (currentData.procurement.length > 0) {
+                const recentProcurement = currentData.procurement[currentData.procurement.length - 1];
+                activities.push({
+                    type: 'procurement',
+                    title: 'Purchase Recorded',
+                    desc: `${recentProcurement.quantity} boxes of ${recentProcurement.productName}`,
+                    time: 'Recently',
+                    icon: 'shopping-cart',
+                    profit: false
+                });
+            }
+            
+            // Add stock count activities
+            if (currentData.stockCounts.length > 0) {
+                const recentStock = currentData.stockCounts[currentData.stockCounts.length - 1];
+                activities.push({
+                    type: 'stock',
+                    title: 'Stock Count Completed',
+                    desc: `${recentStock.itemsSold} items sold, ₵${recentStock.profit.toFixed(2)} profit`,
+                    time: 'Recently',
+                    icon: 'clipboard-check',
+                    profit: true
+                });
+            }
+            
+            // Display activities (limit to 5)
+            activities.slice(-5).forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = `activity-item ${activity.profit ? 'profit' : ''}`;
+                activityItem.innerHTML = `
+                    <i class="fas fa-${activity.icon}"></i>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-desc">${activity.desc}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                `;
+                activityList.appendChild(activityItem);
+            });
+        }
+
+        function addActivity(message, type) {
+            // This function adds activities to the log
+            // In a real implementation, you would store activities and update the UI
+            updateActivityLog();
+        }
+
+        function updateTopProducts() {
+            const topProductsList = document.getElementById('top-products-list');
+            topProductsList.innerHTML = '';
+            
+            if (currentData.products.length === 0) {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-item profit';
+                productItem.innerHTML = `
+                    <div class="product-name">No products yet</div>
+                    <div class="product-stats">
+                        <span class="product-sales">Add your first product</span>
+                    </div>
+                `;
+                topProductsList.appendChild(productItem);
+                return;
+            }
+            
+            // Sort products by current stock (or any other metric)
+            const sortedProducts = [...currentData.products]
+                .sort((a, b) => b.currentStock - a.currentStock)
+                .slice(0, 3);
+            
+            sortedProducts.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = `product-item ${product.currentStock <= 2 ? 'loss' : 'profit'}`;
+                productItem.innerHTML = `
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-stats">
+                        <span class="product-sales">${product.currentStock} boxes in stock</span>
+                        <span class="product-profit">₵${product.sellingPrice.toFixed(2)}/item</span>
+                    </div>
+                `;
+                topProductsList.appendChild(productItem);
+            });
+        }
+
         // ===== EVENT LISTENERS SETUP =====
         function setupEventListeners() {
             // Tab navigation
@@ -3755,6 +4100,24 @@
             document.getElementById('save-settings').addEventListener('click', saveSettings);
             document.getElementById('sync-all').addEventListener('click', syncAllDataToSheets);
             
+            // Load sample data button
+            document.getElementById('load-sample-data').addEventListener('click', () => {
+                if (confirm('Load sample data? This will replace current data with example data.')) {
+                    initializeSampleData();
+                    initializeUI();
+                    showNotification('Sample data loaded successfully!', 'success');
+                }
+            });
+            
+            // Clear data button
+            document.getElementById('clear-data').addEventListener('click', clearAllData);
+            
+            // Export data buttons
+            document.getElementById('export-all').addEventListener('click', () => exportData('all'));
+            document.getElementById('export-products').addEventListener('click', () => exportData('products'));
+            document.getElementById('export-procurement').addEventListener('click', () => exportData('procurement'));
+            document.getElementById('export-dividends').addEventListener('click', () => exportData('dividends'));
+            
             // Sheet setup modal
             document.getElementById('save-sheet-setup').addEventListener('click', () => {
                 const sheetId = document.getElementById('modal-sheet-id').value;
@@ -3821,12 +4184,6 @@
                 setLoading(false);
                 showNotification(`Synced ${successCount} purchase records to Google Sheets`, 'success');
             });
-            
-            // Data export/import
-            document.getElementById('export-all').addEventListener('click', () => exportData('all'));
-            document.getElementById('import-data').addEventListener('click', importData);
-            document.getElementById('clear-data').addEventListener('click', clearAllData);
-            document.getElementById('create-backup').addEventListener('click', createBackup);
             
             // Close modals
             document.querySelectorAll('.close-modal').forEach(btn => {
