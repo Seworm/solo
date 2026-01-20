@@ -953,64 +953,6 @@
             to { transform: translateX(100%); opacity: 0; }
         }
         
-        /* ===== CLEAR DATA MODAL STYLES ===== */
-        .confirmation-modal .modal-content {
-            max-width: 500px;
-        }
-        
-        .confirmation-modal .modal-body {
-            text-align: center;
-            padding: 30px;
-        }
-        
-        .confirmation-modal .warning-icon {
-            font-size: 4rem;
-            color: var(--loss);
-            margin-bottom: 20px;
-        }
-        
-        .confirmation-modal h3 {
-            color: var(--loss);
-            margin-bottom: 15px;
-        }
-        
-        .confirmation-modal .warning-box {
-            background: var(--loss-light);
-            padding: 15px;
-            border-radius: var(--radius);
-            margin: 20px 0;
-            border-left: 4px solid var(--loss);
-        }
-        
-        .confirmation-modal .warning-box i {
-            color: var(--loss);
-            margin-right: 10px;
-        }
-        
-        .confirmation-modal #confirm-delete-input,
-        .confirmation-modal #confirm-import-input {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            text-align: center;
-            font-weight: bold;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            transition: all 0.3s;
-        }
-        
-        .confirmation-modal #confirm-delete-input:focus,
-        .confirmation-modal #confirm-import-input:focus {
-            border-color: var(--loss);
-            box-shadow: 0 0 0 3px var(--loss-light);
-        }
-        
-        .confirmation-modal #confirm-delete-input.correct,
-        .confirmation-modal #confirm-import-input.correct {
-            border-color: var(--profit);
-            background: var(--profit-light);
-        }
-        
         /* ===== FOOTER ===== */
         .main-footer {
             background: var(--white);
@@ -1911,7 +1853,7 @@
 
                 <div class="settings-card">
                     <h3><i class="fas fa-database"></i> Data Management</h3>
-                    <div class="data-controls" id="data-controls">
+                    <div class="data-controls">
                         <button class="btn btn-sm" id="export-all">
                             <i class="fas fa-download"></i> Export All Data
                         </button>
@@ -2107,7 +2049,6 @@
             setLoading(true);
             try {
                 const savedData = safeLocalStorageGet(STORAGE_KEY);
-                
                 if (savedData) {
                     const parsed = JSON.parse(savedData);
                     
@@ -2131,48 +2072,9 @@
                     
                     console.log(`Loaded ${currentData.products.length} products, ${currentData.shareholders.length} shareholders`);
                 } else {
-                    // Try old key
-                    const oldData = safeLocalStorageGet('soloSnacksData');
-                    if (oldData) {
-                        console.log('Found data in old format, migrating...');
-                        const parsed = JSON.parse(oldData);
-                        currentData = {
-                            products: parsed.products || [],
-                            procurement: parsed.procurement || [],
-                            shareholders: parsed.shareholders || [],
-                            stockCounts: parsed.stockCounts || [],
-                            businessRounds: parsed.businessRounds || [{
-                                id: 1,
-                                name: "Round 1",
-                                startDate: new Date().toISOString().split('T')[0],
-                                endDate: null,
-                                status: 'Active',
-                                procurementCost: 0,
-                                salesRevenue: 0,
-                                netProfit: 0,
-                                dividendPool: 0
-                            }],
-                            settings: parsed.settings || {
-                                businessName: APP_NAME,
-                                currency: "₵",
-                                taxRate: 0,
-                                googleSheetId: "",
-                                apiKey: "",
-                                lastSync: null,
-                                autoSave: true,
-                                notifications: true
-                            },
-                            currentRound: parsed.currentRound || 1,
-                            version: APP_VERSION,
-                            lastUpdated: new Date().toISOString()
-                        };
-                        saveData(); // Save in new format
-                        localStorage.removeItem('soloSnacksData'); // Remove old key
-                        showNotification('Data migrated to new format', 'success');
-                    } else {
-                        // Initialize with sample data
-                        initializeSampleData();
-                    }
+                    // Load sample data for first-time users
+                    initializeSampleData();
+                    console.log('Initialized with sample data');
                 }
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -2194,7 +2096,6 @@
                 currency: "₵",
                 taxRate: 0,
                 googleSheetId: "",
-                apiKey: "",
                 lastSync: null,
                 autoSave: true,
                 notifications: true
@@ -2254,10 +2155,6 @@
             const businessName = currentData.settings.businessName || APP_NAME;
             document.getElementById('business-title').textContent = businessName;
             document.getElementById('footer-business-name').textContent = businessName;
-            
-            // Add backup button
-            addBackupButton();
-            addDebugButton();
         }
 
         function setCurrentDate() {
@@ -2911,6 +2808,7 @@
             const shareholder = currentData.shareholders.find(s => s.id === shareholderId);
             if (shareholder) {
                 showNotification(`Dividend marked as paid for ${shareholder.name}`, 'success');
+                // In a real app, you would update a paid status in your data
             }
         }
 
@@ -3265,436 +3163,6 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // ===== CLEAR ALL DATA FUNCTIONALITY =====
-        function clearAllData() {
-            // Create confirmation modal
-            const modal = document.createElement('div');
-            modal.className = 'modal confirmation-modal';
-            modal.style.display = 'flex';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Clear All Data</h3>
-                        <button class="close-modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div style="text-align: center; padding: 20px;">
-                            <i class="fas fa-trash-alt" style="font-size: 4rem; color: var(--loss); margin-bottom: 20px;"></i>
-                            <h3 style="margin-bottom: 10px; color: var(--loss);">Warning: This Cannot Be Undone!</h3>
-                            <p style="margin-bottom: 20px; color: var(--secondary);">
-                                You are about to delete ALL data including:<br>
-                                • All products<br>
-                                • All purchase records<br>
-                                • All shareholders<br>
-                                • All stock counts<br>
-                                • All financial data
-                            </p>
-                            <div class="warning-box">
-                                <p style="color: var(--loss-dark); margin: 0;">
-                                    <i class="fas fa-exclamation-circle"></i> 
-                                    This action is permanent and cannot be undone!
-                                </p>
-                            </div>
-                            <p>Type <strong>"DELETE ALL"</strong> below to confirm:</p>
-                            <input type="text" id="confirm-delete-input" 
-                                   placeholder="Type DELETE ALL here">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" id="cancel-clear-data">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
-                        <button class="btn btn-danger" id="confirm-clear-data" disabled>
-                            <i class="fas fa-trash"></i> Clear All Data
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Set up event listeners for the modal
-            const confirmInput = document.getElementById('confirm-delete-input');
-            const confirmBtn = document.getElementById('confirm-clear-data');
-            const cancelBtn = document.getElementById('cancel-clear-data');
-            const closeBtn = modal.querySelector('.close-modal');
-            
-            // Enable/disable confirm button based on input
-            confirmInput.addEventListener('input', function() {
-                const isCorrect = this.value === 'DELETE ALL';
-                confirmBtn.disabled = !isCorrect;
-                this.classList.toggle('correct', isCorrect);
-            });
-            
-            // Confirm clear data
-            confirmBtn.addEventListener('click', function() {
-                if (confirmInput.value === 'DELETE ALL') {
-                    performClearAllData();
-                    modal.remove();
-                }
-            });
-            
-            // Cancel or close
-            const closeModal = () => modal.remove();
-            cancelBtn.addEventListener('click', closeModal);
-            closeBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
-        }
-
-        function performClearAllData() {
-            setLoading(true);
-            
-            try {
-                // Clear all data from memory
-                currentData = {
-                    products: [],
-                    procurement: [],
-                    shareholders: [],
-                    stockCounts: [],
-                    businessRounds: [{
-                        id: 1,
-                        name: "Round 1",
-                        startDate: new Date().toISOString().split('T')[0],
-                        endDate: null,
-                        status: 'Active',
-                        procurementCost: 0,
-                        salesRevenue: 0,
-                        netProfit: 0,
-                        dividendPool: 0
-                    }],
-                    settings: {
-                        businessName: APP_NAME,
-                        currency: "₵",
-                        taxRate: 0,
-                        googleSheetId: "",
-                        apiKey: "",
-                        lastSync: null,
-                        autoSave: true,
-                        notifications: true
-                    },
-                    currentRound: 1,
-                    version: APP_VERSION,
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                // Clear localStorage
-                localStorage.removeItem(STORAGE_KEY);
-                localStorage.removeItem('soloSnacksData'); // Old key
-                
-                // Save empty data
-                saveData();
-                
-                // Update UI
-                setTimeout(() => {
-                    initializeUI();
-                    updateDashboard();
-                    showNotification('All data cleared successfully!', 'success');
-                    setLoading(false);
-                    
-                    // Show welcome message
-                    setTimeout(() => {
-                        showNotification('System reset. Add your first product to get started!', 'info');
-                    }, 1000);
-                }, 500);
-                
-            } catch (error) {
-                console.error('Error clearing data:', error);
-                showNotification('Error clearing data', 'error');
-                setLoading(false);
-            }
-        }
-
-        // ===== IMPORT DATA FUNCTIONALITY =====
-        function importData() {
-            // Create file input
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = '.json';
-            fileInput.style.display = 'none';
-            
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const importedData = JSON.parse(event.target.result);
-                        
-                        // Validate imported data structure
-                        if (!validateImportedData(importedData)) {
-                            showNotification('Invalid data format', 'error');
-                            return;
-                        }
-                        
-                        // Show confirmation modal
-                        const modal = document.createElement('div');
-                        modal.className = 'modal confirmation-modal';
-                        modal.style.display = 'flex';
-                        modal.innerHTML = `
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h3><i class="fas fa-file-import"></i> Import Data</h3>
-                                    <button class="close-modal">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div style="text-align: center; padding: 20px;">
-                                        <i class="fas fa-database" style="font-size: 4rem; color: var(--profit); margin-bottom: 20px;"></i>
-                                        <h3 style="margin-bottom: 10px;">Import Data Confirmation</h3>
-                                        <div class="warning-box" style="background: var(--profit-light); border-left-color: var(--profit);">
-                                            <p style="color: var(--profit-dark); margin: 0;">
-                                                <i class="fas fa-info-circle"></i> 
-                                                This will replace all current data with the imported data.
-                                            </p>
-                                        </div>
-                                        <p>Imported data contains:</p>
-                                        <div style="text-align: left; margin: 20px 0; padding: 15px; background: var(--light); border-radius: var(--radius);">
-                                            ${importedData.products ? `<p><i class="fas fa-box"></i> ${importedData.products.length} products</p>` : ''}
-                                            ${importedData.procurement ? `<p><i class="fas fa-shopping-cart"></i> ${importedData.procurement.length} purchase records</p>` : ''}
-                                            ${importedData.shareholders ? `<p><i class="fas fa-users"></i> ${importedData.shareholders.length} shareholders</p>` : ''}
-                                            ${importedData.stockCounts ? `<p><i class="fas fa-clipboard-check"></i> ${importedData.stockCounts.length} stock counts</p>` : ''}
-                                        </div>
-                                        <p>Type <strong>"IMPORT"</strong> below to confirm:</p>
-                                        <input type="text" id="confirm-import-input" 
-                                               placeholder="Type IMPORT here">
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn" id="cancel-import">
-                                        <i class="fas fa-times"></i> Cancel
-                                    </button>
-                                    <button class="btn btn-success" id="confirm-import" disabled>
-                                        <i class="fas fa-file-import"></i> Import Data
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                        
-                        document.body.appendChild(modal);
-                        
-                        // Set up event listeners
-                        const confirmInput = document.getElementById('confirm-import-input');
-                        const confirmBtn = document.getElementById('confirm-import');
-                        const cancelBtn = document.getElementById('cancel-import');
-                        const closeBtn = modal.querySelector('.close-modal');
-                        
-                        confirmInput.addEventListener('input', function() {
-                            const isCorrect = this.value === 'IMPORT';
-                            confirmBtn.disabled = !isCorrect;
-                            this.classList.toggle('correct', isCorrect);
-                        });
-                        
-                        confirmBtn.addEventListener('click', function() {
-                            if (confirmInput.value === 'IMPORT') {
-                                performDataImport(importedData);
-                                modal.remove();
-                            }
-                        });
-                        
-                        const closeModal = () => modal.remove();
-                        cancelBtn.addEventListener('click', closeModal);
-                        closeBtn.addEventListener('click', closeModal);
-                        modal.addEventListener('click', (e) => {
-                            if (e.target === modal) closeModal();
-                        });
-                        
-                    } catch (error) {
-                        console.error('Error parsing imported data:', error);
-                        showNotification('Error reading file. Please check the format.', 'error');
-                    }
-                };
-                
-                reader.readAsText(file);
-            });
-            
-            document.body.appendChild(fileInput);
-            fileInput.click();
-            document.body.removeChild(fileInput);
-        }
-
-        function validateImportedData(data) {
-            // Basic validation
-            if (!data || typeof data !== 'object') return false;
-            
-            // Check for expected properties
-            const hasProducts = Array.isArray(data.products);
-            const hasShareholders = Array.isArray(data.shareholders);
-            const hasProcurement = Array.isArray(data.procurement);
-            
-            // Must have at least one of the main data arrays
-            return hasProducts || hasShareholders || hasProcurement;
-        }
-
-        function performDataImport(importedData) {
-            setLoading(true);
-            
-            try {
-                // Merge imported data with current structure
-                currentData = {
-                    ...currentData, // Keep settings and version
-                    products: importedData.products || [],
-                    procurement: importedData.procurement || [],
-                    shareholders: importedData.shareholders || [],
-                    stockCounts: importedData.stockCounts || [],
-                    businessRounds: importedData.businessRounds || [{
-                        id: 1,
-                        name: "Round 1",
-                        startDate: new Date().toISOString().split('T')[0],
-                        endDate: null,
-                        status: 'Active',
-                        procurementCost: 0,
-                        salesRevenue: 0,
-                        netProfit: 0,
-                        dividendPool: 0
-                    }],
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                // Recalculate business round data
-                updateBusinessRoundCosts();
-                
-                // Save imported data
-                saveData();
-                
-                // Update UI
-                setTimeout(() => {
-                    initializeUI();
-                    updateDashboard();
-                    showNotification('Data imported successfully!', 'success');
-                    setLoading(false);
-                }, 500);
-                
-            } catch (error) {
-                console.error('Error importing data:', error);
-                showNotification('Error importing data', 'error');
-                setLoading(false);
-            }
-        }
-
-        // ===== BACKUP FUNCTIONALITY =====
-        function createBackup() {
-            const backupData = {
-                ...currentData,
-                backupDate: new Date().toISOString(),
-                backupNote: 'Manual backup from Solo\'s Snacks'
-            };
-            
-            const json = JSON.stringify(backupData, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `solo-snacks-backup-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showNotification('Backup created successfully!', 'success');
-        }
-
-        function addBackupButton() {
-            const dataControls = document.getElementById('data-controls');
-            if (dataControls) {
-                const backupBtn = document.createElement('button');
-                backupBtn.className = 'btn btn-sm btn-success';
-                backupBtn.innerHTML = '<i class="fas fa-download"></i> Create Backup';
-                backupBtn.id = 'create-backup';
-                backupBtn.style.marginLeft = '10px';
-                dataControls.appendChild(backupBtn);
-                
-                backupBtn.addEventListener('click', createBackup);
-            }
-        }
-
-        // ===== DEBUG FUNCTIONALITY =====
-        function addDebugButton() {
-            const footerLinks = document.querySelector('.footer-links');
-            if (footerLinks) {
-                const debugClear = document.createElement('a');
-                debugClear.href = '#';
-                debugClear.innerHTML = '<i class="fas fa-bug"></i> Debug Clear';
-                debugClear.style.color = 'var(--loss)';
-                debugClear.style.cursor = 'pointer';
-                debugClear.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (confirm('Debug: Clear all data without confirmation?')) {
-                        localStorage.clear();
-                        location.reload();
-                    }
-                });
-                footerLinks.appendChild(debugClear);
-            }
-        }
-
-        // ===== UTILITY FUNCTIONS =====
-        function formatDate(dateString) {
-            if (!dateString) return 'Unknown date';
-            
-            try {
-                const date = new Date(dateString);
-                if (isNaN(date.getTime())) return dateString;
-                
-                const now = new Date();
-                const diffTime = Math.abs(now - date);
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (diffDays === 0) return 'Today';
-                if (diffDays === 1) return 'Yesterday';
-                if (diffDays < 7) return `${diffDays} days ago`;
-                
-                return date.toLocaleDateString();
-            } catch (e) {
-                return dateString;
-            }
-        }
-
-        // ===== EXPORT FUNCTIONS =====
-        function exportData(type) {
-            let data, filename;
-            
-            switch(type) {
-                case 'products':
-                    data = currentData.products;
-                    filename = 'solo-snacks-products.json';
-                    break;
-                case 'procurement':
-                    data = currentData.procurement;
-                    filename = 'solo-snacks-procurement.json';
-                    break;
-                case 'shareholders':
-                    data = currentData.shareholders;
-                    filename = 'solo-snacks-shareholders.json';
-                    break;
-                case 'all':
-                    data = currentData;
-                    filename = 'solo-snacks-full-backup.json';
-                    break;
-                default:
-                    return;
-            }
-            
-            try {
-                const json = JSON.stringify(data, null, 2);
-                const blob = new Blob([json], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showNotification(`Data exported to ${filename}`, 'success');
-            } catch (error) {
-                console.error('Export error:', error);
-                showNotification('Error exporting data', 'error');
-            }
-        }
-
         // ===== EVENT LISTENERS SETUP =====
         function setupEventListeners() {
             // Tab navigation
@@ -3882,9 +3350,19 @@
             document.getElementById('export-dividends').addEventListener('click', () => exportData('shareholders'));
             document.getElementById('export-all').addEventListener('click', () => exportData('all'));
             
-            // Data import and clear
-            document.getElementById('import-data').addEventListener('click', importData);
-            document.getElementById('clear-data').addEventListener('click', clearAllData);
+            // Data import
+            document.getElementById('import-data').addEventListener('click', () => {
+                showNotification('Import feature coming soon!', 'info');
+            });
+            
+            // Clear data with confirmation
+            document.getElementById('clear-data').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear ALL data? This cannot be undone.')) {
+                    localStorage.clear();
+                    showNotification('All data cleared. Refreshing page...', 'warning');
+                    setTimeout(() => location.reload(), 1500);
+                }
+            });
             
             // Modal buttons
             document.getElementById('modal-save').addEventListener('click', saveEdit);
@@ -3985,6 +3463,72 @@
                     select.value = currentData.currentRound;
                 }
             });
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown date';
+            
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) return 'Today';
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
+                
+                return date.toLocaleDateString();
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // ===== EXPORT FUNCTIONS =====
+        function exportData(type) {
+            let data, filename;
+            
+            switch(type) {
+                case 'products':
+                    data = currentData.products;
+                    filename = 'solo-snacks-products.json';
+                    break;
+                case 'procurement':
+                    data = currentData.procurement;
+                    filename = 'solo-snacks-procurement.json';
+                    break;
+                case 'shareholders':
+                    data = currentData.shareholders;
+                    filename = 'solo-snacks-shareholders.json';
+                    break;
+                case 'all':
+                    data = currentData;
+                    filename = 'solo-snacks-full-backup.json';
+                    break;
+                default:
+                    return;
+            }
+            
+            try {
+                const json = JSON.stringify(data, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification(`Data exported to ${filename}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Error exporting data', 'error');
+            }
         }
 
         // ===== MAKE FUNCTIONS GLOBAL =====
